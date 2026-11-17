@@ -373,11 +373,26 @@ class PolicyAuthorizationTest extends TestCase
             'is_completed' => true,
         ]);
 
-        // Customer A berhak melihat progresnya sendiri
-        $this->assertTrue(Gate::forUser($this->customerA)->allows('view', $progressA));
+        $quizA = UserQuizResult::create([
+            'user_id'      => $this->customerA->id,
+            'course_id'    => 1,
+            'score'        => 95,
+            'xp_earned'    => 100,
+            'is_passed'    => true,
+            'completed_at' => now(),
+        ]);
 
-        // Customer B DILARANG melihat progres Customer A
+        // Customer A berhak melihat progres dan hasil kuis miliknya sendiri
+        $this->assertTrue(Gate::forUser($this->customerA)->allows('view', $progressA));
+        $this->assertTrue(Gate::forUser($this->customerA)->allows('view', $quizA));
+
+        // Customer B DILARANG melihat progres maupun hasil kuis Customer A
         $this->assertFalse(Gate::forUser($this->customerB)->allows('view', $progressA));
+        $this->assertFalse(Gate::forUser($this->customerB)->allows('view', $quizA));
+
+        // Admin berhak supervisi progres & kuis warga
+        $this->assertTrue(Gate::forUser($this->adminUser)->allows('view', $progressA));
+        $this->assertTrue(Gate::forUser($this->adminUser)->allows('view', $quizA));
     }
 
     public function test_challenge_participant_and_submission_policy_enforcement(): void
@@ -397,12 +412,18 @@ class PolicyAuthorizationTest extends TestCase
             'proof_notes'    => 'Mencuci dengan ember penampung',
         ]);
 
-        // Customer A berhak melihat partisipasi & submisi miliknya
+        // Customer A berhak melihat dan memperbarui partisipasi & submisi miliknya
         $this->assertTrue(Gate::forUser($this->customerA)->allows('view', $participantA));
         $this->assertTrue(Gate::forUser($this->customerA)->allows('view', $submissionA));
+        $this->assertTrue(Gate::forUser($this->customerA)->allows('update', $submissionA));
 
-        // Customer B DILARANG melihat partisipasi & submisi Customer A
+        // Customer B DILARANG melihat atau memperbarui partisipasi & submisi Customer A
         $this->assertFalse(Gate::forUser($this->customerB)->allows('view', $participantA));
         $this->assertFalse(Gate::forUser($this->customerB)->allows('view', $submissionA));
+        $this->assertFalse(Gate::forUser($this->customerB)->allows('update', $submissionA));
+
+        // Admin berhak supervisi
+        $this->assertTrue(Gate::forUser($this->adminUser)->allows('view', $participantA));
+        $this->assertTrue(Gate::forUser($this->adminUser)->allows('view', $submissionA));
     }
 }
