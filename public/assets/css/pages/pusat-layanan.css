@@ -1,0 +1,14 @@
+/**
+ * Stylesheet Khusus: Pusat Layanan & Pengaduan
+ * File: public/assets/css/pages/pusat-layanan.css
+ */
+
+/* Timeline tracker connector lines */
+.ticket-timeline-line {
+  position: absolute;
+  top: 1.5rem;
+  bottom: 0;
+  left: 0.875rem;
+  width: 2px;
+  background-color: #e2e8f0;
+}

@@ -1,0 +1,14 @@
+/**
+ * Stylesheet Khusus: TirtaBot AI Chat
+ * File: public/assets/css/pages/chat-ai.css
+ */
+
+/* Chat bubble word-wrap and smooth scroll */
+.chat-messages-container {
+  scroll-behavior: smooth;
+}
+
+.chat-bubble-content {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}

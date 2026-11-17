@@ -1,0 +1,9 @@
+/**
+ * Stylesheet Khusus: Tantangan Hemat Air 7 Hari
+ * File: public/assets/css/pages/tantangan.css
+ */
+
+/* Streak day card active border highlight */
+.challenge-day-card.active-day {
+  box-shadow: 0 0 0 2px #0284c7;
+}

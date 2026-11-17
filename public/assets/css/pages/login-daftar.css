@@ -1,0 +1,10 @@
+/**
+ * Stylesheet Khusus: Login & Pendaftaran Akun Pelanggan
+ * File: public/assets/css/pages/login-daftar.css
+ */
+
+/* Auth card glassmorphism effect */
+.auth-card-backdrop {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}

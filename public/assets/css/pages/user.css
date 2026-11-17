@@ -1,0 +1,9 @@
+/**
+ * Stylesheet Khusus: Portal Pelanggan & Profil
+ * File: public/assets/css/pages/user.css
+ */
+
+/* Meter scanner container guide frame */
+.meter-camera-frame {
+  aspect-ratio: 4 / 3;
+}

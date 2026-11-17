@@ -1,0 +1,14 @@
+/**
+ * Stylesheet Khusus: Smart Water Academy Payakumbuh
+ * File: public/assets/css/pages/akademi-air.css
+ */
+
+/* Progress bar smooth transition */
+.academy-progress-fill {
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Quiz option selection hover & active state */
+.quiz-option-btn {
+  transition: all 0.15s ease-in-out;
+}
