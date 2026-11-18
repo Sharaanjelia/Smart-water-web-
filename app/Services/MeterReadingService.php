@@ -3,8 +3,10 @@
 namespace App\Services;
 
 use App\Models\MeterReading;
+use App\Models\Tariff;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -53,8 +55,8 @@ class MeterReadingService
     {
         return DB::transaction(function () use ($data, $user) {
             $meterNumber  = trim((string)($data['meter'] ?? $data['meter_number'] ?? '01000'));
-            $ocrReading   = (float)($data['ocrReading'] ?? $data['reading'] ?? 0);
-            $lastReading  = (float)($data['lastReading'] ?? $data['previous_reading'] ?? 0);
+            $ocrReading   = (float)($data['ocr_reading'] ?? $data['ocrReading'] ?? $data['reading'] ?? 0);
+            $lastReading  = (float)($data['last_reading'] ?? $data['lastReading'] ?? $data['previous_reading'] ?? 0);
             $customerName = trim((string)($data['name'] ?? $data['customer_name'] ?? ''));
             $zone         = trim((string)($data['zone'] ?? 'DIST-A Sektor Utara'));
             $notes        = trim((string)($data['notes'] ?? 'Laporan via Smart Water AI-OCR'));
@@ -63,15 +65,55 @@ class MeterReadingService
                 $customerName = $user->name;
             }
 
-            // Jika stand lalu tidak disertakan, cari riwayat pembacaan terakhir dari nomor meter
+            // Jika stand lalu tidak disertakan, cari riwayat pembacaan terakhir dari nomor meter (SEC-BILL-08)
             if ($lastReading <= 0) {
-                $previousRecord = MeterReading::where('meter_number', $meterNumber)->latest()->first();
-                $lastReading = $previousRecord ? (float)$previousRecord->reading : max(0, round($ocrReading - 19.0, 2));
+                $previousRecord = MeterReading::where('meter_number', $meterNumber)
+                    ->where('status', '!=', 'Ditolak')
+                    ->latest('id')
+                    ->first();
+
+                if ($previousRecord) {
+                    $lastReading = (float) $previousRecord->reading;
+                } elseif ($user && $user->customerProfile && $user->customerProfile->last_meter_value !== null && (float)$user->customerProfile->last_meter_value > 0) {
+                    $lastReading = (float) $user->customerProfile->last_meter_value;
+                } else {
+                    // Baseline pembacaan pertama untuk sambungan baru (0.00 m3)
+                    $lastReading = 0.00;
+                }
             }
 
-            // Hitung pemakaian kubikasi dan estimasi biaya berdasarkan tarif resmi
-            $consumption = max(0, round($ocrReading - $lastReading, 2));
-            $estimatedCost = round(($consumption * 7800) + 2600);
+            // Deteksi anomali stand meter menurun (SEC-BILL-07)
+            $isAnomaly = false;
+            $anomalyReason = null;
+            $status = 'Menunggu Validasi';
+
+            if ($lastReading > 0 && $ocrReading < $lastReading) {
+                $isAnomaly = true;
+                $anomalyReason = "Stand meter terbaru ({$ocrReading} m³) lebih rendah dari stand sebelumnya ({$lastReading} m³). Diperlukan pemeriksaan fisik teknisi.";
+                $status = 'Anomali / Perlu Pemeriksaan Petugas';
+                $consumption = 0.00;
+            } else {
+                $consumption = max(0.00, round($ocrReading - $lastReading, 2));
+            }
+
+            // Hitung estimasi biaya secara dinamis dari master tarif
+            $customerProfile = $user?->customerProfile;
+            $tariffCategory = $customerProfile?->tariff_category ?? '2A - Rumah Tangga Mandiri';
+            $tariff = Tariff::with('tiers')
+                ->where('is_active', true)
+                ->where(function ($query) use ($tariffCategory) {
+                    $query->where('category_name', $tariffCategory)
+                          ->orWhere('category_code', strtok($tariffCategory, ' -'));
+                })
+                ->first();
+
+            $estimatedCost = 0.00;
+            if ($tariff && $tariff->tiers->isNotEmpty()) {
+                $calc = app(BillingService::class)->calculateConsumptionCharges($consumption, $tariff);
+                $estimatedCost = $calc['total_amount'];
+            } else {
+                $estimatedCost = round(($consumption * 7800) + 2600);
+            }
 
             $reportCode = $this->generateReportNumber();
 
@@ -91,10 +133,12 @@ class MeterReadingService
                 'consumption'      => $consumption,
                 'estimated_cost'   => $estimatedCost,
                 'confidence'       => $data['confidence'] ?? 98.4,
-                'image_path'       => $imagePath,
+                'photo_path'       => $imagePath,
                 'zone'             => $zone,
                 'notes'            => $notes,
-                'status'           => 'Menunggu Validasi',
+                'status'           => $status,
+                'is_anomaly'       => $isAnomaly,
+                'anomaly_reason'   => $anomalyReason,
             ]);
         });
     }
@@ -115,11 +159,22 @@ class MeterReadingService
             }
 
             $actionUpper = strtoupper(trim($action));
+            $actingValidator = $validator ?? Auth::user();
 
-            if ($actionUpper === 'APPROVE' || $actionUpper === 'TERVERIFIKASI AI') {
+            if ($actionUpper === 'APPROVE' || $actionUpper === 'TERVERIFIKASI AI' || $actionUpper === 'TERVERIFIKASI') {
+                // SEC-BILL-03: Persetujuan WAJIB dilakukan oleh petugas/admin yang sah (tidak boleh AI murni tanpa validator)
+                if (!$actingValidator) {
+                    throw new \InvalidArgumentException('Persetujuan laporan meter wajib dilakukan oleh petugas atau administrator yang sah.');
+                }
+
+                // SEC-BILL-07: Tolak persetujuan jika laporan terdeteksi anomali tanpa pemeriksaan/koreksi teknisi
+                if ($reading->is_anomaly) {
+                    throw new \InvalidArgumentException('Laporan meter terindikasi anomali (' . ($reading->anomaly_reason ?? 'stand menurun') . ') dan tidak dapat disetujui tanpa koreksi teknisi.');
+                }
+
                 $reading->update([
                     'status'           => 'Terverifikasi AI',
-                    'validated_by'     => $validator?->id,
+                    'validated_by'     => $actingValidator->id,
                     'validated_at'     => now(),
                     'rejection_reason' => null,
                 ]);
@@ -145,7 +200,7 @@ class MeterReadingService
                         $reading->user_id,
                         'METER',
                         'Laporan Meteran Berhasil Diverifikasi',
-                        "Angka stand {$reading->reading} m³ telah disetujui petugas PDAM. Lembar tagihan resmi telah diperbarui.",
+                        "Angka stand {$reading->reading} m³ telah disetujui petugas PDAM. Lembar tagihan telah diperbarui.",
                         '/bill'
                     );
                 }
@@ -157,7 +212,7 @@ class MeterReadingService
             $rejectionReason = $reason ?: 'Foto buram atau angka tidak sesuai dial fisik meteran.';
             $reading->update([
                 'status'           => 'Ditolak',
-                'validated_by'     => $validator?->id,
+                'validated_by'     => $actingValidator?->id,
                 'validated_at'     => now(),
                 'rejection_reason' => $rejectionReason,
             ]);

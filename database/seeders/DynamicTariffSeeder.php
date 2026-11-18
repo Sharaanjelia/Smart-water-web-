@@ -27,6 +27,8 @@ class DynamicTariffSeeder extends Seeder
                 'penalty_percentage' => 0.00,
                 'due_day_of_month' => 20,
                 'is_active' => true,
+                'is_simulation' => true,
+                'approval_status' => 'PROVISIONAL',
             ]
         );
 
@@ -77,6 +79,8 @@ class DynamicTariffSeeder extends Seeder
                 'penalty_percentage' => 0.00,
                 'due_day_of_month' => 20,
                 'is_active' => true,
+                'is_simulation' => true,
+                'approval_status' => 'PROVISIONAL',
             ]
         );
 
@@ -103,6 +107,8 @@ class DynamicTariffSeeder extends Seeder
                 'penalty_percentage' => 0.00,
                 'due_day_of_month' => 20,
                 'is_active' => true,
+                'is_simulation' => true,
+                'approval_status' => 'PROVISIONAL',
             ]
         );
 

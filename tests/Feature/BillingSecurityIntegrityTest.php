@@ -110,6 +110,7 @@ class BillingSecurityIntegrityTest extends TestCase
             'previous_reading' => 100.0,
             'consumption' => 10.0,
             'status' => 'Terverifikasi',
+            'validated_by' => $this->admin->id,
         ]);
 
         $bill = app(BillingService::class)->generateBillFromReading($reading);
@@ -144,6 +145,7 @@ class BillingSecurityIntegrityTest extends TestCase
             'previous_reading' => 100.0,
             'consumption' => 10.0,
             'status' => 'Terverifikasi',
+            'validated_by' => $this->admin->id,
         ]);
 
         $bill = app(BillingService::class)->generateBillFromReading($reading);
@@ -175,6 +177,7 @@ class BillingSecurityIntegrityTest extends TestCase
             'previous_reading' => 100.0,
             'consumption' => 10.0, // 10 m3 @ 2500 = 25000 + 2600 = 27600
             'status' => 'Terverifikasi',
+            'validated_by' => $this->admin->id,
         ]);
 
         $bill = app(BillingService::class)->generateBillFromReading($reading);
@@ -208,6 +211,7 @@ class BillingSecurityIntegrityTest extends TestCase
             'previous_reading' => 100.0,
             'consumption' => 10.0,
             'status' => 'Terverifikasi',
+            'validated_by' => $this->admin->id,
         ]);
 
         $bill = app(BillingService::class)->generateBillFromReading($reading);
@@ -270,6 +274,7 @@ class BillingSecurityIntegrityTest extends TestCase
             'previous_reading' => 100.0,
             'consumption' => 10.0,
             'status' => 'Terverifikasi',
+            'validated_by' => $this->admin->id,
         ]);
 
         $bill = app(BillingService::class)->generateBillFromReading($reading);
@@ -286,16 +291,13 @@ class BillingSecurityIntegrityTest extends TestCase
             'proof_photo' => $file,
         ]);
 
-        // Temuan Audit: Saat ini request lolos (HTTP 201) karena aturan validasi hanya min:0
-        $this->assertEquals(201, $response->getStatusCode());
-        $this->assertDatabaseHas('payments', [
-            'bill_id' => $bill->id,
-            'amount' => 500.00,
-        ]);
+        // Nominal manipulasi wajib ditolak dengan HTTP 422 (SEC-BILL-04)
+        $this->assertEquals(422, $response->getStatusCode());
+        $response->assertJsonValidationErrors(['amount']);
     }
 
     /**
-     * Test 7 (Audit Finding - Medium Risk): Pengajuan bukti pembayaran ganda saat pembayaran sebelumnya masih PENDING.
+     * Test 7 (Fixed SEC-BILL-05): Pengajuan bukti pembayaran ganda saat pembayaran sebelumnya masih PENDING ditolak.
      */
     public function test_multiple_pending_payments_behavior_audit(): void
     {
@@ -310,6 +312,7 @@ class BillingSecurityIntegrityTest extends TestCase
             'previous_reading' => 100.0,
             'consumption' => 10.0,
             'status' => 'Terverifikasi',
+            'validated_by' => $this->admin->id,
         ]);
 
         $bill = app(BillingService::class)->generateBillFromReading($reading);
@@ -323,26 +326,22 @@ class BillingSecurityIntegrityTest extends TestCase
             'sender_name' => 'Budi Santoso',
         ], $file1);
 
-        // Pengajuan kedua saat pengajuan pertama masih PENDING
+        // Pengajuan kedua saat pengajuan pertama masih PENDING wajib ditolak (SEC-BILL-05)
+        $this->expectException(ValidationException::class);
         app(PaymentService::class)->submitManualPayment($bill, $this->customer->id, [
             'amount' => $bill->total_amount,
             'payment_method' => 'manual_transfer',
             'sender_name' => 'Budi Santoso',
         ], $file2);
-
-        // Temuan Audit: Dua record pembayaran berstatus PENDING terbentuk untuk tagihan yang sama
-        $pendingCount = Payment::where('bill_id', $bill->id)->where('status', 'PENDING')->count();
-        $this->assertEquals(2, $pendingCount);
     }
 
     /**
-     * Test 8 (Audit Finding - High Risk): Tabel tariffs saat ini belum memiliki penanda is_simulation atau status persetujuan resmi.
+     * Test 8 (Fixed SEC-BILL-01): Tabel tariffs kini memiliki penanda is_simulation dan approval_status.
      */
     public function test_tariff_simulation_flag_audit(): void
     {
-        // Temuan Audit: Model Tariff belum memiliki atribut 'is_simulation' atau 'is_approved'
-        $attributes = array_keys($this->tariff->getAttributes());
-        $this->assertNotContains('is_simulation', $attributes);
-        $this->assertNotContains('is_approved', $attributes);
+        $attributes = array_keys($this->tariff->fresh()->getAttributes());
+        $this->assertContains('is_simulation', $attributes);
+        $this->assertContains('approval_status', $attributes);
     }
 }

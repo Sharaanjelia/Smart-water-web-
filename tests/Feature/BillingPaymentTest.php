@@ -132,6 +132,7 @@ class BillingPaymentTest extends TestCase
             'previous_reading' => 100.0,
             'consumption' => 10.0,
             'status' => 'Terverifikasi AI',
+            'validated_by' => $this->admin->id,
         ]);
 
         $billingService = app(BillingService::class);
@@ -155,6 +156,7 @@ class BillingPaymentTest extends TestCase
             'previous_reading' => 100.0,
             'consumption' => 10.0,
             'status' => 'Terverifikasi AI',
+            'validated_by' => $this->admin->id,
         ]);
 
         $bill = app(BillingService::class)->generateBillFromReading($reading);
@@ -198,6 +200,7 @@ class BillingPaymentTest extends TestCase
             'previous_reading' => 100.0,
             'consumption' => 10.0,
             'status' => 'Terverifikasi AI',
+            'validated_by' => $this->admin->id,
         ]);
 
         $bill = app(BillingService::class)->generateBillFromReading($reading);
@@ -229,6 +232,7 @@ class BillingPaymentTest extends TestCase
             'previous_reading' => 100.0,
             'consumption' => 10.0,
             'status' => 'Terverifikasi AI',
+            'validated_by' => $this->admin->id,
         ]);
 
         $bill = app(BillingService::class)->generateBillFromReading($reading);
@@ -283,6 +287,7 @@ class BillingPaymentTest extends TestCase
             'previous_reading' => 100.0,
             'consumption' => 10.0,
             'status' => 'Terverifikasi AI',
+            'validated_by' => $this->admin->id,
         ]);
 
         $bill = app(BillingService::class)->generateBillFromReading($reading);

@@ -3,7 +3,9 @@
 namespace App\Http\Requests;
 
 use App\Models\Bill;
+use App\Models\Payment;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
 
 class StoreManualPaymentRequest extends FormRequest
 {
@@ -46,6 +48,47 @@ class StoreManualPaymentRequest extends FormRequest
             'reference_number' => ['nullable', 'string', 'max:100'],
             'notes' => ['nullable', 'string', 'max:1000'],
         ];
+    }
+
+    /**
+     * Configure additional validation callbacks.
+     */
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function ($validator) {
+            $billId = $this->input('bill_id');
+            if (!$billId) {
+                return;
+            }
+
+            $bill = Bill::find($billId);
+            if (!$bill) {
+                return;
+            }
+
+            // SEC-BILL-05: Cek apakah tagihan sudah lunas
+            if ($bill->status === 'PAID') {
+                $validator->errors()->add('bill_id', 'Tagihan ini telah lunas dan tidak dapat dibayar kembali.');
+                return;
+            }
+
+            // SEC-BILL-05: Cegah pengajuan ganda jika masih ada pembayaran berstatus PENDING
+            $hasPendingPayment = Payment::where('bill_id', $bill->id)
+                ->where('status', 'PENDING')
+                ->exists();
+
+            if ($hasPendingPayment) {
+                $validator->errors()->add('bill_id', 'Masih terdapat pembayaran pending yang menunggu verifikasi admin untuk tagihan ini.');
+            }
+
+            // SEC-BILL-04: Validasi kecocokan nominal pembayaran dengan total tagihan
+            $inputAmount = (float) $this->input('amount');
+            $billTotal = (float) $bill->total_amount;
+
+            if (round($inputAmount, 2) !== round($billTotal, 2)) {
+                $validator->errors()->add('amount', 'Nominal transfer (Rp ' . number_format($inputAmount, 0, ',', '.') . ') tidak sesuai dengan total tagihan resmi (Rp ' . number_format($billTotal, 0, ',', '.') . ').');
+            }
+        });
     }
 
     /**

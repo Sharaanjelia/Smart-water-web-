@@ -24,6 +24,8 @@ class MeterReading extends Model
         'zone',
         'photo_path',
         'status',
+        'is_anomaly',
+        'anomaly_reason',
         'validated_by',
         'validated_at',
         'rejection_reason',
@@ -35,6 +37,7 @@ class MeterReading extends Model
         'previous_reading' => 'float',
         'consumption' => 'float',
         'estimated_cost' => 'float',
+        'is_anomaly' => 'boolean',
         'validated_at' => 'datetime',
     ];
 

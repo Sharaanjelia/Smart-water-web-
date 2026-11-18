@@ -21,6 +21,8 @@ class Bill extends Model
         'billing_period',
         'period_label',
         'tariff_category',
+        'bill_type',
+        'is_simulation',
         'previous_reading',
         'current_reading',
         'consumption',
@@ -45,9 +47,20 @@ class Bill extends Model
         'penalty_fee' => 'decimal:2',
         'total_amount' => 'decimal:2',
         'due_date' => 'date',
+        'is_simulation' => 'boolean',
         'tariff_snapshot' => 'array',
         'paid_at' => 'datetime',
     ];
+
+    public function isOfficial(): bool
+    {
+        return $this->bill_type === 'OFFICIAL' && !$this->is_simulation;
+    }
+
+    public function isSimulation(): bool
+    {
+        return $this->bill_type === 'SIMULATION' || $this->is_simulation;
+    }
 
     public function user(): BelongsTo
     {

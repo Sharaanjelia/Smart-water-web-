@@ -23,6 +23,9 @@ class TariffResource extends JsonResource
             'penalty_percentage' => (float) $this->penalty_percentage,
             'due_day_of_month' => $this->due_day_of_month,
             'is_active' => (bool) $this->is_active,
+            'is_simulation' => (bool) $this->is_simulation,
+            'approval_status' => $this->approval_status ?? 'PROVISIONAL',
+            'is_official' => $this->isOfficial(),
             'tiers' => TariffTierResource::collection($this->whenLoaded('tiers')),
         ];
     }
