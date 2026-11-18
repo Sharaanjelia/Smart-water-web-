@@ -11,6 +11,12 @@ if (!headers_sent()) {
     @header('Content-Type: application/json; charset=utf-8');
 }
 
+$setHttpCode = static function (int $code) {
+    if (!headers_sent()) {
+        @http_response_code($code);
+    }
+};
+
 $request = request();
 $rawInput = file_get_contents('php://input');
 if ((!$rawInput || $rawInput === '') && function_exists('request')) {
@@ -26,14 +32,14 @@ $controller = app(ComplaintController::class);
 
 if ($action === 'create') {
     $response = $controller->store($request);
-    http_response_code($response->getStatusCode());
+    $setHttpCode($response->getStatusCode());
     echo $response->getContent();
     return;
 }
 
 if ($action === 'simulate_progress') {
     $response = $controller->simulateProgress($request);
-    http_response_code($response->getStatusCode());
+    $setHttpCode($response->getStatusCode());
     echo $response->getContent();
     return;
 }
@@ -41,7 +47,7 @@ if ($action === 'simulate_progress') {
 if ($action === 'assign') {
     $id = (string)($data['id'] ?? $request->input('id', ''));
     $response = $controller->assign($request, $id);
-    http_response_code($response->getStatusCode());
+    $setHttpCode($response->getStatusCode());
     echo $response->getContent();
     return;
 }
@@ -49,7 +55,7 @@ if ($action === 'assign') {
 if ($action === 'response') {
     $id = (string)($data['id'] ?? $request->input('id', ''));
     $response = $controller->respond($request, $id);
-    http_response_code($response->getStatusCode());
+    $setHttpCode($response->getStatusCode());
     echo $response->getContent();
     return;
 }
@@ -57,7 +63,7 @@ if ($action === 'response') {
 if ($action === 'resolve') {
     $id = (string)($data['id'] ?? $request->input('id', ''));
     $response = $controller->resolve($request, $id);
-    http_response_code($response->getStatusCode());
+    $setHttpCode($response->getStatusCode());
     echo $response->getContent();
     return;
 }
@@ -65,13 +71,13 @@ if ($action === 'resolve') {
 if ($action === 'update_status') {
     $id = (string)($data['id'] ?? $request->input('id', ''));
     $response = $controller->updateStatus($request, $id);
-    http_response_code($response->getStatusCode());
+    $setHttpCode($response->getStatusCode());
     echo $response->getContent();
     return;
 }
 
 // Default fallback: list complaints
 $response = $controller->index($request);
-http_response_code($response->getStatusCode());
+$setHttpCode($response->getStatusCode());
 echo $response->getContent();
 return;

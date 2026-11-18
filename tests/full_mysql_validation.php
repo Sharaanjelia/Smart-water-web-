@@ -818,42 +818,44 @@ class ValidationSuite
     {
         echo "\nSECTION 11: Validasi Kompatibilitas Legacy API Adapters\n";
 
+        $customer = User::where('name', 'Budi Santoso')->first();
+
         // 11.1 Legacy Auth Endpoint
-        $resp = $this->dispatchRequest('GET', '/api/auth/auth.php');
+        $resp = $this->dispatchRequest('GET', '/api/auth.php');
         $json = json_decode($resp->getContent(), true);
         $this->log(
             'LegacyAPI',
-            'Adapter /api/auth/auth.php Menghasilkan Response JSON yang Valid',
+            'Adapter /api/auth.php Menghasilkan Response JSON yang Valid',
             $resp->getStatusCode() === 200 && is_array($json) && isset($json['ok']),
             "ok: " . ((($json['ok'] ?? false) === true) ? 'true' : 'false')
         );
 
         // 11.2 Legacy Complaints Endpoint
-        $resp = $this->dispatchRequest('GET', '/api/complaints/complaints.php');
+        $resp = $this->dispatchRequest('GET', '/api/complaints.php', [], [], $customer);
         $json = json_decode($resp->getContent(), true);
         $this->log(
             'LegacyAPI',
-            'Adapter /api/complaints/complaints.php Kompatibel dengan Frontend',
+            'Adapter /api/complaints.php Kompatibel dengan Frontend',
             $resp->getStatusCode() === 200 && ($json['ok'] ?? false),
             "Total pengaduan terambil: " . count($json['data'] ?? $json['complaints'] ?? [])
         );
 
         // 11.3 Legacy Academy Endpoint
-        $resp = $this->dispatchRequest('GET', '/api/academy/academy.php');
+        $resp = $this->dispatchRequest('GET', '/api/academy.php', [], [], $customer);
         $json = json_decode($resp->getContent(), true);
         $this->log(
             'LegacyAPI',
-            'Adapter /api/academy/academy.php Kompatibel dengan Frontend',
+            'Adapter /api/academy.php Kompatibel dengan Frontend',
             $resp->getStatusCode() === 200 && ($json['ok'] ?? false),
             "Kurikulum: " . count($json['courses'] ?? []) . " modul"
         );
 
         // 11.4 Legacy Challenges Endpoint
-        $resp = $this->dispatchRequest('GET', '/api/challenges/challenges.php');
+        $resp = $this->dispatchRequest('GET', '/api/challenges.php', [], [], $customer);
         $json = json_decode($resp->getContent(), true);
         $this->log(
             'LegacyAPI',
-            'Adapter /api/challenges/challenges.php Kompatibel dengan Frontend',
+            'Adapter /api/challenges.php Kompatibel dengan Frontend',
             $resp->getStatusCode() === 200 && ($json['ok'] ?? false),
             "Tantangan: " . count($json['challenges'] ?? [])
         );

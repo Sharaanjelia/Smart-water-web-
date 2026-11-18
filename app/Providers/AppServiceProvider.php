@@ -2,21 +2,25 @@
 
 namespace App\Providers;
 
+use App\Models\Bill;
 use App\Models\ChallengeParticipant;
 use App\Models\ChallengeSubmission;
 use App\Models\Complaint;
 use App\Models\CustomerProfile;
 use App\Models\MeterReading;
 use App\Models\Notification;
+use App\Models\Payment;
 use App\Models\UserLessonProgress;
 use App\Models\UserQuizResult;
 use App\Policies\AcademyProgressPolicy;
+use App\Policies\BillPolicy;
 use App\Policies\ChallengeParticipantPolicy;
 use App\Policies\ChallengeSubmissionPolicy;
 use App\Policies\ComplaintPolicy;
 use App\Policies\CustomerProfilePolicy;
 use App\Policies\MeterReadingPolicy;
 use App\Policies\NotificationPolicy;
+use App\Policies\PaymentPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -43,5 +47,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(UserQuizResult::class, AcademyProgressPolicy::class);
         Gate::policy(ChallengeParticipant::class, ChallengeParticipantPolicy::class);
         Gate::policy(ChallengeSubmission::class, ChallengeSubmissionPolicy::class);
+        Gate::policy(Bill::class, BillPolicy::class);
+        Gate::policy(Payment::class, PaymentPolicy::class);
     }
 }

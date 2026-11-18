@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\AcademyController;
+use App\Http\Controllers\BillController;
 use App\Http\Controllers\ChallengeController;
 use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\MeterReadingController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterCustomerRequest;
 use App\Http\Requests\Profile\UpdateProfileRequest;
@@ -163,6 +165,18 @@ Route::prefix('v1')->group(function () {
             'message' => 'Data profil berhasil diperbarui.',
             'user'    => new UserProfileResource($freshUser),
         ]);
+    });
+
+    // --- 8. TAGIHAN & PEMBAYARAN MANUAL (BILLING & PAYMENT) ---
+    Route::middleware('auth')->group(function () {
+        Route::get('/bills', [BillController::class, 'index']);
+        Route::get('/bills/active', [BillController::class, 'active']);
+        Route::get('/bills/{bill}', [BillController::class, 'show']);
+
+        Route::get('/payments', [PaymentController::class, 'index']);
+        Route::post('/payments', [PaymentController::class, 'store']);
+        Route::get('/payments/{payment}', [PaymentController::class, 'show']);
+        Route::post('/payments/{payment}/verify', [PaymentController::class, 'verify']);
     });
 
 });

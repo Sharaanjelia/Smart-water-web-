@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\LegacyPageController;
 use App\Http\Controllers\MeterReadingController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\SmartWaterPortalController;
 use Illuminate\Support\Facades\Route;
 
@@ -62,6 +63,8 @@ Route::get('/bill-history', [SmartWaterPortalController::class, 'billHistory'])-
 Route::get('/payment-method', [SmartWaterPortalController::class, 'paymentMethod'])->name('payment-method');
 Route::get('/payment-instruction', [SmartWaterPortalController::class, 'paymentInstruction'])->name('payment-instruction');
 Route::get('/payment-success', [SmartWaterPortalController::class, 'paymentSuccess'])->name('payment-success');
+Route::post('/payment/submit-manual', [PaymentController::class, 'store'])->name('payment.store');
+Route::post('/admin/payments/{payment}/verify', [PaymentController::class, 'verify'])->name('admin.payments.verify')->middleware('role:admin,staff');
 
 // 4. Layanan, Monitoring & Profil Pengguna
 Route::get('/water-condition', [SmartWaterPortalController::class, 'waterCondition'])->name('water-condition');

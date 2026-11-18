@@ -132,6 +132,14 @@ class MeterReadingService
                     ]);
                 }
 
+                // Terbitkan tagihan (Bill) otomatis dari laporan meter yang disetujui
+                try {
+                    app(BillingService::class)->generateBillFromReading($reading);
+                } catch (\Throwable $e) {
+                    // Log error if needed, but do not break reading verification
+                    \Illuminate\Support\Facades\Log::warning('Billing generation deferred or failed: ' . $e->getMessage());
+                }
+
                 if ($reading->user_id) {
                     $this->notificationService->send(
                         $reading->user_id,

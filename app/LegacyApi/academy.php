@@ -10,6 +10,12 @@ if (!headers_sent()) {
     @header('Content-Type: application/json; charset=utf-8');
 }
 
+$setHttpCode = static function (int $code) {
+    if (!headers_sent()) {
+        @http_response_code($code);
+    }
+};
+
 $request = request();
 $raw = file_get_contents('php://input');
 if ((!$raw || $raw === '') && function_exists('request')) {
@@ -25,20 +31,20 @@ $controller = app(AcademyController::class);
 
 if ($action === 'complete_lesson') {
     $response = $controller->completeLesson($request);
-    http_response_code($response->getStatusCode());
+    $setHttpCode($response->getStatusCode());
     echo $response->getContent();
     return;
 }
 
 if ($action === 'complete_quiz') {
     $response = $controller->completeQuiz($request);
-    http_response_code($response->getStatusCode());
+    $setHttpCode($response->getStatusCode());
     echo $response->getContent();
     return;
 }
 
 // Default fallback
 $response = $controller->index();
-http_response_code($response->getStatusCode());
+$setHttpCode($response->getStatusCode());
 echo $response->getContent();
 return;
