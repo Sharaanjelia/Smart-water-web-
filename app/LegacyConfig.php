@@ -494,9 +494,10 @@ switch ($SWC_PAGE_MODULE) {
         $NAV_ITEMS = [
             ['id' => 'beranda',   'label' => 'Beranda'],
             ['id' => 'layanan',   'label' => 'Pusat Layanan'],
+            ['id' => 'ai-ocr',    'label' => 'AI OCR'],
             ['id' => 'akademi',   'label' => 'Akademi Air'],
-            ['id' => 'tantangan', 'label' => 'Tantangan'],
-            ['id' => 'tentang',   'label' => 'Tentang'],
+            ['id' => 'tentang',   'label' => 'Tentang PDAM'],
+            ['id' => 'tantangan', 'label' => 'Tantangan Air'],
         ];
         
         $ACADEMY_CATEGORIES = [
@@ -1196,9 +1197,10 @@ switch ($SWC_PAGE_MODULE) {
         $NAV_ITEMS = [
             ['id' => 'beranda',   'label' => 'Beranda'],
             ['id' => 'layanan',   'label' => 'Pusat Layanan'],
+            ['id' => 'ai-ocr',    'label' => 'AI OCR'],
             ['id' => 'akademi',   'label' => 'Akademi Air'],
-            ['id' => 'tantangan', 'label' => 'Tantangan'],
-            ['id' => 'tentang',   'label' => 'Tentang'],
+            ['id' => 'tentang',   'label' => 'Tentang PDAM'],
+            ['id' => 'tantangan', 'label' => 'Tantangan Air'],
         ];
         
         // Koleksi Foto Lanskap Sumber Air & Danau untuk Hero Background Dinamis
@@ -1291,9 +1293,10 @@ switch ($SWC_PAGE_MODULE) {
         $NAV_ITEMS = [
             ['id' => 'beranda',   'label' => 'Beranda'],
             ['id' => 'layanan',   'label' => 'Pusat Layanan'],
+            ['id' => 'ai-ocr',    'label' => 'AI OCR'],
             ['id' => 'akademi',   'label' => 'Akademi Air'],
-            ['id' => 'tantangan', 'label' => 'Tantangan'],
-            ['id' => 'tentang',   'label' => 'Tentang'],
+            ['id' => 'tentang',   'label' => 'Tentang PDAM'],
+            ['id' => 'tantangan', 'label' => 'Tantangan Air'],
         ];
         
         $CHAT_QUICK_PROMPTS = [
@@ -1410,9 +1413,10 @@ switch ($SWC_PAGE_MODULE) {
         $NAV_ITEMS = [
             ['id' => 'beranda',   'label' => 'Beranda'],
             ['id' => 'layanan',   'label' => 'Pusat Layanan'],
+            ['id' => 'ai-ocr',    'label' => 'AI OCR'],
             ['id' => 'akademi',   'label' => 'Akademi Air'],
-            ['id' => 'tantangan', 'label' => 'Tantangan'],
-            ['id' => 'tentang',   'label' => 'Tentang'],
+            ['id' => 'tentang',   'label' => 'Tentang PDAM'],
+            ['id' => 'tantangan', 'label' => 'Tantangan Air'],
         ];
         
         $DISTRICTS_PAYAKUMBUH = [
@@ -1702,9 +1706,10 @@ switch ($SWC_PAGE_MODULE) {
         $NAV_ITEMS = [
             ['id' => 'beranda',   'label' => 'Beranda'],
             ['id' => 'layanan',   'label' => 'Pusat Layanan'],
+            ['id' => 'ai-ocr',    'label' => 'AI OCR'],
             ['id' => 'akademi',   'label' => 'Akademi Air'],
-            ['id' => 'tantangan', 'label' => 'Tantangan'],
-            ['id' => 'tentang',   'label' => 'Tentang'],
+            ['id' => 'tentang',   'label' => 'Tentang PDAM'],
+            ['id' => 'tantangan', 'label' => 'Tantangan Air'],
         ];
         
         $WATER_CHALLENGES = [
@@ -1900,9 +1905,10 @@ switch ($SWC_PAGE_MODULE) {
         $NAV_ITEMS = [
             ['id' => 'beranda',   'label' => 'Beranda'],
             ['id' => 'layanan',   'label' => 'Pusat Layanan'],
+            ['id' => 'ai-ocr',    'label' => 'AI OCR'],
             ['id' => 'akademi',   'label' => 'Akademi Air'],
-            ['id' => 'tantangan', 'label' => 'Tantangan'],
-            ['id' => 'tentang',   'label' => 'Tentang'],
+            ['id' => 'tentang',   'label' => 'Tentang PDAM'],
+            ['id' => 'tantangan', 'label' => 'Tantangan Air'],
         ];
         
         $ECOSYSTEM_PILLARS = [
@@ -1980,9 +1986,10 @@ switch ($SWC_PAGE_MODULE) {
         $NAV_ITEMS = [
             ['id' => 'beranda',   'label' => 'Beranda'],
             ['id' => 'layanan',   'label' => 'Pusat Layanan'],
+            ['id' => 'ai-ocr',    'label' => 'AI OCR'],
             ['id' => 'akademi',   'label' => 'Akademi Air'],
-            ['id' => 'tantangan', 'label' => 'Tantangan'],
-            ['id' => 'tentang',   'label' => 'Tentang'],
+            ['id' => 'tentang',   'label' => 'Tentang PDAM'],
+            ['id' => 'tantangan', 'label' => 'Tantangan Air'],
         ];
         
         $DISTRICTS_PAYAKUMBUH = [

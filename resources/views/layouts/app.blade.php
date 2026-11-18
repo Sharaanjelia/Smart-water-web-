@@ -21,12 +21,12 @@ $APP_META = $APP_META ?? [
 ];
 
 $NAV_ITEMS = [
-    ['id' => 'beranda',       'label' => 'Beranda'],
-    ['id' => 'meter-reading', 'label' => 'Lapor Meter'],
-    ['id' => 'layanan',       'label' => 'Pusat Layanan'],
-    ['id' => 'akademi',       'label' => 'Akademi Air'],
-    ['id' => 'tantangan',     'label' => 'Tantangan'],
-    ['id' => 'tentang',       'label' => 'Tentang'],
+    ['id' => 'beranda',   'label' => 'Beranda'],
+    ['id' => 'layanan',   'label' => 'Pusat Layanan'],
+    ['id' => 'ai-ocr',    'label' => 'AI OCR'],
+    ['id' => 'akademi',   'label' => 'Akademi Air'],
+    ['id' => 'tentang',   'label' => 'Tentang PDAM'],
+    ['id' => 'tantangan', 'label' => 'Tantangan Air'],
 ];
 
 $SHARED_HEADER_OPTIONS = [

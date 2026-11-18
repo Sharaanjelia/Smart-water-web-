@@ -17,6 +17,7 @@ Route::get('/meter-reading', fn () => redirect($basePath('/report-meter')))->nam
 Route::post('/meter-reading', fn () => redirect($basePath('/report-meter')));
 Route::get('/lapor-meter', fn () => redirect($basePath('/report-meter')));
 Route::get('/meter', fn () => redirect($basePath('/report-meter')));
+Route::get('/ai-ocr', fn () => redirect($basePath('/report-meter')))->name('ai-ocr');
 Route::get('/layanan', fn () => $renderPage('pusat-layanan'));
 Route::get('/pusat-layanan', fn () => $renderPage('pusat-layanan'));
 Route::get('/akademi', fn () => $renderPage('akademi-air'));

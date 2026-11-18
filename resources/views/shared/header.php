@@ -47,11 +47,11 @@ if ($activeRole === 'admin') {
     $headerLogoHref = url('/beranda');
     $NAV_ITEMS = [
         ['id' => 'beranda',         'label' => 'Beranda'],
-        ['id' => 'report-meter',    'label' => 'Lapor Meter'],
-        ['id' => 'bill',            'label' => 'Tagihan Air'],
-        ['id' => 'water-condition', 'label' => 'Kondisi Air'],
         ['id' => 'layanan',         'label' => 'Pusat Layanan'],
+        ['id' => 'ai-ocr',          'label' => 'AI OCR'],
         ['id' => 'akademi',         'label' => 'Akademi Air'],
+        ['id' => 'tentang',         'label' => 'Tentang PDAM'],
+        ['id' => 'tantangan',       'label' => 'Tantangan Air'],
     ];
 } else {
     // Mode Tamu / Publik (Belum Login)
@@ -59,6 +59,7 @@ if ($activeRole === 'admin') {
     $NAV_ITEMS = [
         ['id' => 'beranda',         'label' => 'Beranda'],
         ['id' => 'layanan',         'label' => 'Pusat Layanan'],
+        ['id' => 'ai-ocr',          'label' => 'AI OCR'],
         ['id' => 'akademi',         'label' => 'Akademi Air'],
         ['id' => 'tentang',         'label' => 'Tentang PDAM'],
         ['id' => 'tantangan',       'label' => 'Tantangan Air'],
@@ -67,6 +68,8 @@ if ($activeRole === 'admin') {
 
 $navRoutes = [
     'beranda'              => url('/beranda'),
+    'layanan'              => url('/pusat-layanan'),
+    'ai-ocr'               => url('/report-meter'),
     'report-meter'         => url('/report-meter'),
     'meter-reading'        => url('/report-meter'),
     'bill'                 => url('/bill'),
@@ -76,7 +79,6 @@ $navRoutes = [
     'water-monitoring'     => url('/water-monitoring'),
     'reservoir-detail'     => url('/reservoir-detail'),
     'distribution-network' => url('/distribution-network'),
-    'layanan'              => url('/pusat-layanan'),
     'akademi'              => url('/akademi-air'),
     'tantangan'            => url('/tantangan'),
     'tentang'              => url('/tentang'),
@@ -104,7 +106,7 @@ $navRoutes = [
     <!-- Menu Navigasi Utama -->
     <nav class="hidden md:flex items-center gap-5 lg:gap-7 text-sm font-medium text-slate-600">
       <?php foreach ($NAV_ITEMS as $item): ?>
-        <?php $isActive = $header['activeNav'] && ($currentTab ?? '') === $item['id']; ?>
+        <?php $isActive = $header['activeNav'] && (($currentTab ?? '') === $item['id'] || ($item['id'] === 'ai-ocr' && in_array($currentTab ?? '', ['ai-ocr', 'report-meter', 'scanning-meter', 'meter-result', 'meter-confirmation'], true))); ?>
         <a
           href="<?= $navRoutes[$item['id']] ?? url('/' . $item['id']) ?>"
           class="whitespace-nowrap shrink-0 py-1 transition-colors duration-150 border-b-2 text-sm cursor-pointer <?= $isActive
@@ -123,18 +125,6 @@ $navRoutes = [
         <!-- ============================================== -->
         <!-- AKSI MODE GUEST / TAMU (BELUM LOGIN)           -->
         <!-- ============================================== -->
-        <a
-          href="<?= url('/portal-petugas') ?>"
-          class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-semibold text-slate-700 hover:text-cyan-700 bg-slate-100 hover:bg-cyan-50/80 border border-slate-200 hover:border-cyan-200 transition-all cursor-pointer shadow-2xs"
-          title="Masuk langsung ke Portal Operasional Petugas & Operator SCADA PDAM"
-        >
-          <svg class="w-3.5 h-3.5 text-cyan-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
-            <path d="m9 12 2 2 4-4"/>
-          </svg>
-          <span>Portal Petugas</span>
-        </a>
-
         <a
           href="<?= url('/login') ?>"
           class="inline-flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-cyan-600 to-sky-600 hover:from-cyan-500 hover:to-sky-500 shadow-sm hover:shadow-md transition-all cursor-pointer"
@@ -366,7 +356,7 @@ $navRoutes = [
   <!-- Mobile Drawer Menu -->
   <div id="mobileMenuDrawer" class="hidden md:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-5 space-y-2 animate-slide-down shadow-lg">
     <?php foreach ($NAV_ITEMS as $item): ?>
-      <?php $isActive = $header['activeNav'] && ($currentTab ?? '') === $item['id']; ?>
+      <?php $isActive = $header['activeNav'] && (($currentTab ?? '') === $item['id'] || ($item['id'] === 'ai-ocr' && in_array($currentTab ?? '', ['ai-ocr', 'report-meter', 'scanning-meter', 'meter-result', 'meter-confirmation'], true))); ?>
       <a
         href="<?= $navRoutes[$item['id']] ?? url('/' . $item['id']) ?>"
         class="block w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-colors cursor-pointer <?= $isActive
@@ -384,12 +374,6 @@ $navRoutes = [
           class="w-full text-center py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-cyan-600 hover:bg-cyan-700 flex items-center justify-center gap-2 shadow-xs"
         >
           <span>Masuk Pelanggan</span>
-        </a>
-        <a
-          href="<?= url('/portal-petugas') ?>"
-          class="w-full text-center py-2.5 px-4 rounded-xl text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 flex items-center justify-center gap-2 border border-slate-200"
-        >
-          <span>Portal Petugas PDAM</span>
         </a>
       <?php elseif ($activeRole === 'customer'): ?>
         <a
