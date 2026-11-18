@@ -250,6 +250,11 @@
             return { success: true, balance: wallet.balance };
         },
 
+        // Helper cek status login pelanggan resmi
+        isCustomerLoggedIn() {
+            return typeof document !== 'undefined' && document.querySelector('meta[name="auth-check"]')?.content === '1';
+        },
+
         // --- 2. TAGIHAN REKENING (BILLS) ---
         getBills() {
             return load(STORAGE_KEYS.BILLS, DEFAULT_BILLS);
@@ -261,11 +266,18 @@
         },
 
         isBillPaid(inv = 'INV-PYK-2025-04-1000') {
+            if (this.isCustomerLoggedIn() && inv === 'INV-PYK-2025-04-1000') {
+                return false;
+            }
             const b = this.getBill(inv);
             return b ? b.status === 'PAID' : false;
         },
 
         payBill(inv, method = 'Saldo Dompet Smart Water') {
+            if (this.isCustomerLoggedIn()) {
+                // Untuk user terautentikasi, pembayaran resmi melalui verifikasi backend Laravel
+                return false;
+            }
             const bills = this.getBills();
             const target = bills.find(b => b.inv === inv);
             if (!target) return false;

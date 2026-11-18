@@ -31,70 +31,182 @@
             Riwayat Pembayaran Rekening
         </h1>
         <p class="text-xs sm:text-sm text-slate-500">
-            Arsip lengkap seluruh transaksi pembayaran rekening air PDAM Kota Payakumbuh yang telah lunas terverifikasi.
+            Arsip lengkap seluruh transaksi pembayaran rekening air PDAM Kota Payakumbuh yang tercatat di sistem.
         </p>
     </div>
 
     <!-- Daftar Kartu Riwayat Pembayaran -->
-    @php
-    $bills = [
-        ['period' => 'Maret 2025', 'usage' => '18.2 m³', 'amount' => 144560, 'method' => 'BCA Virtual Account', 'paidAt' => '10 Maret 2025, 09:14 WIB', 'trx' => 'TRX-PYK-20250310-891'],
-        ['period' => 'Februari 2025', 'usage' => '17.5 m³', 'amount' => 139100, 'method' => 'QRIS Bank Nagari', 'paidAt' => '08 Februari 2025, 14:22 WIB', 'trx' => 'TRX-PYK-20250208-412'],
-        ['period' => 'Januari 2025', 'usage' => '19.0 m³', 'amount' => 150800, 'method' => 'Mandiri Virtual Account', 'paidAt' => '12 Januari 2025, 10:05 WIB', 'trx' => 'TRX-PYK-20250112-654'],
-        ['period' => 'Desember 2024', 'usage' => '20.1 m³', 'amount' => 159380, 'method' => 'BCA Virtual Account', 'paidAt' => '09 Desember 2024, 16:30 WIB', 'trx' => 'TRX-PYK-20241209-119'],
-        ['period' => 'November 2024', 'usage' => '16.8 m³', 'amount' => 133640, 'method' => 'DANA E-Wallet', 'paidAt' => '11 November 2024, 08:45 WIB', 'trx' => 'TRX-PYK-20241111-782'],
-        ['period' => 'Oktober 2024', 'usage' => '15.4 m³', 'amount' => 122720, 'method' => 'BCA Virtual Account', 'paidAt' => '10 Oktober 2024, 11:12 WIB', 'trx' => 'TRX-PYK-20241010-330'],
-    ];
-    @endphp
+    @if(isset($isLoggedIn) && $isLoggedIn)
+        {{-- MODE PELANGGAN TERAUTENTIKASI (DATA DARI DATABASE MYSQL) --}}
+        <div class="space-y-3" id="historyListWrapper">
+            @if(isset($historyBills) && $historyBills->isNotEmpty())
+                @foreach($historyBills as $b)
+                    <div class="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-sky-300 transition-colors">
+                        <div class="flex items-start gap-4">
+                            <div class="w-11 h-11 rounded-2xl @if($b->status === 'PAID') bg-emerald-50 text-emerald-600 border border-emerald-200 @elseif($b->status === 'PENDING_VERIFICATION') bg-amber-50 text-amber-600 border border-amber-200 @else bg-slate-50 text-slate-600 border border-slate-200 @endif flex items-center justify-center shrink-0">
+                                @if($b->status === 'PAID')
+                                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/>
+                                    </svg>
+                                @else
+                                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+                                    </svg>
+                                @endif
+                            </div>
+                            <div class="space-y-1 text-xs">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <h3 class="font-extrabold text-slate-900 text-sm sm:text-base">
+                                        {{ \Carbon\Carbon::hasFormat($b->billing_period, 'Y-m') ? \Carbon\Carbon::createFromFormat('Y-m', $b->billing_period)->translatedFormat('F Y') : $b->billing_period }}
+                                    </h3>
+                                    @if($b->isSimulation())
+                                        <span class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold">
+                                            Simulasi
+                                        </span>
+                                    @endif
+                                    @if($b->status === 'PAID')
+                                        <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold">
+                                            Lunas
+                                        </span>
+                                    @elseif($b->status === 'PENDING_VERIFICATION')
+                                        <span class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-[10px] font-bold">
+                                            Menunggu Verifikasi
+                                        </span>
+                                    @else
+                                        <span class="px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-[10px] font-bold">
+                                            Belum Bayar
+                                        </span>
+                                    @endif
+                                </div>
+                                <p class="text-slate-500 font-mono text-xs">{{ $b->bill_number }}</p>
+                                <p class="text-slate-400 text-[11px]">
+                                    Metode: <strong class="text-slate-700">{{ $b->latestPayment?->payment_method ?? 'Kanal Terverifikasi' }}</strong> • Pemakaian: <strong class="text-slate-700">{{ number_format($b->consumption, 1) }} m³</strong> • 
+                                    @if($b->status === 'PAID')
+                                        Lunas: <strong class="text-slate-700">{{ $b->paid_at ? \Carbon\Carbon::parse($b->paid_at)->translatedFormat('d M Y') : 'Terverifikasi' }}</strong>
+                                    @else
+                                        Jatuh Tempo: <strong class="text-slate-700">{{ $b->due_date ? \Carbon\Carbon::parse($b->due_date)->translatedFormat('d M Y') : '-' }}</strong>
+                                    @endif
+                                </p>
+                            </div>
+                        </div>
 
-    <div class="space-y-3" id="historyListWrapper">
-        <!-- April 2025 card injected dynamically if paid -->
-        @foreach($bills as $b)
-            <div class="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-sky-300 transition-colors">
-                <div class="flex items-start gap-4">
-                    <div class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center shrink-0">
+                        <div class="sm:text-right flex sm:flex-col items-center sm:items-end justify-between gap-2 border-t sm:border-t-0 border-slate-100 pt-3 sm:pt-0">
+                            <div>
+                                <span class="text-[10px] text-slate-400 uppercase font-bold block">Total Tagihan</span>
+                                <span class="font-mono text-base sm:text-lg font-black text-slate-900">
+                                    Rp {{ number_format($b->total_amount, 0, ',', '.') }}
+                                </span>
+                            </div>
+
+                            @if($b->status === 'PAID')
+                                <a
+                                    href="{{ url('/payment-success') }}?bill_id={{ $b->id }}"
+                                    class="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center gap-1 transition-colors"
+                                >
+                                    <span>Lihat Bukti</span>
+                                    <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="m9 18 6-6-6-6"/>
+                                    </svg>
+                                </a>
+                            @else
+                                <a
+                                    href="{{ url('/bill-detail') }}?id={{ $b->id }}"
+                                    class="px-3 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-800 text-xs font-semibold flex items-center gap-1 transition-colors"
+                                >
+                                    <span>Rincian</span>
+                                    <svg class="w-3.5 h-3.5 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="m9 18 6-6-6-6"/>
+                                    </svg>
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+
+                @if(method_exists($historyBills, 'links'))
+                    <div class="pt-4">
+                        {{ $historyBills->links() }}
+                    </div>
+                @endif
+            @else
+                <div class="bg-white rounded-3xl border border-slate-200/90 p-8 text-center space-y-3">
+                    <div class="w-12 h-12 mx-auto rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center">
                         <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/>
+                            <rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/>
                         </svg>
                     </div>
-                    <div class="space-y-1 text-xs">
-                        <div class="flex items-center gap-2">
-                            <h3 class="font-extrabold text-slate-900 text-sm sm:text-base">{{ $b['period'] }}</h3>
-                            <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold">
-                                Lunas
-                            </span>
-                        </div>
-                        <p class="text-slate-500 font-mono text-xs">{{ $b['trx'] }}</p>
-                        <p class="text-slate-400 text-[11px]">
-                            Metode: <strong class="text-slate-700">{{ $b['method'] }}</strong> • Pemakaian: <strong class="text-slate-700">{{ $b['usage'] }}</strong> • Tanggal: {{ $b['paidAt'] }}
+                    <div class="space-y-1">
+                        <h3 class="font-bold text-slate-800 text-sm">Belum Ada Riwayat Tagihan</h3>
+                        <p class="text-xs text-slate-400 max-w-sm mx-auto">
+                            Akun Anda belum memiliki riwayat tagihan atau pembayaran yang tercatat di sistem.
                         </p>
                     </div>
                 </div>
+            @endif
+        </div>
 
-                <div class="sm:text-right flex sm:flex-col items-center sm:items-end justify-between gap-2 border-t sm:border-t-0 border-slate-100 pt-3 sm:pt-0">
-                    <div>
-                        <span class="text-[10px] text-slate-400 uppercase font-bold block">Total Pembayaran</span>
-                        <span class="font-mono text-base sm:text-lg font-black text-slate-900">
-                            Rp {{ number_format($b['amount'], 0, ',', '.') }}
-                        </span>
+    @else
+        {{-- MODE DEMO / NON-LOGIN --}}
+        @php
+        $bills = [
+            ['period' => 'Maret 2025', 'usage' => '18.2 m³', 'amount' => 144560, 'method' => 'BCA Virtual Account', 'paidAt' => '10 Maret 2025, 09:14 WIB', 'trx' => 'TRX-PYK-20250310-891'],
+            ['period' => 'Februari 2025', 'usage' => '17.5 m³', 'amount' => 139100, 'method' => 'QRIS Bank Nagari', 'paidAt' => '08 Februari 2025, 14:22 WIB', 'trx' => 'TRX-PYK-20250208-412'],
+            ['period' => 'Januari 2025', 'usage' => '19.0 m³', 'amount' => 150800, 'method' => 'Mandiri Virtual Account', 'paidAt' => '12 Januari 2025, 10:05 WIB', 'trx' => 'TRX-PYK-20250112-654'],
+            ['period' => 'Desember 2024', 'usage' => '20.1 m³', 'amount' => 159380, 'method' => 'BCA Virtual Account', 'paidAt' => '09 Desember 2024, 16:30 WIB', 'trx' => 'TRX-PYK-20241209-119'],
+            ['period' => 'November 2024', 'usage' => '16.8 m³', 'amount' => 133640, 'method' => 'DANA E-Wallet', 'paidAt' => '11 November 2024, 08:45 WIB', 'trx' => 'TRX-PYK-20241111-782'],
+            ['period' => 'Oktober 2024', 'usage' => '15.4 m³', 'amount' => 122720, 'method' => 'BCA Virtual Account', 'paidAt' => '10 Oktober 2024, 11:12 WIB', 'trx' => 'TRX-PYK-20241010-330'],
+        ];
+        @endphp
+
+        <div class="space-y-3" id="historyListWrapper">
+            @foreach($bills as $b)
+                <div class="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-sky-300 transition-colors">
+                    <div class="flex items-start gap-4">
+                        <div class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center shrink-0">
+                            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/>
+                            </svg>
+                        </div>
+                        <div class="space-y-1 text-xs">
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-extrabold text-slate-900 text-sm sm:text-base">{{ $b['period'] }}</h3>
+                                <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold">
+                                    Lunas (Demo)
+                                </span>
+                            </div>
+                            <p class="text-slate-500 font-mono text-xs">{{ $b['trx'] }}</p>
+                            <p class="text-slate-400 text-[11px]">
+                                Metode: <strong class="text-slate-700">{{ $b['method'] }}</strong> • Pemakaian: <strong class="text-slate-700">{{ $b['usage'] }}</strong> • Tanggal: {{ $b['paidAt'] }}
+                            </p>
+                        </div>
                     </div>
 
-                    <a
-                        href="{{ url('/payment-success') }}"
-                        class="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center gap-1 transition-colors"
-                    >
-                        <span>Lihat Bukti</span>
-                        <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m9 18 6-6-6-6"/>
-                        </svg>
-                    </a>
+                    <div class="sm:text-right flex sm:flex-col items-center sm:items-end justify-between gap-2 border-t sm:border-t-0 border-slate-100 pt-3 sm:pt-0">
+                        <div>
+                            <span class="text-[10px] text-slate-400 uppercase font-bold block">Total Pembayaran</span>
+                            <span class="font-mono text-base sm:text-lg font-black text-slate-900">
+                                Rp {{ number_format($b['amount'], 0, ',', '.') }}
+                            </span>
+                        </div>
+
+                        <a
+                            href="{{ url('/payment-success') }}"
+                            class="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center gap-1 transition-colors"
+                        >
+                            <span>Lihat Bukti</span>
+                            <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m9 18 6-6-6-6"/>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
-            </div>
-        @endforeach
-    </div>
+            @endforeach
+        </div>
+    @endif
 
 </div>
 
+@if(!isset($isLoggedIn) || !$isLoggedIn)
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     if (!window.SWC) return;
@@ -149,4 +261,5 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+@endif
 @endsection

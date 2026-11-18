@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bill;
+use App\Models\BillDetail;
 use App\Models\Complaint;
 use App\Models\CustomerProfile;
 use App\Models\MeterReading;
 use App\Models\User;
 use App\Services\AuthService;
+use App\Services\BillingService;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterCustomerRequest;
 use Illuminate\Http\RedirectResponse;
@@ -16,6 +19,12 @@ use Illuminate\View\View;
 
 class SmartWaterPortalController extends Controller
 {
+    public function __construct(
+        protected ?BillingService $billingService = null
+    ) {
+        $this->billingService = $billingService ?? app(BillingService::class);
+    }
+
     /**
      * Dapatkan data sesi role dan user saat ini dari Laravel Auth / Database.
      */
@@ -295,32 +304,103 @@ class SmartWaterPortalController extends Controller
         if ($guard = $this->ensureCustomerRole($data)) {
             return $guard;
         }
+
+        $user = Auth::user();
+        if (!$user && !empty($data['currentUser']['id'])) {
+            $user = User::find($data['currentUser']['id']);
+        }
+
+        $activeBill = null;
+        $billHistory = collect();
+        $paidBills = collect();
+
+        if ($user) {
+            $activeBill = $this->billingService->getUnpaidBillForUser($user->id);
+            $billHistory = $this->billingService->getBillHistoryForUser($user->id, 15);
+            $paidBills = Bill::with(['details', 'latestPayment'])
+                ->where('user_id', $user->id)
+                ->where('status', 'PAID')
+                ->orderBy('id', 'desc')
+                ->get();
+        }
+
         return view('billing.index', array_merge($data, [
-            'currentTab' => 'bill',
+            'currentTab'   => 'bill',
+            'activeBill'   => $activeBill,
+            'billHistory'  => $billHistory,
+            'paidBills'    => $paidBills,
+            'isLoggedIn'   => ($user !== null),
         ]));
     }
 
     // 7. Bill Detail Screen
-    public function billDetail()
+    public function billDetail(Request $request, ?Bill $bill = null)
     {
         $data = $this->getSessionData();
         if ($guard = $this->ensureCustomerRole($data)) {
             return $guard;
         }
+
+        $user = Auth::user();
+        if (!$user && !empty($data['currentUser']['id'])) {
+            $user = User::find($data['currentUser']['id']);
+        }
+
+        $billId = $bill?->id ?? $request->query('id') ?? $request->query('bill_id');
+
+        if ($billId) {
+            $selectedBill = Bill::with(['details', 'latestPayment', 'user.customerProfile', 'meterReading'])->find($billId);
+            if (!$selectedBill) {
+                abort(404, 'Tagihan tidak ditemukan.');
+            }
+            // IDOR Protection: User can only view their own bill unless admin/staff
+            if ($user && !$user->isAdmin() && !$user->isStaff() && $selectedBill->user_id !== $user->id) {
+                abort(403, 'Anda tidak memiliki hak akses untuk melihat tagihan ini.');
+            }
+        } else {
+            // Default to user's active unpaid bill, or latest bill
+            $selectedBill = null;
+            if ($user) {
+                $selectedBill = $this->billingService->getUnpaidBillForUser($user->id)
+                    ?? Bill::with(['details', 'latestPayment', 'user.customerProfile', 'meterReading'])
+                        ->where('user_id', $user->id)
+                        ->latest('id')
+                        ->first();
+            }
+        }
+
         return view('billing.detail', array_merge($data, [
             'currentTab' => 'bill',
+            'bill'       => $selectedBill,
+            'isLoggedIn' => ($user !== null),
         ]));
     }
 
     // 8. Bill History Screen
-    public function billHistory()
+    public function billHistory(Request $request)
     {
         $data = $this->getSessionData();
         if ($guard = $this->ensureCustomerRole($data)) {
             return $guard;
         }
+
+        $user = Auth::user();
+        if (!$user && !empty($data['currentUser']['id'])) {
+            $user = User::find($data['currentUser']['id']);
+        }
+
+        $historyBills = collect();
+        if ($user) {
+            $historyBills = Bill::with(['details', 'latestPayment'])
+                ->where('user_id', $user->id)
+                ->orderBy('id', 'desc')
+                ->paginate(15);
+        }
+
         return view('billing.history', array_merge($data, [
-            'currentTab' => 'bill',
+            'currentTab'   => 'bill',
+            'historyBills' => $historyBills,
+            'isLoggedIn'   => ($user !== null),
         ]));
     }
 

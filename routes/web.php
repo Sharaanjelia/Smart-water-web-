@@ -58,7 +58,7 @@ Route::get('/meter-confirmation', [SmartWaterPortalController::class, 'meterConf
 
 // 3. Alur Tagihan & Pembayaran (Payment Gateway)
 Route::get('/bill', [SmartWaterPortalController::class, 'bill'])->name('bill');
-Route::get('/bill-detail', [SmartWaterPortalController::class, 'billDetail'])->name('bill-detail');
+Route::get('/bill-detail/{bill?}', [SmartWaterPortalController::class, 'billDetail'])->name('bill-detail');
 Route::get('/bill-history', [SmartWaterPortalController::class, 'billHistory'])->name('bill-history');
 Route::get('/payment-method', [SmartWaterPortalController::class, 'paymentMethod'])->name('payment-method');
 Route::get('/payment-instruction', [SmartWaterPortalController::class, 'paymentInstruction'])->name('payment-instruction');
