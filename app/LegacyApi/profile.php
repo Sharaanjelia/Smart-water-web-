@@ -35,33 +35,8 @@ if (!is_array($payload)) {
 
 $action = trim((string) ($payload['action'] ?? ''));
 
-if ($action === 'login_demo') {
-    $user = User::where('email', 'budi.santoso@warga.payakumbuh.go.id')->first();
-    if (!$user) {
-        $user = User::first();
-    }
-    if ($user) {
-        $formatted = AuthService::syncSession($user);
-        echo json_encode([
-            'ok'      => true,
-            'message' => 'Berhasil masuk sebagai ' . $user->name . '!',
-            'user'    => $formatted,
-        ]);
-        return;
-    }
-}
-
 if ($action === 'logout') {
-    Auth::logout();
-    if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
-        @session_start();
-    }
-    unset($_SESSION['swc_user'], $_SESSION['swc_role']);
-    if (function_exists('session')) {
-        session()->forget(['swc_user', 'swc_role']);
-        session()->flush();
-        session()->save();
-    }
+    AuthService::performLogout();
     echo json_encode([
         'ok'      => true,
         'message' => 'Anda telah keluar dari sesi pelanggan.',
@@ -77,7 +52,7 @@ if (!$authUser && !empty($_SESSION['swc_user']['email'])) {
     }
 }
 
-if (!$authUser && empty($_SESSION['swc_user'])) {
+if (!$authUser) {
     http_response_code(401);
     echo json_encode(['ok' => false, 'message' => 'Silakan masuk akun pelanggan terlebih dahulu.']);
     return;

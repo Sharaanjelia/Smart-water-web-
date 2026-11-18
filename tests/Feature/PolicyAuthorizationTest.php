@@ -321,12 +321,13 @@ class PolicyAuthorizationTest extends TestCase
         $this->assertNotEquals('admin', session('swc_role'));
     }
 
-    public function test_guest_without_session_can_use_demo_portal_petugas(): void
+    public function test_guest_without_session_is_redirected_to_admin_login(): void
     {
         $response = $this->get('/portal-petugas');
 
-        // Pengunjung demo (tamu) diarahkan ke admin dashboard
-        $response->assertRedirect(url('/admin-dashboard'));
+        // Pengunjung tanpa sesi diarahkan ke halaman login petugas
+        $response->assertRedirect(url('/admin-login'));
+        $response->assertSessionHas('info');
     }
 
     // =========================================================================

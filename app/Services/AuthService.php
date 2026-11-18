@@ -49,12 +49,16 @@ class AuthService
     public static function authenticateCustomer(string $identifier, string $password): ?User
     {
         $identifier = trim($identifier);
+        $cleanPhone = preg_replace('/[^0-9]/', '', $identifier);
 
         $user = User::where('email', $identifier)
-            ->orWhereHas('customerProfile', function ($q) use ($identifier) {
+            ->orWhereHas('customerProfile', function ($q) use ($identifier, $cleanPhone) {
                 $q->where('phone', $identifier)
                   ->orWhere('customer_id', $identifier)
                   ->orWhere('meter_number', $identifier);
+                if (!empty($cleanPhone) && strlen($cleanPhone) >= 9) {
+                    $q->orWhereRaw("REPLACE(REPLACE(phone, '-', ''), ' ', '') = ?", [$cleanPhone]);
+                }
             })
             ->first();
 
@@ -72,16 +76,12 @@ class AuthService
     /**
      * Autentikasi Admin atau Petugas SCADA.
      */
-    public static function authenticateStaff(string $identifier, string $password, bool $isDemo = false): ?User
+    public static function authenticateStaff(string $identifier, string $password): ?User
     {
-        if ($isDemo) {
-            // Ambil akun petugas teknis default dari database
-            return User::where('email', 'ahmad.pratama@tirtasago.id')
-                ->orWhere('email', 'admin@tirtasago.id')
-                ->first();
-        }
-
         $identifier = trim($identifier);
+        if ($identifier === '' || $password === '') {
+            return null;
+        }
 
         $user = User::where('email', $identifier)
             ->orWhereHas('staffProfile', function ($q) use ($identifier) {
@@ -137,6 +137,10 @@ class AuthService
         if (function_exists('session')) {
             session()->forget(['swc_user', 'swc_role']);
             session()->flush();
+            if (function_exists('request') && request()->hasSession()) {
+                request()->session()->invalidate();
+                request()->session()->regenerateToken();
+            }
             session()->save();
         }
     }

@@ -67,8 +67,8 @@ class SmartWaterPortalController extends Controller
         }
 
         return [
-            'currentUser' => $sessionUser,
-            'activeRole'  => $activeRole,
+            'currentUser' => null,
+            'activeRole'  => 'guest',
         ];
     }
 
@@ -104,7 +104,7 @@ class SmartWaterPortalController extends Controller
     }
 
     /**
-     * Masuk langsung ke Portal Petugas / Admin SCADA (Akses Demo Kedinasan).
+     * Akses Portal Petugas / Admin SCADA (Mengarahkan sesuai status autentikasi petugas).
      */
     public function enterAdminDirect(): RedirectResponse
     {
@@ -112,20 +112,16 @@ class SmartWaterPortalController extends Controller
         $currentUser = Auth::user() ?? (!empty($sessionData['currentUser']['id']) ? User::find($sessionData['currentUser']['id']) : null);
 
         // Pencegahan Eskalasi Hak Akses (Privilege Escalation):
-        // Jika pelanggan aktif mencoba masuk melalui rute demo petugas, tolak dan kembalikan ke portal pelanggan
+        // Jika pelanggan aktif mencoba masuk melalui rute petugas, tolak dan kembalikan ke portal pelanggan
         if ($currentUser && !$currentUser->isStaff()) {
             return redirect(url('/user'))->with('error', 'Akses ditolak: Akun pelanggan tidak diizinkan masuk ke Portal Petugas SCADA.');
         }
 
-        $staffUser = AuthService::authenticateStaff('', '', true);
-
-        if (!$staffUser) {
-            return redirect(url('/admin-login'))->with('error', 'Akun petugas kedinasan tidak ditemukan di database.');
+        if ($currentUser && $currentUser->isStaff()) {
+            return redirect(url('/admin-dashboard'))->with('success', 'Selamat datang di Portal Petugas & SCADA PDAM Tirta Sago.');
         }
 
-        AuthService::syncSession($staffUser);
-
-        return redirect(url('/admin-dashboard'))->with('success', 'Selamat datang di Portal Petugas & SCADA PDAM Tirta Sago.');
+        return redirect(url('/admin-login'))->with('info', 'Silakan masuk menggunakan kredensial NIP dan kata sandi dinas Anda.');
     }
 
     /**
@@ -145,11 +141,10 @@ class SmartWaterPortalController extends Controller
      */
     public function handleAdminLogin(LoginRequest $request): RedirectResponse
     {
-        $isDemo = !empty($request->input('is_demo'));
         $identifier = trim((string)$request->input('identifier', ''));
         $password = (string)$request->input('password', '');
 
-        $staffUser = AuthService::authenticateStaff($identifier, $password, $isDemo);
+        $staffUser = AuthService::authenticateStaff($identifier, $password);
 
         if (!$staffUser) {
             return redirect()->back()->with('error', 'NIP atau kata sandi dinas Anda salah.');

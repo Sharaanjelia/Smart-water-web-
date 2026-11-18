@@ -122,18 +122,15 @@
             </div>
           </div>
 
-          <!-- Quick direct button in left column too -->
+          <!-- Informasi Akses Kedinasan -->
           <div class="p-4 rounded-2xl bg-sky-50/80 border border-sky-200/80 flex items-center justify-between gap-4">
             <div class="space-y-0.5">
-              <span class="text-xs font-bold text-sky-950 block">Akses Tanpa Hambatan (Firebase Ready)</span>
-              <p class="text-[11px] text-sky-800">Klik tombol di samping untuk langsung membuka Command Center SCADA.</p>
+              <span class="text-xs font-bold text-sky-950 block">Keamanan Akses Kedinasan</span>
+              <p class="text-[11px] text-sky-800">Setiap akses ke Command Center SCADA diverifikasi melalui sistem database autentikasi terpusat.</p>
             </div>
-            <a
-              href="{{ url('/portal-petugas') }}"
-              class="px-4 py-2 rounded-xl text-xs font-bold bg-[#0284C7] hover:bg-[#0369A1] text-white whitespace-nowrap shadow-xs transition-colors shrink-0"
-            >
-              Buka SCADA Langsung &rarr;
-            </a>
+            <span class="px-3 py-1.5 rounded-xl text-[11px] font-bold bg-white text-sky-800 border border-sky-200 shrink-0">
+              RBAC MySQL
+            </span>
           </div>
         </div>
 
@@ -164,38 +161,26 @@
               </p>
             </div>
 
-            <!-- TOMBOL UTAMA: MASUK LANGSUNG (1-KLIK LANGSUNG MASUK) -->
-            <div class="p-4 rounded-2xl bg-gradient-to-r from-sky-50 to-cyan-50 border border-sky-200/90 shadow-2xs space-y-2.5">
-              <div class="flex items-center justify-between text-xs">
-                <span class="font-bold text-sky-950 flex items-center gap-1.5">
-                  <svg class="w-4 h-4 text-[#0284C7]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
-                  <span>Akses Cepat Petugas Demo</span>
-                </span>
-                <span class="text-[10px] font-mono text-sky-700 bg-white px-2 py-0.5 rounded border border-sky-200 font-bold">
-                  NIP: 198804-004
-                </span>
+            @if (session('error'))
+              <div class="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+                <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+                <span>{{ session('error') }}</span>
               </div>
-              <p class="text-[11px] text-sky-800 leading-tight">
-                Masuk instan sebagai <strong>Ahmad Pratama</strong> (Operator SCADA &amp; Petugas Lapangan).
-              </p>
-              <a
-                href="{{ url('/portal-petugas') }}"
-                class="w-full py-3 px-4 rounded-xl bg-[#0284C7] hover:bg-[#0369A1] text-white text-xs font-bold transition-all shadow-md shadow-sky-600/20 flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m13 2-2 10h5l-4 10 2-10h-5l4-10Z"/></svg>
-                <span>⚡ Masuk Langsung ke Dashboard Petugas</span>
-              </a>
-            </div>
+            @endif
+            @if (session('info'))
+              <div class="p-3 rounded-xl bg-sky-50 border border-sky-200 text-sky-800 text-xs flex items-center gap-2">
+                <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="16" y2="12"/><line x1="12" x2="12.01" y1="8" y2="8"/></svg>
+                <span>{{ session('info') }}</span>
+              </div>
+            @endif
+            @if (session('success'))
+              <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2">
+                <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="9 11 12 14 22 4"/></svg>
+                <span>{{ session('success') }}</span>
+              </div>
+            @endif
 
-            <!-- Divider -->
-            <div class="relative flex items-center justify-center my-2">
-              <div class="w-full border-t border-slate-200"></div>
-              <span class="bg-white/90 px-3 text-[11px] text-slate-400 font-medium whitespace-nowrap rounded-full">
-                atau masuk dengan akun dinas
-              </span>
-            </div>
-
-            <!-- Form Manual Petugas (jika ingin ketik) -->
+            <!-- Form Manual Petugas (Verifikasi Database MySQL) -->
             <form action="{{ url('/admin-login') }}" method="POST" class="space-y-3.5">
               @csrf
               <div>
@@ -210,7 +195,7 @@
                     id="admin-nip"
                     name="identifier"
                     type="text"
-                    value="ahmad.pratama@tirtasago.id"
+                    required
                     placeholder="NIP atau email dinas"
                     class="w-full text-xs rounded-xl border border-slate-200 pl-10 pr-3.5 py-2.5 text-slate-900 placeholder:text-slate-400 focus:outline-hidden focus:border-[#0284C7] focus:ring-2 focus:ring-sky-100 transition-all bg-white"
                   />
@@ -229,8 +214,8 @@
                     id="admin-pass"
                     name="password"
                     type="password"
-                    value="admin123"
-                    placeholder="Masukkan kata sandi"
+                    required
+                    placeholder="Masukkan kata sandi dinas"
                     class="w-full text-xs rounded-xl border border-slate-200 pl-10 pr-3.5 py-2.5 text-slate-900 placeholder:text-slate-400 focus:outline-hidden focus:border-[#0284C7] focus:ring-2 focus:ring-sky-100 transition-all bg-white"
                   />
                 </div>

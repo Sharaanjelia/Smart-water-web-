@@ -60,9 +60,11 @@ if ($action === 'login') {
 
     if ($identifier === '') {
         $respondJson(['error' => 'Silakan masukkan alamat email atau nomor telepon Anda.'], 422);
+        return;
     }
     if ($password === '') {
         $respondJson(['error' => 'Silakan masukkan kata sandi akun Anda.'], 422);
+        return;
     }
 
     // Cek apakah akun adalah staf / admin
@@ -73,6 +75,7 @@ if ($action === 'login') {
 
     if (!$user) {
         $respondJson(['error' => 'Kombinasi identitas dan kata sandi Anda tidak cocok.'], 422);
+        return;
     }
 
     $userData = AuthService::syncSession($user);
@@ -87,6 +90,7 @@ if ($action === 'login') {
         'role'     => $role,
         'redirect' => $redirectUrl,
     ]);
+    return;
 }
 
 // 2. REGISTER
@@ -100,22 +104,28 @@ if ($action === 'register') {
 
     if ($name === '') {
         $respondJson(['error' => 'Nama lengkap wajib diisi.'], 422);
+        return;
     }
     if ($email === '' || strpos($email, '@') === false) {
         $respondJson(['error' => 'Alamat email valid wajib diisi.'], 422);
+        return;
     }
     if ($password === '' || strlen($password) < 6) {
         $respondJson(['error' => 'Kata sandi minimal 6 karakter.'], 422);
+        return;
     }
     if ($password !== $confirmPassword) {
         $respondJson(['error' => 'Konfirmasi kata sandi tidak cocok.'], 422);
+        return;
     }
     if (!$agreeTerms) {
         $respondJson(['error' => 'Anda wajib menyetujui Syarat & Ketentuan dan Kebijakan Privasi.'], 422);
+        return;
     }
 
     if (User::where('email', $email)->exists()) {
         $respondJson(['error' => 'Alamat email sudah terdaftar. Silakan masuk menggunakan akun Anda.'], 422);
+        return;
     }
 
     $user = AuthService::registerCustomer([
@@ -133,24 +143,16 @@ if ($action === 'register') {
         'role'     => 'customer',
         'redirect' => $getUrl('/report-meter'),
     ]);
+    return;
 }
 
-// 3. GOOGLE SIGN-IN (DEMO WARGA)
+// 3. GOOGLE SIGN-IN
 if ($action === 'google_signin') {
-    $user = User::where('email', 'budi.santoso@warga.payakumbuh.go.id')->first();
-    if (!$user) {
-        $user = User::first();
-    }
-    if ($user) {
-        $userData = AuthService::syncSession($user);
-        $respondJson([
-            'ok'       => true,
-            'user'     => $userData,
-            'role'     => $userData['role'],
-            'redirect' => $getUrl('/report-meter'),
-        ]);
-    }
-    $respondJson(['error' => 'Akun Google demo tidak tersedia.'], 422);
+    $respondJson([
+        'ok'    => false,
+        'error' => 'Integrasi Google OAuth sedang dalam tahap konfigurasi resmi. Silakan masuk menggunakan Email dan Kata Sandi terdaftar Anda.',
+    ], 422);
+    return;
 }
 
 // 4. FORGOT PASSWORD
@@ -158,24 +160,35 @@ if ($action === 'forgot_password') {
     $email = trim((string)($body['email'] ?? ''));
     if ($email === '' || strpos($email, '@') === false) {
         $respondJson(['error' => 'Silakan masukkan alamat email yang valid.'], 422);
+        return;
     }
     $respondJson([
         'ok'       => true,
         'email'    => $email,
         'message'  => 'Tautan pemulihan akun berhasil dikirim ke ' . $email,
     ]);
+    return;
 }
 
 // 5. ADMIN / STAFF LOGIN
 if ($action === 'admin_login') {
     $identifier = trim((string)($body['identifier'] ?? ''));
     $password   = (string)($body['password'] ?? '');
-    $isDemo     = !empty($body['instantDemo']);
 
-    $user = AuthService::authenticateStaff($identifier, $password, $isDemo);
+    if ($identifier === '') {
+        $respondJson(['error' => 'Silakan masukkan NIP atau email dinas Anda.'], 422);
+        return;
+    }
+    if ($password === '') {
+        $respondJson(['error' => 'Silakan masukkan kata sandi dinas Anda.'], 422);
+        return;
+    }
+
+    $user = AuthService::authenticateStaff($identifier, $password);
 
     if (!$user) {
-        $respondJson(['error' => 'NIP atau kata sandi dinas Anda tidak terdaftar sebagai petugas.'], 422);
+        $respondJson(['error' => 'NIP atau kata sandi dinas Anda tidak sesuai atau tidak terdaftar sebagai petugas.'], 422);
+        return;
     }
 
     $userData = AuthService::syncSession($user);
@@ -186,24 +199,18 @@ if ($action === 'admin_login') {
         'role'     => $userData['role'],
         'redirect' => $getUrl('/admin-dashboard'),
     ]);
+    return;
 }
 
 // 6. LOGOUT
 if ($action === 'logout') {
-    Auth::logout();
-    if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
-        @session_start();
-    }
-    unset($_SESSION['swc_user'], $_SESSION['swc_role']);
-    if (function_exists('session')) {
-        session()->forget(['swc_user', 'swc_role']);
-        session()->flush();
-        session()->save();
-    }
+    AuthService::performLogout();
     $respondJson([
         'ok'       => true,
         'redirect' => $getUrl('/login'),
     ]);
+    return;
 }
 
 $respondJson(['error' => 'Aksi autentikasi tidak dikenali.'], 400);
+return;

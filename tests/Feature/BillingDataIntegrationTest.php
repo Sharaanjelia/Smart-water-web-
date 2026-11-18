@@ -26,6 +26,12 @@ class BillingDataIntegrationTest extends TestCase
     {
         parent::setUp();
 
+        if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+            @session_start();
+        }
+        unset($_SESSION['swc_user'], $_SESSION['swc_role'], $_SESSION['swc_academy_progress'], $_SESSION['swc_challenge_progress']);
+        \Illuminate\Support\Facades\Auth::logout();
+
         $custRole = Role::firstOrCreate(['name' => 'customer'], ['display_name' => 'Pelanggan']);
 
         $this->customer = User::factory()->create([
@@ -321,6 +327,9 @@ class BillingDataIntegrationTest extends TestCase
      */
     public function test_10_unauthenticated_demo_mode_renders_safely(): void
     {
+        unset($_SESSION['swc_user'], $_SESSION['swc_role']);
+        \Illuminate\Support\Facades\Auth::logout();
+
         // Tamu tanpa login diarahkan ke login
         $resBill = $this->get('/bill');
         $resBill->assertStatus(302);
@@ -346,5 +355,12 @@ class BillingDataIntegrationTest extends TestCase
 
         $resCustomerHistory = $this->actingAs($emptyCustomer)->get('/bill-history');
         $resCustomerHistory->assertStatus(200);
+    }
+
+    protected function tearDown(): void
+    {
+        unset($_SESSION['swc_user'], $_SESSION['swc_role']);
+        \Illuminate\Support\Facades\Auth::logout();
+        parent::tearDown();
     }
 }

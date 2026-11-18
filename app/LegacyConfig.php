@@ -2187,27 +2187,40 @@ switch ($SWC_PAGE_MODULE) {
             ],
         ];
         
-        // Query params opsional untuk uji cepat persona atau tamu
+        // Query params opsional untuk logout
         if (isset($_GET['action']) && $_GET['action'] === 'logout') {
+            if (class_exists(\App\Services\AuthService::class)) {
+                \App\Services\AuthService::performLogout();
+            } else {
+                $_SESSION['swc_user'] = null;
+            }
+            header('Location: ' . $SWC_PAGE_URL);
+            exit;
+        }
+
+        $authDbUser = class_exists(\Illuminate\Support\Facades\Auth::class) ? \Illuminate\Support\Facades\Auth::user() : null;
+        if (!$authDbUser && function_exists('session') && session()->has('swc_user.id')) {
+            $sessionUid = session('swc_user.id');
+            if ($sessionUid && class_exists(\App\Models\User::class)) {
+                $authDbUser = \App\Models\User::find($sessionUid);
+                if ($authDbUser && class_exists(\Illuminate\Support\Facades\Auth::class)) {
+                    \Illuminate\Support\Facades\Auth::setUser($authDbUser);
+                }
+            }
+        }
+
+        if ($authDbUser && class_exists(\App\Services\AuthService::class)) {
+            $currentUser = \App\Services\AuthService::formatUserData($authDbUser);
+            $_SESSION['swc_user'] = $currentUser;
+            $_SESSION['swc_role'] = $currentUser['role'];
+        } else {
+            $currentUser = null;
             $_SESSION['swc_user'] = null;
-            header('Location: ' . $SWC_PAGE_URL);
-            exit;
         }
-        if (isset($_GET['action']) && $_GET['action'] === 'login_demo') {
-            $pid = $_GET['persona'] ?? 'user-01';
-            $_SESSION['swc_user'] = $DEMO_USERS[$pid] ?? $DEMO_USERS['user-01'];
-            header('Location: ' . $SWC_PAGE_URL);
-            exit;
-        }
-        
-        if (!array_key_exists('swc_user', $_SESSION)) {
-            $_SESSION['swc_user'] = $DEMO_USERS['user-01'];
-        }
+
         if (!isset($_SESSION['swc_complaints']) || !is_array($_SESSION['swc_complaints'])) {
             $_SESSION['swc_complaints'] = $INITIAL_USER_COMPLAINTS;
         }
-        
-        $currentUser = $_SESSION['swc_user'];
         $allComplaints = $_SESSION['swc_complaints'];
         
         function calculateGolongan2ABill(float $volume): array

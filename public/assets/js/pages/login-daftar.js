@@ -380,8 +380,8 @@ async function handleInstantCustomerDemo() {
   hideAllErrors();
   const idInput = document.getElementById('login-identifier');
   const pwInput = document.getElementById('login-password');
-  if (idInput) idInput.value = '0812-7389-4902';
-  if (pwInput) pwInput.value = '123456';
+  if (idInput) idInput.value = 'budi.santoso@warga.payakumbuh.go.id';
+  if (pwInput) pwInput.value = 'Pelanggan123!';
 
   const btn = document.getElementById('login-submit-btn');
   if (btn) {
@@ -393,7 +393,7 @@ async function handleInstantCustomerDemo() {
     const res = await fetch(getAppBaseUrl('/api/auth.php'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'login', identifier: '0812-7389-4902', password: 'password' }),
+      body: JSON.stringify({ action: 'login', identifier: 'budi.santoso@warga.payakumbuh.go.id', password: 'Pelanggan123!' }),
     });
     const data = await res.json();
     if (data.ok && data.user) {
@@ -404,14 +404,14 @@ async function handleInstantCustomerDemo() {
         window.location.href = data.redirect || getAppBaseUrl('/report-meter');
       }, 500);
     } else {
-      showError('login-error', 'login-error-text', data.error || 'Gagal masuk akun demo.');
+      showError('login-error', 'login-error-text', data.error || 'Gagal masuk akun.');
       if (btn) {
         btn.disabled = false;
         btn.textContent = 'Masuk';
       }
     }
   } catch (e) {
-    showError('login-error', 'login-error-text', 'Gagal memproses login instan demo.');
+    showError('login-error', 'login-error-text', 'Gagal memproses verifikasi autentikasi.');
     if (btn) {
       btn.disabled = false;
       btn.textContent = 'Masuk';
@@ -423,26 +423,28 @@ async function handleInstantAdminDemo() {
   hideAllErrors();
   const idInput = document.getElementById('admin-identifier');
   const pwInput = document.getElementById('admin-password');
-  if (idInput) idInput.value = 'admin@tirtasago.id';
-  if (pwInput) pwInput.value = 'admin123';
+  if (idInput) idInput.value = 'ahmad.pratama@tirtasago.id';
+  if (pwInput) pwInput.value = 'Petugas123!';
 
   try {
     const res = await fetch(getAppBaseUrl('/api/auth.php'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'admin_login', instantDemo: true }),
+      body: JSON.stringify({ action: 'admin_login', identifier: 'ahmad.pratama@tirtasago.id', password: 'Petugas123!' }),
     });
     const data = await res.json();
     if (data.ok && data.user) {
       currentUser = data.user;
       renderSessionBanner();
-      showToastNotification('Mode Petugas Demo aktif! Membuka SCADA...', 'success');
+      showToastNotification('Login Petugas PDAM berhasil! Membuka SCADA...', 'success');
       setTimeout(() => {
         window.location.href = data.redirect || getAppBaseUrl('/admin-dashboard');
       }, 600);
+    } else {
+      showError('admin-error', 'admin-error-text', data.error || 'Gagal masuk portal petugas.');
     }
   } catch (e) {
-    showError('admin-error', 'admin-error-text', 'Gagal menghubungi server PHP.');
+    showError('admin-error', 'admin-error-text', 'Gagal menghubungi server autentikasi.');
   }
 }
 

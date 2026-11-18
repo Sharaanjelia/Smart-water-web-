@@ -575,21 +575,21 @@ require_once $legacySharedPath . '/brand_logo.php';
                 <span id="login-error-text"></span>
               </div>
 
-              <!-- Demo Instant Login untuk Pelanggan PDAM (Budi Santoso) -->
+              <!-- Akses Cepat Pelanggan Terdaftar (Budi Santoso) -->
               <div class="p-3.5 rounded-2xl bg-sky-50/90 border border-sky-200 shadow-2xs space-y-2">
                 <div class="flex items-center justify-between text-xs">
                   <span class="font-bold text-sky-950 flex items-center gap-1.5">
                     <svg class="w-4 h-4 text-[#0284C7]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
                     </svg>
-                    <span>Akun Pelanggan Demo</span>
+                    <span>Akun Pelanggan Terdaftar</span>
                   </span>
                   <span class="text-[10px] font-mono text-sky-700 bg-white px-2 py-0.5 rounded border border-sky-200 font-bold">
                     Meter: 01000
                   </span>
                 </div>
                 <p class="text-[11px] text-sky-800 leading-tight">
-                  Masuk instan sebagai <strong>Budi Santoso</strong> (Rumah Tangga Mandiri - DIST-A Sektor Utara).
+                  Masuk cepat sebagai <strong>Budi Santoso</strong> (Rumah Tangga Mandiri - DIST-A Sektor Utara).
                 </p>
                 <button
                   type="button"
@@ -597,7 +597,7 @@ require_once $legacySharedPath . '/brand_logo.php';
                   class="w-full py-2.5 px-3 rounded-xl bg-[#0284C7] hover:bg-[#0369A1] text-white text-xs font-bold transition-colors shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-2 10h5l-4 10 2-10h-5l4-10Z"/></svg>
-                  <span>⚡ Masuk Cepat sebagai Pelanggan Demo (Budi Santoso)</span>
+                  <span>⚡ Masuk Cepat sebagai Pelanggan (Budi Santoso)</span>
                 </button>
               </div>
 

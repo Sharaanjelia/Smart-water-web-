@@ -1395,8 +1395,8 @@ require $legacySharedPath . '/header.php';
           <a href="<?= url('/login') ?>" class="w-full sm:w-auto px-6 py-3 rounded-xl text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 transition-colors shadow-sm">
             Masuk ke Akun Anda
           </a>
-          <a href="<?= url('/user?action=login_demo&persona=user-01') ?>" class="w-full sm:w-auto px-6 py-3 rounded-xl text-xs font-bold text-cyan-900 bg-cyan-50 hover:bg-cyan-100 border border-cyan-200 transition-colors">
-            Masuk Demo Pelanggan
+          <a href="<?= url('/daftar') ?>" class="w-full sm:w-auto px-6 py-3 rounded-xl text-xs font-bold text-cyan-900 bg-cyan-50 hover:bg-cyan-100 border border-cyan-200 transition-colors">
+            Daftar Akun Baru
           </a>
         </div>
       </div>
