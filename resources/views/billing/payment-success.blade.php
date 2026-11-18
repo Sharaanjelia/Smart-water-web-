@@ -107,11 +107,8 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const method = urlParams.get('method') || 'Saldo Dompet Smart Water';
-    if (window.SWC) {
-        window.SWC.payBill('INV-PYK-2025-04-1000', method);
-    }
+    // Audit Payment Safety: Halaman kuitansi hanya menampilkan data read-only.
+    // Tidak ada mutasi status tagihan di sisi klien.
 });
 </script>
 @endsection

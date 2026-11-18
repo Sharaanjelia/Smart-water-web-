@@ -32,7 +32,13 @@ class BillPolicy
      */
     public function pay(User $user, Bill $bill): bool
     {
-        if ($bill->status === 'PAID') {
+        // Tagihan yang sudah lunas atau simulasi tidak dapat dibayar
+        if ($bill->status === 'PAID' || $bill->isSimulation() || $bill->bill_type === 'SIMULATION') {
+            return false;
+        }
+
+        // Tagihan yang sedang menunggu verifikasi tidak dapat dibayar ulang
+        if ($bill->status === 'PENDING_VERIFICATION') {
             return false;
         }
 

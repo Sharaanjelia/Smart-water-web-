@@ -216,6 +216,9 @@
         },
 
         deductWallet(amount, note) {
+            if (this.isCustomerLoggedIn()) {
+                return { success: false, message: 'Fitur pembayaran sedang dipersiapkan. Pemotongan saldo dompet tidak diizinkan.' };
+            }
             const wallet = this.getWallet();
             if (wallet.balance < amount) {
                 return { success: false, message: 'Saldo Dompet tidak mencukupi!' };
@@ -274,32 +277,10 @@
         },
 
         payBill(inv, method = 'Saldo Dompet Smart Water') {
-            if (this.isCustomerLoggedIn()) {
-                // Untuk user terautentikasi, pembayaran resmi melalui verifikasi backend Laravel
-                return false;
-            }
-            const bills = this.getBills();
-            const target = bills.find(b => b.inv === inv);
-            if (!target) return false;
-
-            target.status = 'PAID';
-            target.method = method;
-            const now = new Date();
-            const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-            target.paidAt = `${now.getDate()} ${monthNames[now.getMonth()]} ${now.getFullYear()}, ${now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB`;
-
-            save(STORAGE_KEYS.BILLS, bills);
-
-            // Tambahkan Notifikasi Pembayaran Berhasil
-            this.addNotification({
-                type: 'BILL',
-                title: `Pembayaran Rekening ${target.period} Lunas`,
-                desc: `Terima kasih! Rekening air sebesar Rp ${target.amount.toLocaleString('id-ID')} via ${method} telah lunas resmi terverifikasi.`,
-                link: '/payment-success?method=' + encodeURIComponent(method)
-            });
-
-            notifyChange('bill_paid', target);
-            return true;
+            // Keamanan Transaksi (Task 10A.1):
+            // Pembayaran simulasi dinonaktifkan. Seluruh status PAID wajib melalui verifikasi backend Laravel.
+            console.warn('payBill: Pembayaran simulasi dinonaktifkan. Menunggu integrasi pembayaran Tahap 10B.');
+            return false;
         },
 
         // --- 3. LAPOR METER & VERIFIKASI PETUGAS ---

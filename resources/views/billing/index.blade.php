@@ -190,15 +190,17 @@
                         <span>⚠️ Simulasi — Pembayaran Non-Aktif</span>
                     </div>
                 @else
-                    <a
-                        href="{{ url('/payment-method') }}?bill_id={{ $activeBill->id }}"
-                        class="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#0284C7] hover:bg-[#0369A1] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-sky-600/20 transition-all cursor-pointer"
+                    <button
+                        type="button"
+                        disabled
+                        class="w-full sm:w-auto px-5 py-3 rounded-xl bg-slate-100 border border-slate-300 text-slate-600 font-bold text-xs flex items-center justify-center gap-2 cursor-not-allowed"
+                        title="Fitur pembayaran sedang dipersiapkan untuk Tahap 10B"
                     >
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/>
+                        <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
                         </svg>
-                        <span>Bayar Sekarang</span>
-                    </a>
+                        <span>Fitur pembayaran sedang dipersiapkan.</span>
+                    </button>
                 @endif
             </div>
             @endif

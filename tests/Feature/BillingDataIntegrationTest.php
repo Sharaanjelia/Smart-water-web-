@@ -282,7 +282,7 @@ class BillingDataIntegrationTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('TAGIHAN RESMI');
         $response->assertSee('BELUM BAYAR');
-        $response->assertSee('/payment-method?bill_id=' . $officialBill->id);
+        $response->assertSee('Fitur pembayaran sedang dipersiapkan.');
     }
 
     /**

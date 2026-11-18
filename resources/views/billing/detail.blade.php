@@ -198,16 +198,18 @@
                     <span>Bukti Pembayaran Sedang Diverifikasi oleh Petugas PDAM</span>
                 </div>
             @else
-                <a
+                <button
+                    type="button"
+                    disabled
                     id="detailCtaBtn"
-                    href="{{ url('/payment-method') }}?bill_id={{ $bill->id }}"
-                    class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-[#0284C7] to-[#0369A1] hover:from-[#0369A1] hover:to-[#075985] text-white font-extrabold text-sm shadow-lg shadow-sky-600/25 flex items-center justify-center gap-2 transition-all cursor-pointer"
+                    class="w-full py-4 px-6 rounded-2xl bg-slate-100 border border-slate-300 text-slate-600 font-extrabold text-sm shadow-xs flex items-center justify-center gap-2 cursor-not-allowed"
+                    title="Fitur pembayaran sedang dipersiapkan untuk Tahap 10B"
                 >
-                    <span id="detailCtaText">Lanjut ke Pembayaran (Rp {{ number_format($bill->total_amount, 0, ',', '.') }})</span>
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="m9 18 6-6-6-6"/>
+                    <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
                     </svg>
-                </a>
+                    <span id="detailCtaText">Fitur pembayaran sedang dipersiapkan.</span>
+                </button>
             @endif
         </div>
 
