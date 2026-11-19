@@ -14,6 +14,8 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         $adminRole = Role::where('name', 'admin')->first();
+        $scadaRole = Role::where('name', 'scada_operator')->first();
+        $fieldRole = Role::where('name', 'field_officer')->first();
         $staffRole = Role::where('name', 'staff')->first();
         $customerRole = Role::where('name', 'customer')->first();
 
@@ -38,7 +40,7 @@ class UserSeeder extends Seeder
             ]
         );
 
-        // 2. Akun Petugas Lapangan & Operator SCADA
+        // 2. Akun Operator SCADA (Ahmad Pratama)
         $staff = User::firstOrCreate(
             ['email' => 'ahmad.pratama@tirtasago.id'],
             [
@@ -46,8 +48,9 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('Petugas123!'),
             ]
         );
-        if ($staffRole && !$staff->roles()->where('role_id', $staffRole->id)->exists()) {
-            $staff->roles()->attach($staffRole);
+        $scadaTargetRole = $scadaRole ?: $staffRole;
+        if ($scadaTargetRole && !$staff->roles()->where('role_id', $scadaTargetRole->id)->exists()) {
+            $staff->roles()->attach($scadaTargetRole);
         }
         StaffProfile::firstOrCreate(
             ['user_id' => $staff->id],
@@ -114,5 +117,18 @@ class UserSeeder extends Seeder
                 'points' => 120,
             ]
         );
+
+        // 5. Akun Petugas Lapangan (Dedi Kurniawan)
+        $fieldOfficer = User::firstOrCreate(
+            ['email' => 'dedi.teknisi@tirtasago.id'],
+            [
+                'name' => 'Dedi Kurniawan, A.Md. (Teknisi TRC)',
+                'password' => Hash::make('Petugas123!'),
+            ]
+        );
+        $fieldTargetRole = $fieldRole ?: $staffRole;
+        if ($fieldTargetRole && !$fieldOfficer->roles()->where('role_id', $fieldTargetRole->id)->exists()) {
+            $fieldOfficer->roles()->attach($fieldTargetRole);
+        }
     }
 }

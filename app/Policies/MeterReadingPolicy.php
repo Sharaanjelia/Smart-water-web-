@@ -28,7 +28,7 @@ class MeterReadingPolicy
             return false;
         }
 
-        if ($user->isStaff()) {
+        if ($user->isAdmin() || $user->isScadaOperator()) {
             return true;
         }
 
@@ -45,10 +45,11 @@ class MeterReadingPolicy
 
     /**
      * Menentukan apakah pengguna berhak memvalidasi atau menolak laporan meter.
-     * Hanya Petugas / Administrator SCADA yang memiliki wewenang ini.
+     * Hanya Administrator dan Operator SCADA yang memiliki wewenang ini.
+     * Role legacy staff dan petugas lapangan dilarang keras.
      */
     public function validate(User $user, MeterReading $meterReading): bool
     {
-        return $user->isStaff();
+        return $user->isAdmin() || $user->isScadaOperator();
     }
 }

@@ -5,19 +5,6 @@
 @section('content')
 <div class="max-w-4xl mx-auto space-y-6">
 
-    <!-- Header & Navigasi -->
-    <div class="flex items-center justify-between">
-        <a href="{{ url('/beranda') }}" class="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-800 transition-colors">
-            <svg class="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m15 18-6-6 6-6"/>
-            </svg>
-            <span>Kembali ke Beranda</span>
-        </a>
-        <span class="text-xs font-bold uppercase tracking-wider text-cyan-800 bg-cyan-50 px-3 py-1 rounded-full border border-cyan-200">
-            AI-OCR Smart Water
-        </span>
-    </div>
-
     <!-- Judul & Deskripsi Halaman -->
     <div class="space-y-1">
         <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">

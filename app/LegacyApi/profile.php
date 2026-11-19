@@ -3,6 +3,8 @@
  * Endpoint API Profil Pelanggan Database-Backed - Smart Water Kota Payakumbuh
  */
 
+require_once __DIR__ . '/_bootstrap.php';
+
 use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\MeterReadingController;
 use App\Models\CustomerProfile;

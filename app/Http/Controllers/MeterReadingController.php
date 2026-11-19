@@ -89,8 +89,8 @@ class MeterReadingController extends Controller
 
         $userId = null;
 
-        // Jika user adalah pelanggan biasa (bukan staf/admin), batasi hanya laporannya sendiri
-        if (!$user->isStaff()) {
+        // Hanya Admin dan Operator SCADA yang berwenang melihat antrean seluruh laporan warga kota
+        if (!($user->isAdmin() || $user->isScadaOperator())) {
             $userId = $user->id;
         }
 

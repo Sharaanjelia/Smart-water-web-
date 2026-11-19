@@ -118,41 +118,45 @@ class SmartWaterPortalController extends Controller
         }
 
         if ($currentUser && $currentUser->isStaff()) {
-            return redirect(url('/admin-dashboard'))->with('success', 'Selamat datang di Portal Petugas & SCADA PDAM Tirta Sago.');
+            return redirect(AuthService::getRedirectForUser($currentUser))->with('success', 'Selamat datang di Portal Petugas & SCADA PDAM Tirta Sago.');
         }
 
-        return redirect(url('/admin-login'))->with('info', 'Silakan masuk menggunakan kredensial NIP dan kata sandi dinas Anda.');
+        return redirect(url('/login'))->with('info', 'Silakan masuk menggunakan kredensial akun dinas Anda.');
     }
 
     /**
-     * Tampilkan Halaman Login Khusus Petugas PDAM / SCADA
+     * Tampilkan Halaman Login (Auto-redirect jika pengguna sudah login).
      */
-    public function adminLoginForm()
+    public function loginForm(Request $request)
     {
-        $data = $this->getSessionData();
-        if ($data['activeRole'] === 'admin' || $data['activeRole'] === 'staff') {
-            return redirect(url('/admin-dashboard'));
+        $sessionData = $this->getSessionData();
+        $user = Auth::user();
+        if (!$user && !empty($sessionData['currentUser']['id'])) {
+            $user = User::find($sessionData['currentUser']['id']);
         }
-        return view('auth.admin-login');
+
+        if ($user) {
+            $dest = AuthService::getRedirectForUser($user);
+            return redirect($dest);
+        }
+
+        return app(LegacyPageController::class)->show('login-daftar');
     }
 
     /**
-     * Proses Login Khusus Petugas PDAM
+     * Tampilkan Halaman Login Khusus Petugas PDAM / SCADA -> Dialihkan ke Halaman Login Terpadu (/login)
+     */
+    public function adminLoginForm(): RedirectResponse
+    {
+        return redirect(url('/login'))->with('info', 'Silakan masuk melalui halaman login utama Smart Water.');
+    }
+
+    /**
+     * Proses Login Khusus Petugas PDAM -> Didelegasikan ke login terpadu
      */
     public function handleAdminLogin(LoginRequest $request): RedirectResponse
     {
-        $identifier = trim((string)$request->input('identifier', ''));
-        $password = (string)$request->input('password', '');
-
-        $staffUser = AuthService::authenticateStaff($identifier, $password);
-
-        if (!$staffUser) {
-            return redirect()->back()->with('error', 'NIP atau kata sandi dinas Anda salah.');
-        }
-
-        AuthService::syncSession($staffUser);
-
-        return redirect(url('/admin-dashboard'))->with('success', 'Selamat datang di Portal Operasional SCADA PDAM Tirta Sago.');
+        return $this->handleLogin($request);
     }
 
     /**
@@ -160,19 +164,13 @@ class SmartWaterPortalController extends Controller
      */
     public function logout(Request $request): RedirectResponse
     {
-        $wasAdmin = (session('swc_role') === 'admin' || ($_SESSION['swc_role'] ?? '') === 'admin' || $request->query('to') === 'admin');
-
         AuthService::performLogout();
-
-        if ($wasAdmin) {
-            return redirect(url('/admin-login'))->with('success', 'Anda telah keluar dari Portal Petugas PDAM.');
-        }
 
         return redirect(url('/login'))->with('success', 'Anda berhasil keluar dari sistem Smart Water.');
     }
 
     /**
-     * Fallback Login handler via HTTP Form POST
+     * Login handler via HTTP Form POST (Satu pintu login untuk seluruh peran)
      */
     public function handleLogin(LoginRequest $request): RedirectResponse
     {
@@ -184,9 +182,10 @@ class SmartWaterPortalController extends Controller
             return redirect()->back()->with('error', 'Kombinasi identitas dan kata sandi Anda salah.');
         }
 
-        $dest = in_array($userData['role'], ['admin', 'staff'], true) ? url('/admin-dashboard') : url('/report-meter');
+        $user = Auth::user();
+        $dest = AuthService::getRedirectForUser($user);
 
-        return redirect($dest)->with('success', 'Selamat datang kembali, ' . ($userData['name'] ?? 'Pelanggan') . '!');
+        return redirect($dest)->with('success', 'Selamat datang kembali, ' . ($userData['name'] ?? 'Pengguna') . '!');
     }
 
     /**
@@ -197,7 +196,7 @@ class SmartWaterPortalController extends Controller
         $user = AuthService::registerCustomer($request->validated());
         AuthService::syncSession($user);
 
-        return redirect(url('/report-meter'))->with('success', 'Pendaftaran akun berhasil! Selamat datang di Smart Water.');
+        return redirect(url('/user'))->with('success', 'Pendaftaran akun berhasil! Selamat datang di Smart Water.');
     }
 
     /**
@@ -212,15 +211,15 @@ class SmartWaterPortalController extends Controller
     }
 
     /**
-     * Pastikan pengguna memiliki peran admin untuk mengakses portal operasional.
+     * Pastikan pengguna memiliki peran internal staff untuk mengakses portal operasional.
      */
     protected function ensureAdminRole(array $data)
     {
         if (empty($data['currentUser'])) {
-            return redirect(url('/admin-login'))->with('error', 'Halaman ini khusus untuk Petugas & Operator PDAM. Silakan masuk dengan akun kedinasan Anda.');
+            return redirect(url('/login'))->with('error', 'Halaman ini khusus untuk Petugas & Operator PDAM. Silakan masuk dengan akun kedinasan Anda.');
         }
 
-        if (!in_array($data['activeRole'] ?? '', ['admin', 'staff'], true)) {
+        if (!in_array($data['activeRole'] ?? '', ['admin', 'staff', 'scada_operator', 'field_officer'], true)) {
             return redirect(url('/user'))->with('error', 'Akses ditolak: Anda tidak memiliki wewenang administrator.');
         }
 
@@ -348,8 +347,8 @@ class SmartWaterPortalController extends Controller
             if (!$selectedBill) {
                 abort(404, 'Tagihan tidak ditemukan.');
             }
-            // IDOR Protection: User can only view their own bill unless admin/staff
-            if ($user && !$user->isAdmin() && !$user->isStaff() && $selectedBill->user_id !== $user->id) {
+            // IDOR Protection: User can only view their own bill unless admin
+            if ($user && !$user->isAdmin() && $selectedBill->user_id !== $user->id) {
                 abort(403, 'Anda tidak memiliki hak akses untuk melihat tagihan ini.');
             }
         } else {
@@ -463,16 +462,11 @@ class SmartWaterPortalController extends Controller
         ]));
     }
 
-    // 14. Profile Screen
+    // 14. Profile Screen -> Dialihkan ke Halaman Utama Profil & Dashboard Pelanggan (/user)
     public function profile()
     {
-        $data = $this->getSessionData();
-        if ($guard = $this->ensureCustomerRole($data)) {
-            return $guard;
-        }
-        return view('customer.profile', array_merge($data, [
-            'currentTab' => 'profile',
-        ]));
+        $query = request()->getQueryString();
+        return redirect(url('/user' . ($query ? '?' . $query : '')));
     }
 
     // 15. Wallet Screen
@@ -487,16 +481,10 @@ class SmartWaterPortalController extends Controller
         ]));
     }
 
-    // 16. Settings Screen
+    // 16. Settings Screen -> Dialihkan ke Tab Pengaturan Privasi & Keamanan (/user?tab=privasi)
     public function settings()
     {
-        $data = $this->getSessionData();
-        if (empty($data['currentUser'])) {
-            return redirect(url('/login'))->with('error', 'Silakan masuk untuk mengakses halaman pengaturan.');
-        }
-        return view('customer.settings', array_merge($data, [
-            'currentTab' => 'settings',
-        ]));
+        return redirect(url('/user?tab=privasi'));
     }
 
     // 17. Admin Dashboard Screen
@@ -506,9 +494,30 @@ class SmartWaterPortalController extends Controller
         if ($guard = $this->ensureAdminRole($data)) {
             return $guard;
         }
-        $subTab = $request->query('tab', 'verify');
-        if (!in_array($subTab, ['verify', 'bills', 'customers'], true)) {
-            $subTab = 'verify';
+
+        $user = Auth::user();
+        if (!$user && !empty($data['currentUser']['id'])) {
+            $user = User::find($data['currentUser']['id']);
+        }
+
+        $requestedTab = $request->query('tab');
+
+        // Batasi dan arahkan sub-tab berdasarkan kewenangan granular aktor
+        if ($user && $user->isFieldOfficer()) {
+            if ($requestedTab && in_array($requestedTab, ['verify', 'bills', 'overview'], true)) {
+                return redirect(url('/admin-dashboard?tab=customers'))->with('error', 'Akses dibatasi: Petugas Lapangan hanya berwenang mengakses data teknis sambungan pelanggan.');
+            }
+            $subTab = $requestedTab && in_array($requestedTab, ['customers', 'profile'], true) ? $requestedTab : 'customers';
+        } elseif ($user && $user->isScadaOperator()) {
+            if ($requestedTab && in_array($requestedTab, ['bills', 'customers'], true)) {
+                return redirect(url('/admin-dashboard?tab=verify'))->with('error', 'Akses dibatasi: Operator SCADA tidak berwenang mengakses rekonsiliasi kas atau database pelanggan.');
+            }
+            $subTab = $requestedTab && in_array($requestedTab, ['overview', 'verify', 'profile'], true) ? $requestedTab : 'verify';
+        } else {
+            $subTab = $requestedTab ?: 'overview';
+            if (!in_array($subTab, ['overview', 'verify', 'bills', 'customers', 'profile'], true)) {
+                $subTab = 'overview';
+            }
         }
 
         $pendingReportsCount = MeterReading::where('status', 'Menunggu Validasi')
@@ -520,6 +529,10 @@ class SmartWaterPortalController extends Controller
         return view('admin.dashboard', array_merge($data, [
             'currentTab'           => 'admin-dashboard',
             'subTab'               => $subTab,
+            'isAdmin'              => $user ? $user->isAdmin() : false,
+            'isScada'              => $user ? $user->isScadaOperator() : false,
+            'isField'              => $user ? $user->isFieldOfficer() : false,
+            'isLegacyStaff'        => $user ? $user->hasRole('staff') : false,
             'pendingReportsCount'  => $pendingReportsCount,
             'totalComplaintsCount' => $totalComplaintsCount,
             'totalCustomersCount'  => $totalCustomersCount,

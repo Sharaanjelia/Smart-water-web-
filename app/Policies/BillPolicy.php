@@ -20,7 +20,7 @@ class BillPolicy
      */
     public function view(User $user, Bill $bill): bool
     {
-        if ($user->isAdmin() || $user->isStaff()) {
+        if ($user->isAdmin()) {
             return true;
         }
 

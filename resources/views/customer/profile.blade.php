@@ -1,3 +1,12 @@
+@php
+if (!headers_sent()) {
+    header('Location: ' . url('/user' . (request()->getQueryString() ? '?' . request()->getQueryString() : '')), true, 302);
+    exit;
+}
+@endphp
+<script>
+    window.location.replace("{{ url('/user' . (request()->getQueryString() ? '?' . request()->getQueryString() : '')) }}");
+</script>
 @extends('layouts.app')
 
 @section('title', 'Profil Pelanggan')

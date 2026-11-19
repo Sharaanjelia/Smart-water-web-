@@ -73,48 +73,7 @@ require_once $legacySharedPath . '/brand_logo.php';
         </nav>
       </header>
 
-      <!-- Active PHP Session Banner (appears once user logs in / registers) -->
-      <div id="auth-session-banner" class="hidden relative z-10 max-w-7xl w-full mx-auto px-5 sm:px-8 lg:px-12 pt-4">
-        <div class="p-4 rounded-2xl bg-emerald-50/90 backdrop-blur-md border border-emerald-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
-              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>
-              </svg>
-            </div>
-            <div>
-              <p class="text-xs font-bold text-emerald-950">
-                Selamat datang, <span id="session-user-name">Warga Payakumbuh</span>!
-              </p>
-              <p class="text-[11px] text-emerald-800">
-                <span id="session-user-role">Pelanggan Smart Water</span> &middot; <span id="session-user-meta" class="font-mono"></span>
-              </p>
-            </div>
-          </div>
-          <div class="flex flex-wrap items-center gap-2 shrink-0">
-            <a
-              id="session-primary-link"
-              href="<?= url('/report-meter') ?>"
-              class="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#0284C7] text-white hover:bg-[#0369A1] transition-colors"
-            >
-              Buka Portal Pelanggan &rarr;
-            </a>
-            <a
-              href="<?= url('/beranda') ?>"
-              class="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-600 text-white hover:bg-emerald-700 transition-colors"
-            >
-              Ke Beranda
-            </a>
-            <button
-              type="button"
-              onclick="handleLogoutSession()"
-              class="px-3 py-2 rounded-xl text-xs font-semibold bg-white border border-emerald-200 text-emerald-900 hover:bg-emerald-100 transition-colors cursor-pointer"
-            >
-              Keluar
-            </button>
-          </div>
-        </div>
-      </div>
+
 
       <!-- ======================================================== -->
       <!-- 2. MAIN TWO-COLUMN SPLIT CONTAINER                      -->
@@ -528,14 +487,14 @@ require_once $legacySharedPath . '/brand_logo.php';
             </div>
 
             <!-- ============================================== -->
-            <!-- SEGMENTED TABS: Masuk | Daftar | Lupa Password -->
+            <!-- SEGMENTED TABS: Masuk | Daftar Akun            -->
             <!-- ============================================== -->
-            <div class="grid grid-cols-3 p-1 rounded-2xl bg-slate-100/90 border border-slate-200/80 mt-5 mb-1 text-center text-xs font-bold select-none shadow-2xs">
+            <div class="grid grid-cols-2 p-1 rounded-2xl bg-slate-100/90 border border-slate-200/80 mt-5 mb-1 text-center text-xs font-bold select-none shadow-2xs">
               <button
                 type="button"
                 id="tab-btn-login"
                 onclick="switchAuthMode('login')"
-                class="py-2.5 px-2 rounded-xl transition-all cursor-pointer bg-white text-slate-900 shadow-xs font-bold"
+                class="py-2.5 px-3 rounded-xl transition-all cursor-pointer bg-white text-slate-900 shadow-xs font-bold"
               >
                 Masuk
               </button>
@@ -543,17 +502,9 @@ require_once $legacySharedPath . '/brand_logo.php';
                 type="button"
                 id="tab-btn-register"
                 onclick="switchAuthMode('register')"
-                class="py-2.5 px-2 rounded-xl transition-all cursor-pointer text-slate-500 hover:text-slate-900 font-semibold"
+                class="py-2.5 px-3 rounded-xl transition-all cursor-pointer text-slate-500 hover:text-slate-900 font-semibold"
               >
                 Daftar Akun
-              </button>
-              <button
-                type="button"
-                id="tab-btn-forgot-password"
-                onclick="switchAuthMode('forgot-password')"
-                class="py-2.5 px-2 rounded-xl transition-all cursor-pointer text-slate-500 hover:text-slate-900 font-semibold truncate"
-              >
-                Lupa Password
               </button>
             </div>
 
@@ -573,32 +524,6 @@ require_once $legacySharedPath . '/brand_logo.php';
               <div id="login-error" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
                 <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
                 <span id="login-error-text"></span>
-              </div>
-
-              <!-- Akses Cepat Pelanggan Terdaftar (Budi Santoso) -->
-              <div class="p-3.5 rounded-2xl bg-sky-50/90 border border-sky-200 shadow-2xs space-y-2">
-                <div class="flex items-center justify-between text-xs">
-                  <span class="font-bold text-sky-950 flex items-center gap-1.5">
-                    <svg class="w-4 h-4 text-[#0284C7]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-                    </svg>
-                    <span>Akun Pelanggan Terdaftar</span>
-                  </span>
-                  <span class="text-[10px] font-mono text-sky-700 bg-white px-2 py-0.5 rounded border border-sky-200 font-bold">
-                    Meter: 01000
-                  </span>
-                </div>
-                <p class="text-[11px] text-sky-800 leading-tight">
-                  Masuk cepat sebagai <strong>Budi Santoso</strong> (Rumah Tangga Mandiri - DIST-A Sektor Utara).
-                </p>
-                <button
-                  type="button"
-                  onclick="handleInstantCustomerDemo()"
-                  class="w-full py-2.5 px-3 rounded-xl bg-[#0284C7] hover:bg-[#0369A1] text-white text-xs font-bold transition-colors shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer"
-                >
-                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-2 10h5l-4 10 2-10h-5l4-10Z"/></svg>
-                  <span>⚡ Masuk Cepat sebagai Pelanggan (Budi Santoso)</span>
-                </button>
               </div>
 
               <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
@@ -707,16 +632,6 @@ require_once $legacySharedPath . '/brand_logo.php';
                 >
                   Daftar sekarang
                 </button>
-              </div>
-
-              <div class="pt-3 border-t border-slate-100 text-center">
-                <a
-                  href="<?= url('/portal-petugas') ?>"
-                  class="text-xs font-semibold text-slate-500 hover:text-[#0284C7] inline-flex items-center gap-1.5 transition-colors cursor-pointer py-1.5 px-3.5 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200"
-                >
-                  <svg class="w-4 h-4 text-[#0284C7]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
-                  <span>Khusus Petugas PDAM? Masuk Portal Petugas &rarr;</span>
-                </a>
               </div>
             </div>
 
@@ -996,45 +911,6 @@ require_once $legacySharedPath . '/brand_logo.php';
                     <span>Kembali ke halaman masuk</span>
                   </button>
                 </div>
-              </div>
-            </div>
-
-            <!-- ============================================== -->
-            <!-- MODE 4: ADMIN / OPERATOR LOGIN                -->
-            <!-- ============================================== -->
-            <div id="auth-mode-admin-login" class="hidden mt-5 space-y-4 animate-fade-zoom">
-              <div class="p-6 rounded-3xl bg-slate-900 text-white space-y-4 border border-slate-800 shadow-xl text-center">
-                <div class="w-12 h-12 rounded-2xl bg-cyan-600/20 border border-cyan-500/40 text-cyan-400 flex items-center justify-center mx-auto">
-                  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
-                    <path d="m9 12 2 2 4-4"/>
-                  </svg>
-                </div>
-                <div class="space-y-1">
-                  <h3 class="text-base font-black text-white">Portal Khusus Petugas PDAM</h3>
-                  <p class="text-xs text-slate-400 leading-relaxed max-w-sm mx-auto">
-                    Halaman ini dikhususkan bagi petugas teknis dan operator SCADA PDAM Tirta Sago dengan enkripsi audit trail.
-                  </p>
-                </div>
-                <div class="pt-2">
-                  <a
-                    href="<?= url('/portal-petugas') ?>"
-                    class="inline-flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl text-xs font-bold bg-cyan-600 hover:bg-cyan-500 text-white transition-all shadow-lg shadow-cyan-600/30"
-                  >
-                    <span>⚡ Masuk Langsung ke Dashboard Petugas &rarr;</span>
-                  </a>
-                </div>
-              </div>
-
-              <div class="pt-2 text-center border-t border-slate-100">
-                <button
-                  type="button"
-                  onclick="switchAuthMode('login')"
-                  class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-[#0284C7] transition-colors cursor-pointer"
-                >
-                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
-                  <span>Kembali ke Masuk sebagai Pelanggan / Warga</span>
-                </button>
               </div>
             </div>
 

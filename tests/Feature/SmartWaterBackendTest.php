@@ -26,6 +26,15 @@ class SmartWaterBackendTest extends TestCase
         $responseLogin = $this->get('/login');
         $responseLogin->assertStatus(200);
 
+        // Guest accessing protected pages is redirected to login with redirect parameter
+        $this->get('/pusat-layanan')->assertRedirect(url('/login?redirect=' . urlencode(url('/pusat-layanan'))));
+        $this->get('/akademi-air')->assertRedirect(url('/login?redirect=' . urlencode(url('/akademi-air'))));
+        $this->get('/tantangan')->assertRedirect(url('/login?redirect=' . urlencode(url('/tantangan'))));
+
+        // Authenticated customer can access all service, academy, and challenge pages
+        $customer = User::where('email', 'budi.santoso@warga.payakumbuh.go.id')->first();
+        $this->actingAs($customer);
+
         $responseService = $this->get('/pusat-layanan');
         $responseService->assertStatus(200);
 

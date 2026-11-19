@@ -17,9 +17,65 @@ $billCalc       = null;
 if ($currentUser) {
     $userComplaints = array_values(array_filter(
         $allComplaints,
-        fn($c) => ($c['userId'] ?? '') === $currentUser['id']
+        fn($c) => ($c['userId'] ?? '') === ($currentUser['id'] ?? '')
     ));
-    $report = $currentUser['personalWaterReport'];
+
+    $report = $currentUser['personalWaterReport'] ?? null;
+    if (!$report || !is_array($report)) {
+        $lastM = (float) ($currentUser['lastMeterValue'] ?? 1833);
+        $currM = (float) ($currentUser['currentMeterValue'] ?? 1842);
+        $m3Diff = max(0.0, round($currM - $lastM, 1));
+        if ($m3Diff <= 0.0) {
+            $m3Diff = 9.4;
+        }
+        $meterNo = $currentUser['meterNumber'] ?? '01000';
+        $report = [
+            'currentMonthM3'         => $m3Diff,
+            'previousMonthM3'        => round($m3Diff * 1.1, 1),
+            'currentBillEstimateIdr' => (int) round($m3Diff * 5000),
+            'lastBillStatus'         => 'Lunas',
+            'lastPaymentDate'        => '10 Oktober 2026',
+            'dueDate'                => '20 Oktober 2026',
+            'dailyAverageLiters'     => (int) round(($m3Diff * 1000) / 30),
+            'householdMembers'       => 3,
+            'standMeterCurrent'      => (int) $currM,
+            'standMeterLastMonth'    => (int) $lastM,
+            'billingHistory'         => [
+                [
+                    'period'    => 'Oktober 2026',
+                    'm3'        => $m3Diff,
+                    'amountIdr' => (int) round($m3Diff * 5000),
+                    'status'    => 'Lunas',
+                    'invoiceNo' => 'INV-PYK-2026-10-' . $meterNo,
+                    'paidDate'  => '10 Oktober 2026',
+                ],
+                [
+                    'period'    => 'September 2026',
+                    'm3'        => round($m3Diff * 1.1, 1),
+                    'amountIdr' => (int) round(round($m3Diff * 1.1, 1) * 5000),
+                    'status'    => 'Lunas',
+                    'invoiceNo' => 'INV-PYK-2026-09-' . $meterNo,
+                    'paidDate'  => '10 September 2026',
+                ],
+            ],
+        ];
+    }
+
+    if (!isset($report['billingHistory']) || !is_array($report['billingHistory'])) {
+        $report['billingHistory'] = [];
+    }
+
+    $report['currentMonthM3']         = (float) ($report['currentMonthM3'] ?? 9.4);
+    $report['previousMonthM3']        = (float) ($report['previousMonthM3'] ?? 11.2);
+    $report['currentBillEstimateIdr'] = (int) ($report['currentBillEstimateIdr'] ?? 47000);
+    $report['lastBillStatus']         = (string) ($report['lastBillStatus'] ?? 'Lunas');
+    $report['lastPaymentDate']        = (string) ($report['lastPaymentDate'] ?? '10 Oktober 2026');
+    $report['dueDate']                = (string) ($report['dueDate'] ?? '20 Oktober 2026');
+    $report['dailyAverageLiters']     = (int) ($report['dailyAverageLiters'] ?? 285);
+    $report['householdMembers']       = (int) ($report['householdMembers'] ?? 3);
+    $report['standMeterCurrent']      = (float) ($report['standMeterCurrent'] ?? 1842);
+    $report['standMeterLastMonth']    = (float) ($report['standMeterLastMonth'] ?? 1833);
+
     $completedCoursesCount = count($currentUser['completedQuizzes'] ?? []);
     $userBadges = $currentUser['badges'] ?? [];
     $privacy = $currentUser['privacySettings'] ?? [
@@ -49,7 +105,20 @@ if ($currentUser) {
   <link rel="stylesheet" href="../../assets/css/shared.css" />
   <link rel="stylesheet" href="../../assets/css/pages/user.css" />
 </head>
-<body class="min-h-screen bg-slate-50 text-slate-800 antialiased font-sans flex flex-col">
+<body class="relative min-h-screen bg-slate-50 text-slate-800 antialiased font-sans flex flex-col overflow-x-hidden">
+
+  <!-- Full-Page Crystal Clear Scenic Water Background (Lanskap Air Jernih Payakumbuh) -->
+  <div class="fixed inset-0 z-0 pointer-events-none select-none overflow-hidden">
+    <img
+      src="../../assets/images/hero-lake-bright.jpg"
+      alt="Lanskap Sumber Air Jernih Payakumbuh"
+      class="w-full h-full object-cover object-center transform scale-105"
+    />
+    <!-- Frosted translucent overlay for crystal clear water aesthetic & pristine readability -->
+    <div class="absolute inset-0 bg-gradient-to-tr from-[#EBF5FB]/88 via-white/82 to-[#F0F8FF]/85 backdrop-blur-[3px]"></div>
+    <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-cyan-400/20 blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-sky-500/15 blur-3xl pointer-events-none"></div>
+  </div>
 
   <!-- Top Header Navbar -->
   <?php
@@ -79,19 +148,19 @@ require $legacySharedPath . '/header.php';
     <!-- ======================================================== -->
     <!-- HALAMAN PROFIL PELANGGAN (SUDAH LOGIN)                   -->
     <!-- ======================================================== -->
-    <main class="flex-1 bg-[#F0F6FB] py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
+    <main class="relative z-10 flex-1 bg-transparent pt-2.5 sm:pt-3.5 pb-8 sm:pb-10 px-4 sm:px-6 lg:px-8">
       <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-6">
 
         <!-- LEFT SIDEBAR -->
         <aside class="w-full lg:w-64 shrink-0 space-y-4">
           <!-- User Mini Card -->
-          <div class="bg-white p-4 rounded-2xl border border-sky-100/90 shadow-2xs space-y-2">
+          <div class="bg-white/92 backdrop-blur-md p-4 rounded-2xl border border-white/80 shadow-md shadow-sky-950/5 space-y-2">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-full bg-[#0284C7] flex items-center justify-center text-white text-base font-bold shrink-0 shadow-xs">
                 <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
               </div>
               <div class="overflow-hidden">
-                <h3 class="text-sm font-bold text-[#0F2C59] truncate leading-tight"><?= e($currentUser['name']) ?></h3>
+                <h3 class="text-sm font-bold text-[#0F2C59] truncate leading-tight"><?= e($currentUser['name'] ?? 'Pelanggan') ?></h3>
                 <div class="flex items-center gap-1.5 mt-1">
                   <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] font-semibold">
                     <svg class="w-2.5 h-2.5 text-emerald-600 stroke-[3]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -104,29 +173,40 @@ require $legacySharedPath . '/header.php';
           </div>
 
           <!-- Navigation Links -->
-          <div class="bg-white p-2.5 rounded-2xl border border-sky-100/90 shadow-2xs space-y-1">
-            <button type="button" data-ptab="beranda" onclick="switchProfileTab('beranda')" class="profile-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-all cursor-pointer bg-[#E3EFFB] text-[#0284C7] font-bold shadow-2xs">
+          <?php
+          $activeProfileTab = request()->query('tab', 'beranda');
+          if (!in_array($activeProfileTab, ['beranda', 'info', 'laporan', 'pengaduan', 'belajar', 'privasi', 'lencana'], true)) {
+              $activeProfileTab = 'beranda';
+          }
+          $getNavBtnClass = function (string $tab) use ($activeProfileTab): string {
+              return $activeProfileTab === $tab
+                  ? 'profile-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-all cursor-pointer bg-[#E3EFFB] text-[#0284C7] font-bold shadow-2xs'
+                  : 'profile-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-slate-50';
+          };
+          ?>
+          <div class="bg-white/92 backdrop-blur-md p-2.5 rounded-2xl border border-white/80 shadow-md shadow-sky-950/5 space-y-1">
+            <button type="button" data-ptab="beranda" onclick="switchProfileTab('beranda')" class="<?= $getNavBtnClass('beranda') ?>">
               <div class="flex items-center gap-3">
                 <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                 <span>Beranda</span>
               </div>
             </button>
 
-            <button type="button" data-ptab="info" onclick="switchProfileTab('info')" class="profile-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-slate-50">
+            <button type="button" data-ptab="info" onclick="switchProfileTab('info')" class="<?= $getNavBtnClass('info') ?>">
               <div class="flex items-center gap-3">
                 <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 <span class="text-left">Informasi Akun &amp; Data Pelanggan</span>
               </div>
             </button>
 
-            <button type="button" data-ptab="laporan" onclick="switchProfileTab('laporan')" class="profile-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-slate-50">
+            <button type="button" data-ptab="laporan" onclick="switchProfileTab('laporan')" class="<?= $getNavBtnClass('laporan') ?>">
               <div class="flex items-center gap-3">
                 <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
                 <span class="text-left">Laporan Pemakaian Air Pribadi</span>
               </div>
             </button>
 
-            <button type="button" data-ptab="pengaduan" onclick="switchProfileTab('pengaduan')" class="profile-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-slate-50">
+            <button type="button" data-ptab="pengaduan" onclick="switchProfileTab('pengaduan')" class="<?= $getNavBtnClass('pengaduan') ?>">
               <div class="flex items-center gap-3">
                 <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 <span>Riwayat Pengaduan</span>
@@ -136,7 +216,7 @@ require $legacySharedPath . '/header.php';
               </span>
             </button>
 
-            <button type="button" data-ptab="belajar" onclick="switchProfileTab('belajar')" class="profile-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-slate-50">
+            <button type="button" data-ptab="belajar" onclick="switchProfileTab('belajar')" class="<?= $getNavBtnClass('belajar') ?>">
               <div class="flex items-center gap-3">
                 <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                 <span class="text-left">Progres Belajar &amp; Kuis</span>
@@ -146,14 +226,14 @@ require $legacySharedPath . '/header.php';
               </span>
             </button>
 
-            <button type="button" data-ptab="privasi" onclick="switchProfileTab('privasi')" class="profile-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-slate-50">
+            <button type="button" data-ptab="privasi" onclick="switchProfileTab('privasi')" class="<?= $getNavBtnClass('privasi') ?>">
               <div class="flex items-center gap-3">
                 <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
                 <span class="text-left">Pengaturan Privasi &amp; Keamanan</span>
               </div>
             </button>
 
-            <button type="button" data-ptab="lencana" onclick="switchProfileTab('lencana')" class="profile-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-slate-50">
+            <button type="button" data-ptab="lencana" onclick="switchProfileTab('lencana')" class="<?= $getNavBtnClass('lencana') ?>">
               <div class="flex items-center gap-3">
                 <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
                 <span>Lencana Komunitas</span>
@@ -161,37 +241,6 @@ require $legacySharedPath . '/header.php';
               <span class="px-2 py-0.5 rounded-full bg-cyan-100 text-[#0284C7] text-[10px] font-bold">
                 <?= count($userBadges) ?>/<?= count($BADGE_DEFINITIONS) ?>
               </span>
-            </button>
-          </div>
-
-          <!-- Slogan Water Droplets Card -->
-          <div class="bg-[#EBF5FB] p-5 rounded-2xl border border-sky-100/70 text-center space-y-2 shadow-2xs">
-            <div class="w-12 h-12 mx-auto rounded-full bg-white flex items-center justify-center text-[#0284C7] shadow-xs">
-              <svg class="w-6 h-6 fill-[#0284C7] text-[#0284C7]" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>
-            </div>
-            <p class="text-xs font-semibold text-[#0F2C59] leading-snug">
-              Bersama jaga air, untuk Payakumbuh yang lebih baik
-            </p>
-          </div>
-
-          <!-- Switch Persona Demo (Memudahkan pengujian multi pelanggan di PHP) -->
-          <div class="bg-white p-3 rounded-2xl border border-sky-100/90 shadow-2xs space-y-2 text-[11px]">
-            <span class="font-bold text-slate-400 uppercase tracking-wider text-[10px] block">Akun Demo Pelanggan</span>
-            <div class="grid grid-cols-2 gap-1.5">
-              <a href="index.php?action=login_demo&persona=user-01" class="px-2 py-1.5 rounded-lg text-center font-semibold border transition-colors <?= $currentUser['id'] === 'user-01' ? 'bg-sky-50 border-sky-300 text-[#0284C7]' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100' ?>">
-                Warga Google
-              </a>
-              <a href="index.php?action=login_demo&persona=user-02" class="px-2 py-1.5 rounded-lg text-center font-semibold border transition-colors <?= $currentUser['id'] === 'user-02' ? 'bg-sky-50 border-sky-300 text-[#0284C7]' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100' ?>">
-                Ibu Siti N.
-              </a>
-            </div>
-          </div>
-
-          <!-- Keluar Akun Button -->
-          <div class="bg-white p-2 rounded-2xl border border-sky-100/90 shadow-2xs">
-            <button type="button" onclick="openLogoutModal()" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer">
-              <svg class="w-4 h-4 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
-              <span>Keluar Akun</span>
             </button>
           </div>
         </aside>
@@ -202,9 +251,9 @@ require $legacySharedPath . '/header.php';
           <!-- ======================================================== -->
           <!-- 1. TAB: BERANDA (OVERVIEW DASHBOARD)                     -->
           <!-- ======================================================== -->
-          <section id="profile-tab-beranda" class="profile-tab-panel space-y-6">
+          <section id="profile-tab-beranda" class="profile-tab-panel <?= $activeProfileTab === 'beranda' ? '' : 'hidden' ?> space-y-6">
             <!-- Header Profil Banner -->
-            <div class="relative rounded-3xl border border-sky-100/80 shadow-xs overflow-hidden bg-gradient-to-r from-[#D7EEFD] via-[#E8F4FE] to-[#D5EDFC] p-6 sm:p-8 min-h-[160px] flex flex-col justify-between">
+            <div class="relative rounded-3xl border border-white/80 shadow-md shadow-sky-950/5 overflow-hidden bg-gradient-to-r from-[#D7EEFD]/90 via-[#E8F4FE]/90 to-[#D5EDFC]/90 backdrop-blur-md p-6 sm:p-8 min-h-[160px] flex flex-col justify-between">
               <!-- Panoramic Landscape Graphic (Jam Gadang & Mountains Payakumbuh) -->
               <div class="absolute right-0 top-0 bottom-0 w-2/5 pointer-events-none opacity-85 hidden md:block">
                 <svg viewBox="0 0 360 160" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full object-cover">
@@ -234,25 +283,25 @@ require $legacySharedPath . '/header.php';
                   <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
                   <span>Dashboard Mandiri Pelanggan Payakumbuh</span>
                 </div>
-                <h1 class="text-2xl sm:text-3xl font-extrabold text-[#0F2C59] tracking-tight"><?= e($currentUser['name']) ?></h1>
-                <p class="text-xs sm:text-sm font-semibold text-slate-700"><?= e($currentUser['role']) ?></p>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-[#0F2C59] tracking-tight"><?= e($currentUser['name'] ?? 'Pelanggan') ?></h1>
+                <p class="text-xs sm:text-sm font-semibold text-slate-700"><?= e($currentUser['role'] ?? 'Pelanggan PDAM') ?></p>
 
                 <div class="flex flex-wrap items-center gap-x-5 gap-y-2 pt-2 text-xs text-slate-600 font-medium">
                   <span class="flex items-center gap-1.5 font-mono text-slate-800 font-semibold bg-white/70 px-2.5 py-1 rounded-lg border border-sky-100">
                     <svg class="w-3.5 h-3.5 text-[#0284C7]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>
-                    <span>No. Meter: <?= e($currentUser['meterNumber']) ?></span>
+                    <span>No. Meter: <?= e($currentUser['meterNumber'] ?? '01000') ?></span>
                   </span>
                   <span class="flex items-center gap-1.5">
                     <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                    <span class="bind-user-phone"><?= e($currentUser['phone']) ?></span>
+                    <span class="bind-user-phone"><?= e($currentUser['phone'] ?? '-') ?></span>
                   </span>
                   <span class="flex items-center gap-1.5">
                     <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
-                    <span><?= e($currentUser['district']) ?></span>
+                    <span><?= e($currentUser['district'] ?? 'Payakumbuh Barat') ?></span>
                   </span>
                   <span class="flex items-center gap-1.5">
                     <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
-                    <span>Bergabung <?= e($currentUser['joinedDate']) ?></span>
+                    <span>Bergabung <?= e($currentUser['joinedDate'] ?? 'Agustus 2026') ?></span>
                   </span>
                 </div>
               </div>
@@ -260,7 +309,7 @@ require $legacySharedPath . '/header.php';
 
             <!-- Empat Kartu Statistik Ringkasan -->
             <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-              <div onclick="switchProfileTab('laporan')" class="bg-white rounded-2xl border border-sky-100/90 p-4 sm:p-5 shadow-2xs space-y-3 cursor-pointer hover:border-[#0284C7] hover:shadow-md transition-all group">
+              <div onclick="switchProfileTab('laporan')" class="bg-white/92 backdrop-blur-md rounded-2xl border border-white/80 p-4 sm:p-5 shadow-md shadow-sky-950/5 space-y-3 cursor-pointer hover:border-[#0284C7] hover:shadow-lg transition-all group">
                 <div class="w-9 h-9 rounded-full bg-sky-50 text-[#0284C7] flex items-center justify-center group-hover:bg-[#0284C7] group-hover:text-white transition-colors">
                   <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>
                 </div>
@@ -276,7 +325,7 @@ require $legacySharedPath . '/header.php';
                 </div>
               </div>
 
-              <div onclick="switchProfileTab('laporan')" class="bg-white rounded-2xl border border-sky-100/90 p-4 sm:p-5 shadow-2xs space-y-3 cursor-pointer hover:border-amber-400 hover:shadow-md transition-all group">
+              <div onclick="switchProfileTab('laporan')" class="bg-white/92 backdrop-blur-md rounded-2xl border border-white/80 p-4 sm:p-5 shadow-md shadow-sky-950/5 space-y-3 cursor-pointer hover:border-amber-400 hover:shadow-lg transition-all group">
                 <div class="w-9 h-9 rounded-full bg-amber-50 text-amber-700 flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white transition-colors">
                   <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></svg>
                 </div>
@@ -295,7 +344,7 @@ require $legacySharedPath . '/header.php';
                 </div>
               </div>
 
-              <div onclick="switchProfileTab('pengaduan')" class="bg-white rounded-2xl border border-sky-100/90 p-4 sm:p-5 shadow-2xs space-y-3 cursor-pointer hover:border-[#0284C7] hover:shadow-md transition-all group">
+              <div onclick="switchProfileTab('pengaduan')" class="bg-white/92 backdrop-blur-md rounded-2xl border border-white/80 p-4 sm:p-5 shadow-md shadow-sky-950/5 space-y-3 cursor-pointer hover:border-[#0284C7] hover:shadow-lg transition-all group">
                 <div class="w-9 h-9 rounded-full bg-sky-50 text-[#0284C7] flex items-center justify-center group-hover:bg-[#0284C7] group-hover:text-white transition-colors">
                   <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/></svg>
                 </div>
@@ -311,7 +360,7 @@ require $legacySharedPath . '/header.php';
                 </div>
               </div>
 
-              <div onclick="switchProfileTab('belajar')" class="bg-white rounded-2xl border border-sky-100/90 p-4 sm:p-5 shadow-2xs space-y-3 cursor-pointer hover:border-amber-400 hover:shadow-md transition-all group">
+              <div onclick="switchProfileTab('belajar')" class="bg-white/92 backdrop-blur-md rounded-2xl border border-white/80 p-4 sm:p-5 shadow-md shadow-sky-950/5 space-y-3 cursor-pointer hover:border-amber-400 hover:shadow-lg transition-all group">
                 <div class="w-9 h-9 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-colors">
                   <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                 </div>
@@ -329,7 +378,7 @@ require $legacySharedPath . '/header.php';
             </div>
 
             <!-- Kartu Digital Pelanggan & Quick Actions -->
-            <div class="bg-white rounded-3xl border border-sky-100/90 p-6 shadow-2xs grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            <div class="bg-white/92 backdrop-blur-md rounded-3xl border border-white/80 p-6 shadow-md shadow-sky-950/5 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
               <!-- Royal Blue Digital Card -->
               <div class="lg:col-span-7 bg-gradient-to-br from-[#0284C7] via-[#0369A1] to-[#0F2C59] rounded-2xl p-6 text-white shadow-md relative overflow-hidden flex flex-col justify-between min-h-[190px]">
                 <div class="absolute right-0 top-0 bottom-0 w-1/2 pointer-events-none opacity-20">
@@ -351,15 +400,15 @@ require $legacySharedPath . '/header.php';
                   </div>
 
                   <div class="pt-2">
-                    <p class="text-base font-extrabold text-white tracking-tight"><?= e($currentUser['name']) ?></p>
+                    <p class="text-base font-extrabold text-white tracking-tight"><?= e($currentUser['name'] ?? 'Pelanggan') ?></p>
                     <div class="grid grid-cols-2 gap-4 mt-2">
                       <div>
                         <span class="text-[10px] text-cyan-200 uppercase font-semibold block">No. Meteran Air</span>
-                        <p class="text-base sm:text-lg font-mono font-black text-white mt-0.5"><?= e($currentUser['meterNumber']) ?></p>
+                        <p class="text-base sm:text-lg font-mono font-black text-white mt-0.5"><?= e($currentUser['meterNumber'] ?? '01000') ?></p>
                       </div>
                       <div>
                         <span class="text-[10px] text-cyan-200 uppercase font-semibold block">Kategori Tarif</span>
-                        <p class="text-xs font-semibold text-cyan-50 mt-1"><?= e($currentUser['tariffCategory']) ?></p>
+                        <p class="text-xs font-semibold text-cyan-50 mt-1"><?= e($currentUser['tariffCategory'] ?? '2A - Rumah Tangga Mandiri') ?></p>
                       </div>
                     </div>
                   </div>
@@ -368,7 +417,7 @@ require $legacySharedPath . '/header.php';
                 <div class="relative z-10 pt-4 mt-2 border-t border-white/15 flex items-center justify-between text-xs">
                   <span class="flex items-center gap-1.5 text-xs text-cyan-100 font-medium">
                     <svg class="w-3.5 h-3.5 text-cyan-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
-                    <span><?= e($currentUser['district']) ?></span>
+                    <span><?= e($currentUser['district'] ?? 'Payakumbuh Barat') ?></span>
                   </span>
                   <span class="px-3 py-1 rounded-full bg-emerald-500 text-white font-bold text-[10px] shadow-xs">Aktif &amp; Normal</span>
                 </div>
@@ -428,8 +477,8 @@ require $legacySharedPath . '/header.php';
           <!-- ======================================================== -->
           <!-- 2. TAB: INFORMASI AKUN & DATA PELANGGAN                  -->
           <!-- ======================================================== -->
-          <section id="profile-tab-info" class="profile-tab-panel hidden space-y-6">
-            <div class="bg-white rounded-3xl border border-sky-100/90 p-6 sm:p-7 shadow-2xs space-y-4">
+          <section id="profile-tab-info" class="profile-tab-panel <?= $activeProfileTab === 'info' ? '' : 'hidden' ?> space-y-6">
+            <div class="bg-white/92 backdrop-blur-md rounded-3xl border border-white/80 p-6 sm:p-7 shadow-md shadow-sky-950/5 space-y-4">
               <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
                 <div class="space-y-1">
                   <div class="flex items-center gap-2 text-xs text-slate-400 font-medium">
@@ -457,13 +506,13 @@ require $legacySharedPath . '/header.php';
                       <svg class="w-5 h-5 fill-white text-white" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>
                       <span class="font-extrabold uppercase tracking-wider text-xs">Kartu Digital Tirta Sago</span>
                     </div>
-                    <h3 class="text-xl font-black text-white"><?= e($currentUser['name']) ?></h3>
-                    <p class="text-xs text-cyan-100"><?= e($currentUser['tariffCategory']) ?></p>
+                    <h3 class="text-xl font-black text-white"><?= e($currentUser['name'] ?? 'Pelanggan') ?></h3>
+                    <p class="text-xs text-cyan-100"><?= e($currentUser['tariffCategory'] ?? '2A - Rumah Tangga Mandiri') ?></p>
                   </div>
 
                   <div class="text-left sm:text-right space-y-1">
                     <span class="text-[10px] text-cyan-200 uppercase font-bold block">Nomor Meteran Air</span>
-                    <span class="text-xl font-mono font-black text-white block"><?= e($currentUser['meterNumber']) ?></span>
+                    <span class="text-xl font-mono font-black text-white block"><?= e($currentUser['meterNumber'] ?? '01000') ?></span>
                     <span class="inline-block px-2.5 py-0.5 rounded-full bg-emerald-500 text-white text-[10px] font-bold">Aktif &amp; Terverifikasi</span>
                   </div>
                 </div>
@@ -478,7 +527,7 @@ require $legacySharedPath . '/header.php';
                     </div>
                     <span class="font-semibold text-slate-700">Nama Lengkap</span>
                   </div>
-                  <div class="md:col-span-4 font-bold text-slate-900"><?= e($currentUser['name']) ?></div>
+                  <div class="md:col-span-4 font-bold text-slate-900"><?= e($currentUser['name'] ?? 'Pelanggan') ?></div>
                   <div class="md:col-span-4 text-[11px] text-slate-400">Perubahan nama memerlukan verifikasi KTP di kantor PDAM.</div>
                 </div>
 
@@ -489,7 +538,7 @@ require $legacySharedPath . '/header.php';
                     </div>
                     <span class="font-semibold text-slate-700">Nomor Meteran Air (ID Pelanggan)</span>
                   </div>
-                  <div class="md:col-span-4 font-mono font-bold text-slate-900"><?= e($currentUser['meterNumber']) ?></div>
+                  <div class="md:col-span-4 font-mono font-bold text-slate-900"><?= e($currentUser['meterNumber'] ?? '01000') ?></div>
                   <div class="md:col-span-4 text-[11px] text-slate-400">Terhubung langsung ke register meteran fisik rumah tangga.</div>
                 </div>
 
@@ -500,7 +549,7 @@ require $legacySharedPath . '/header.php';
                     </div>
                     <span class="font-semibold text-slate-700">Kategori Tarif PDAM</span>
                   </div>
-                  <div class="md:col-span-4 font-semibold text-slate-800"><?= e($currentUser['tariffCategory']) ?></div>
+                  <div class="md:col-span-4 font-semibold text-slate-800"><?= e($currentUser['tariffCategory'] ?? '2A - Rumah Tangga Mandiri') ?></div>
                   <div class="md:col-span-4 text-[11px] text-slate-400">Berdasarkan Peraturan Walikota Payakumbuh tentang Tarif Air Minum.</div>
                 </div>
 
@@ -511,7 +560,7 @@ require $legacySharedPath . '/header.php';
                     </div>
                     <span class="font-semibold text-slate-700">Nomor Telepon (WhatsApp)</span>
                   </div>
-                  <div class="md:col-span-4 font-mono font-bold text-slate-900 bind-user-phone"><?= e($currentUser['phone']) ?></div>
+                  <div class="md:col-span-4 font-mono font-bold text-slate-900 bind-user-phone"><?= e($currentUser['phone'] ?? '-') ?></div>
                   <div class="md:col-span-4 text-[11px] text-slate-400">Digunakan untuk konfirmasi respon tiket dan notifikasi darurat.</div>
                 </div>
 
@@ -522,7 +571,7 @@ require $legacySharedPath . '/header.php';
                     </div>
                     <span class="font-semibold text-slate-700">Alamat Email</span>
                   </div>
-                  <div class="md:col-span-4 font-mono font-semibold text-slate-800 bind-user-email"><?= e($currentUser['email']) ?></div>
+                  <div class="md:col-span-4 font-mono font-semibold text-slate-800 bind-user-email"><?= e($currentUser['email'] ?? '-') ?></div>
                   <div class="md:col-span-4 text-[11px] text-slate-400">Untuk pengiriman e-billing dan bukti kuitansi resmi.</div>
                 </div>
 
@@ -533,7 +582,7 @@ require $legacySharedPath . '/header.php';
                     </div>
                     <span class="font-semibold text-slate-700">Wilayah Kecamatan</span>
                   </div>
-                  <div class="md:col-span-4 font-semibold text-slate-800"><?= e($currentUser['district']) ?></div>
+                  <div class="md:col-span-4 font-semibold text-slate-800"><?= e($currentUser['district'] ?? 'Payakumbuh Barat') ?></div>
                   <div class="md:col-span-4 text-[11px] text-slate-400">Zona distribusi teknis Perumda Tirta Sago.</div>
                 </div>
 
@@ -544,7 +593,7 @@ require $legacySharedPath . '/header.php';
                     </div>
                     <span class="font-semibold text-slate-700">Alamat Lengkap Sambungan Rumah Tangga</span>
                   </div>
-                  <div class="md:col-span-4 text-xs font-medium text-slate-900 leading-relaxed bind-user-address"><?= e($currentUser['address']) ?></div>
+                  <div class="md:col-span-4 text-xs font-medium text-slate-900 leading-relaxed bind-user-address"><?= e($currentUser['address'] ?? 'Kota Payakumbuh') ?></div>
                   <div class="md:col-span-4 text-[11px] text-slate-400">Alamat ini otomatis menjadi rujukan petugas jika Anda melaporkan gangguan pipa.</div>
                 </div>
               </div>
@@ -554,8 +603,8 @@ require $legacySharedPath . '/header.php';
           <!-- ======================================================== -->
           <!-- 3. TAB: LAPORAN PEMAKAIAN AIR PRIBADI                    -->
           <!-- ======================================================== -->
-          <section id="profile-tab-laporan" class="profile-tab-panel hidden space-y-6">
-            <div class="bg-white rounded-3xl border border-sky-100/90 p-6 sm:p-7 shadow-2xs space-y-4">
+          <section id="profile-tab-laporan" class="profile-tab-panel <?= $activeProfileTab === 'laporan' ? '' : 'hidden' ?> space-y-6">
+            <div class="bg-white/92 backdrop-blur-md rounded-3xl border border-white/80 p-6 sm:p-7 shadow-md shadow-sky-950/5 space-y-4">
               <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
                 <div class="space-y-1">
                   <div class="flex items-center gap-2 text-xs text-slate-400 font-medium">
@@ -926,8 +975,8 @@ require $legacySharedPath . '/header.php';
           <!-- ======================================================== -->
           <!-- 4. TAB: RIWAYAT PENGADUAN                                -->
           <!-- ======================================================== -->
-          <section id="profile-tab-pengaduan" class="profile-tab-panel hidden space-y-6">
-            <div class="bg-white rounded-3xl border border-sky-100/90 p-6 sm:p-7 shadow-2xs space-y-6">
+          <section id="profile-tab-pengaduan" class="profile-tab-panel <?= $activeProfileTab === 'pengaduan' ? '' : 'hidden' ?> space-y-6">
+            <div class="bg-white/92 backdrop-blur-md rounded-3xl border border-white/80 p-6 sm:p-7 shadow-md shadow-sky-950/5 space-y-6">
               <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
                 <div class="space-y-1">
                   <div class="flex items-center gap-2 text-xs text-slate-400 font-medium">
@@ -963,8 +1012,8 @@ require $legacySharedPath . '/header.php';
           <!-- ======================================================== -->
           <!-- 5. TAB: PROGRES BELAJAR & KUIS                           -->
           <!-- ======================================================== -->
-          <section id="profile-tab-belajar" class="profile-tab-panel hidden space-y-6">
-            <div class="bg-white rounded-3xl border border-sky-100/90 p-6 sm:p-7 shadow-2xs space-y-6">
+          <section id="profile-tab-belajar" class="profile-tab-panel <?= $activeProfileTab === 'belajar' ? '' : 'hidden' ?> space-y-6">
+            <div class="bg-white/92 backdrop-blur-md rounded-3xl border border-white/80 p-6 sm:p-7 shadow-md shadow-sky-950/5 space-y-6">
               <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
                 <div class="space-y-1">
                   <div class="flex items-center gap-2 text-xs text-slate-400 font-medium">
@@ -985,7 +1034,7 @@ require $legacySharedPath . '/header.php';
               <div class="space-y-3">
                 <?php foreach ($ACADEMY_COURSES_SUMMARY as $course): ?>
                   <?php
-                  $score = $currentUser['completedQuizzes'][$course['id']] ?? null;
+                  $score = ($currentUser['completedQuizzes'] ?? [])[$course['id']] ?? null;
                   $isPassed = $score !== null && $score >= 70;
                   ?>
                   <div class="p-4 rounded-xl border border-slate-100 bg-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
@@ -1017,8 +1066,8 @@ require $legacySharedPath . '/header.php';
           <!-- ======================================================== -->
           <!-- 6. TAB: PENGATURAN PRIVASI & KEAMANAN                    -->
           <!-- ======================================================== -->
-          <section id="profile-tab-privasi" class="profile-tab-panel hidden space-y-6">
-            <div class="bg-white rounded-3xl border border-sky-100/90 p-6 sm:p-7 shadow-2xs space-y-6">
+          <section id="profile-tab-privasi" class="profile-tab-panel <?= $activeProfileTab === 'privasi' ? '' : 'hidden' ?> space-y-6">
+            <div class="bg-white/92 backdrop-blur-md rounded-3xl border border-white/80 p-6 sm:p-7 shadow-md shadow-sky-950/5 space-y-6">
               <div class="border-b border-slate-100 pb-3 space-y-1">
                 <div class="flex items-center gap-2 text-xs text-slate-400 font-medium">
                   <span>Profil Pelanggan</span>
@@ -1029,7 +1078,7 @@ require $legacySharedPath . '/header.php';
               </div>
 
               <div class="space-y-4 text-xs">
-                <div class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl">
+                <div class="flex items-center justify-between p-3.5 bg-slate-50/80 rounded-xl border border-sky-50">
                   <div>
                     <span class="font-bold text-slate-900 block">Tampilkan Nama di Papan Komunitas</span>
                     <span class="text-slate-500 text-[11px]">Menampilkan nama Anda pada papan peringkat tantangan hemat air.</span>
@@ -1037,7 +1086,7 @@ require $legacySharedPath . '/header.php';
                   <input id="privShowLeaderboard" type="checkbox" <?= !empty($privacy['showInLeaderboard']) ? 'checked' : '' ?> class="w-4 h-4 rounded text-[#0284C7] cursor-pointer" />
                 </div>
 
-                <div class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl">
+                <div class="flex items-center justify-between p-3.5 bg-slate-50/80 rounded-xl border border-sky-50">
                   <div>
                     <span class="font-bold text-slate-900 block">Notifikasi WhatsApp</span>
                     <span class="text-slate-500 text-[11px]">Kirim notifikasi update tiket gangguan ke nomor WA terdaftar.</span>
@@ -1045,7 +1094,7 @@ require $legacySharedPath . '/header.php';
                   <input id="privWaNotif" type="checkbox" <?= !empty($privacy['waNotifications']) ? 'checked' : '' ?> class="w-4 h-4 rounded text-[#0284C7] cursor-pointer" />
                 </div>
 
-                <div class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl">
+                <div class="flex items-center justify-between p-3.5 bg-slate-50/80 rounded-xl border border-sky-50">
                   <div>
                     <span class="font-bold text-slate-900 block">Verifikasi 2 Langkah (2FA)</span>
                     <span class="text-slate-500 text-[11px]">Meminta OTP saat perubahan data kontak atau pembayaran.</span>
@@ -1065,8 +1114,8 @@ require $legacySharedPath . '/header.php';
           <!-- ======================================================== -->
           <!-- 7. TAB: LENCANA KOMUNITAS                                -->
           <!-- ======================================================== -->
-          <section id="profile-tab-lencana" class="profile-tab-panel hidden space-y-6">
-            <div class="bg-white rounded-3xl border border-sky-100/90 p-6 sm:p-7 shadow-2xs space-y-6">
+          <section id="profile-tab-lencana" class="profile-tab-panel <?= $activeProfileTab === 'lencana' ? '' : 'hidden' ?> space-y-6">
+            <div class="bg-white/92 backdrop-blur-md rounded-3xl border border-white/80 p-6 sm:p-7 shadow-md shadow-sky-950/5 space-y-6">
               <div class="border-b border-slate-100 pb-3 space-y-1">
                 <div class="flex items-center gap-2 text-xs text-slate-400 font-medium">
                   <span>Profil Pelanggan</span>
@@ -1093,31 +1142,6 @@ require $legacySharedPath . '/header.php';
               </div>
             </div>
           </section>
-
-          <!-- Bottom Profile Sub-Footer -->
-          <div class="pt-8 pb-4 border-t border-sky-100/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-            <div class="flex items-center gap-2">
-              <div class="w-6 h-6 rounded-full bg-[#0284C7] flex items-center justify-center text-white">
-                <svg class="w-3.5 h-3.5 fill-white text-white" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>
-              </div>
-              <div class="leading-tight">
-                <span class="font-black text-[#0284C7] block">Tirta Sago</span>
-                <span class="text-[10px] text-slate-400">PDAM Kota Payakumbuh</span>
-              </div>
-            </div>
-            <div class="italic text-slate-500 text-[11px] text-center">
-              Air Bersih, Hidup Sehat, Payakumbuh Maju
-            </div>
-            <div class="flex items-center gap-2">
-              <div class="w-6 h-6 rounded-full bg-[#0284C7] flex items-center justify-center text-white">
-                <svg class="w-3.5 h-3.5 fill-white text-white" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>
-              </div>
-              <div class="leading-tight text-right">
-                <span class="font-black text-[#0284C7] block">Smart Water</span>
-                <span class="text-[10px] text-slate-400">Payakumbuh</span>
-              </div>
-            </div>
-          </div>
 
         </div>
       </div>
@@ -1365,7 +1389,7 @@ require $legacySharedPath . '/header.php';
     <!-- ======================================================== -->
     <!-- GUEST PROFILE FALLBACK (BELUM MASUK AKUN - App.tsx)      -->
     <!-- ======================================================== -->
-    <main class="flex-1">
+    <main class="relative z-10 flex-1">
       <div class="max-w-xl mx-auto px-4 py-16 text-center space-y-6">
         <div class="w-16 h-16 mx-auto rounded-3xl bg-gradient-to-tr from-cyan-600 to-sky-400 flex items-center justify-center text-white shadow-lg shadow-cyan-600/20">
           <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -1379,12 +1403,12 @@ require $legacySharedPath . '/header.php';
         </div>
 
         <div class="grid grid-cols-2 gap-3 text-left max-w-md mx-auto pt-2">
-          <div class="p-3.5 rounded-2xl bg-white border border-slate-200/90 shadow-xs space-y-1">
+          <div class="p-3.5 rounded-2xl bg-white/90 backdrop-blur-md border border-white/80 shadow-md shadow-sky-950/5 space-y-1">
             <span class="text-[10px] font-bold uppercase tracking-wider text-cyan-800 block">Data Pelanggan</span>
             <p class="text-xs font-semibold text-slate-800">ID Meteran &amp; Tarif PDAM</p>
             <p class="text-[11px] text-slate-400">Sinkronisasi data resmi sambungan</p>
           </div>
-          <div class="p-3.5 rounded-2xl bg-white border border-slate-200/90 shadow-xs space-y-1">
+          <div class="p-3.5 rounded-2xl bg-white/90 backdrop-blur-md border border-white/80 shadow-md shadow-sky-950/5 space-y-1">
             <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 block">Laporan Air</span>
             <p class="text-xs font-semibold text-slate-800">Kubikasi &amp; E-Kuitansi</p>
             <p class="text-[11px] text-slate-400">Pantau tagihan &amp; hemat air</p>
@@ -1404,10 +1428,12 @@ require $legacySharedPath . '/header.php';
   <?php endif; ?>
 
   <!-- Site Footer -->
-  <?php
-$SHARED_FOOTER_VARIANT = 'user';
-require $legacySharedPath . '/footer.php';
-?>
+  <div class="relative z-10">
+    <?php
+    $SHARED_FOOTER_VARIANT = 'user';
+    require $legacySharedPath . '/footer.php';
+    ?>
+  </div>
 
   <!-- TirtaBot AI Chatbot Widget -->
   <?php require $legacySharedPath . '/chatbot.php'; ?>

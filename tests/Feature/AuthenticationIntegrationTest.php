@@ -54,7 +54,7 @@ class AuthenticationIntegrationTest extends TestCase
             'password'   => 'Pelanggan123!',
         ]);
 
-        $response->assertRedirect(url('/report-meter'));
+        $response->assertRedirect(url('/user'));
         $this->assertTrue(Auth::check());
         $this->assertSame($this->customerUser->id, Auth::id());
         $this->assertSame('customer', session('swc_role'));
@@ -72,10 +72,10 @@ class AuthenticationIntegrationTest extends TestCase
             'password'   => 'Petugas123!',
         ]);
 
-        $response->assertRedirect(url('/admin-dashboard'));
+        $response->assertRedirect(url('/water-monitoring'));
         $this->assertTrue(Auth::check());
         $this->assertSame($this->staffUser->id, Auth::id());
-        $this->assertSame('staff', session('swc_role'));
+        $this->assertSame('scada_operator', session('swc_role'));
     }
 
     /**
@@ -124,7 +124,7 @@ class AuthenticationIntegrationTest extends TestCase
             'agree_terms'           => '1',
         ]);
 
-        $response->assertRedirect(url('/report-meter'));
+        $response->assertRedirect(url('/user'));
 
         $createdUser = User::where('email', $newEmail)->first();
         $this->assertNotNull($createdUser);
@@ -182,13 +182,13 @@ class AuthenticationIntegrationTest extends TestCase
     }
 
     /**
-     * 8. Pengguna tanpa autentikasi tidak dapat membuka dashboard admin (Redirect 302 ke admin-login)
+     * 8. Pengguna tanpa autentikasi tidak dapat membuka dashboard admin (Redirect 302 ke login)
      */
     public function test_unauthenticated_user_cannot_access_admin_dashboard(): void
     {
         $response = $this->get(route('admin-dashboard'));
 
-        $response->assertRedirect(url('/admin-login'));
+        $response->assertRedirect(url('/login'));
         $response->assertSessionHas('error');
     }
 
@@ -236,13 +236,13 @@ class AuthenticationIntegrationTest extends TestCase
     }
 
     /**
-     * 12. Rute /portal-petugas tidak lagi mengizinkan direct bypass tanpa login
+     * 12. Rute /portal-petugas tidak lagi mengizinkan direct bypass tanpa login (Redirect ke /login)
      */
     public function test_enter_admin_direct_redirects_unauthenticated_user_to_admin_login(): void
     {
         $response = $this->get(route('portal-petugas'));
 
-        $response->assertRedirect(url('/admin-login'));
+        $response->assertRedirect(url('/login'));
         $response->assertSessionHas('info');
         $this->assertFalse(Auth::check());
     }
@@ -304,5 +304,75 @@ class AuthenticationIntegrationTest extends TestCase
         // Data tidak bercampur dengan admin/staff
         $this->assertNotSame($this->adminUser->email, $userData['email']);
         $this->assertSame('customer', $userData['role']);
+    }
+
+    /**
+     * 17. Satu Halaman Login (/login): Semua role masuk lewat rute login terpadu dan dialihkan ke dashboard masing-masing
+     */
+    public function test_single_login_endpoint_redirects_each_role_correctly(): void
+    {
+        // A. Admin PDAM -> /admin-dashboard
+        $responseAdmin = $this->post(route('login.post'), [
+            'identifier' => 'admin@tirtasago.id',
+            'password'   => 'Admin123!',
+        ]);
+        $responseAdmin->assertRedirect(url('/admin-dashboard'));
+        $this->assertSame('admin', session('swc_role'));
+        Auth::logout();
+
+        // B. SCADA Operator (Ahmad Pratama) -> /water-monitoring
+        $responseScada = $this->post(route('login.post'), [
+            'identifier' => 'ahmad.pratama@tirtasago.id',
+            'password'   => 'Petugas123!',
+        ]);
+        $responseScada->assertRedirect(url('/water-monitoring'));
+        $this->assertSame('scada_operator', session('swc_role'));
+        Auth::logout();
+
+        // C. Petugas Lapangan (Dedi Kurniawan) -> /admin-dashboard
+        $fieldOfficer = User::where('email', 'dedi.teknisi@tirtasago.id')->first();
+        if ($fieldOfficer) {
+            $responseField = $this->post(route('login.post'), [
+                'identifier' => 'dedi.teknisi@tirtasago.id',
+                'password'   => 'Petugas123!',
+            ]);
+            $responseField->assertRedirect(url('/admin-dashboard'));
+            $this->assertSame('field_officer', session('swc_role'));
+            Auth::logout();
+        }
+
+        // D. Pelanggan (Budi Santoso) -> /user
+        $responseCust = $this->post(route('login.post'), [
+            'identifier' => 'budi.santoso@warga.payakumbuh.go.id',
+            'password'   => 'Pelanggan123!',
+        ]);
+        $responseCust->assertRedirect(url('/user'));
+        $this->assertSame('customer', session('swc_role'));
+        Auth::logout();
+    }
+
+    /**
+     * 18. URL legacy admin login (/admin-login, /petugas/login, /admin/login) otomatis dialihkan ke /login
+     */
+    public function test_legacy_admin_login_urls_redirect_to_unified_login_page(): void
+    {
+        $this->get('/admin-login')->assertRedirect(url('/login'));
+        $this->get('/petugas/login')->assertRedirect(url('/login'));
+        $this->get('/admin/login')->assertRedirect(url('/login'));
+    }
+
+    /**
+     * 19. Akun tidak dikenal atau password salah tetap berada di halaman login dengan pesan error
+     */
+    public function test_unknown_user_or_wrong_password_remains_on_login_with_error(): void
+    {
+        $response = $this->from(url('/login'))->post(route('login.post'), [
+            'identifier' => 'akun.palsu@tirtasago.id',
+            'password'   => 'Salah123!',
+        ]);
+
+        $response->assertRedirect(url('/login'));
+        $response->assertSessionHas('error');
+        $this->assertFalse(Auth::check());
     }
 }

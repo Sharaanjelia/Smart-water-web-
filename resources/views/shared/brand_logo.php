@@ -3,6 +3,7 @@
  * Komponen BrandLogo - Smart Water
  * Mendukung ukuran 'sm', 'md', 'lg' dan subtitle opsional
  */
+if (!function_exists('renderBrandLogo')) {
 function renderBrandLogo(string $size = 'md', bool $showSubtitle = false, string $href = '', string $extraClass = ''): void
 {
     if ($href === '' || $href === 'index.php' || str_contains($href, 'php-beranda')) {
@@ -76,4 +77,5 @@ function renderBrandLogo(string $size = 'md', bool $showSubtitle = false, string
       </div>
     </a>
     <?php
+}
 }

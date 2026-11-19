@@ -39,10 +39,11 @@ Route::prefix('v1')->group(function () {
             }
 
             return response()->json([
-                'ok'      => true,
-                'message' => 'Login berhasil.',
-                'user'    => $userData,
-                'role'    => $userData['role'],
+                'ok'       => true,
+                'message'  => 'Login berhasil.',
+                'user'     => $userData,
+                'role'     => $userData['role'],
+                'redirect' => AuthService::getRedirectForUser(Auth::user()),
             ]);
         });
 
@@ -83,9 +84,9 @@ Route::prefix('v1')->group(function () {
     Route::post('/complaints/simulate-progress', [ComplaintController::class, 'simulateProgress']);
 
     // Tindak Lanjut Pengaduan Khusus Petugas TRC / Admin SCADA
-    Route::middleware('role:admin,staff')->group(function () {
+    Route::post('/complaints/{id}/assign', [ComplaintController::class, 'assign'])->middleware('role:admin');
+    Route::middleware('role:admin,field_officer')->group(function () {
         Route::post('/complaints/{id}/status', [ComplaintController::class, 'updateStatus']);
-        Route::post('/complaints/{id}/assign', [ComplaintController::class, 'assign']);
         Route::post('/complaints/{id}/response', [ComplaintController::class, 'respond']);
         Route::post('/complaints/{id}/resolve', [ComplaintController::class, 'resolve']);
     });
@@ -103,7 +104,7 @@ Route::prefix('v1')->group(function () {
     // --- 5. PEMBACAAN METER AI-OCR ---
     Route::get('/meter-reports', [MeterReadingController::class, 'apiList']);
     Route::post('/meter-reports', [MeterReadingController::class, 'apiStore']);
-    Route::post('/meter-reports/validate', [MeterReadingController::class, 'apiValidate'])->middleware('role:admin,staff');
+    Route::post('/meter-reports/validate', [MeterReadingController::class, 'apiValidate'])->middleware('role:admin,scada_operator');
 
     // --- 6. NOTIFIKASI ---
     Route::get('/notifications', function () {
@@ -176,7 +177,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/payments', [PaymentController::class, 'index']);
         Route::post('/payments', [PaymentController::class, 'store']);
         Route::get('/payments/{payment}', [PaymentController::class, 'show']);
-        Route::post('/payments/{payment}/verify', [PaymentController::class, 'verify']);
+        Route::post('/payments/{payment}/verify', [PaymentController::class, 'verify'])->middleware('role:admin');
     });
 
 });

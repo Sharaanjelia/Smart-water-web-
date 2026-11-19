@@ -1,6 +1,8 @@
 <?php
 $footerHandler = e($SHARED_FOOTER_HANDLER ?? '');
 $footerVariant = $SHARED_FOOTER_VARIANT ?? 'default';
+$footerUser = $_SESSION['swc_user'] ?? (function_exists('session') ? session('swc_user') : null);
+$footerIsGuest = empty($footerUser) && !\Illuminate\Support\Facades\Auth::check();
 ?>
 <footer class="bg-slate-900 text-slate-300 border-t border-slate-800">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -30,11 +32,11 @@ $footerVariant = $SHARED_FOOTER_VARIANT ?? 'default';
         <h4 class="text-xs font-semibold text-white uppercase tracking-wider">Navigasi Komunitas</h4>
         <ul class="space-y-2 text-xs">
           <li><a href="<?= url('/beranda') ?>" class="hover:text-cyan-300 transition-colors">Beranda Utama</a></li>
-          <li><a href="<?= url('/meter-reading') ?>" class="hover:text-cyan-300 transition-colors">Lapor Stand Meter Mandiri</a></li>
-          <li><a href="<?= url('/pusat-layanan') ?>" class="hover:text-cyan-300 transition-colors">Pusat Layanan &amp; Pengaduan</a></li>
-          <li><a href="<?= url('/akademi-air') ?>" class="hover:text-cyan-300 transition-colors">Smart Water Academy &amp; Kuis</a></li>
-          <li><a href="<?= url('/tantangan') ?>" class="hover:text-cyan-300 transition-colors">Tantangan Hemat Air 7 Hari</a></li>
-          <li><a href="<?= url('/tentang') ?>" class="hover:text-cyan-300 transition-colors">Tentang Ekosistem Smart Water</a></li>
+          <li><a href="<?= $footerIsGuest ? url('/login?redirect=' . urlencode(url('/report-meter'))) : url('/report-meter') ?>" class="hover:text-cyan-300 transition-colors">Lapor Stand Meter Mandiri</a></li>
+          <li><a href="<?= $footerIsGuest ? url('/login?redirect=' . urlencode(url('/pusat-layanan'))) : url('/pusat-layanan') ?>" class="hover:text-cyan-300 transition-colors">Pusat Layanan &amp; Pengaduan</a></li>
+          <li><a href="<?= $footerIsGuest ? url('/login?redirect=' . urlencode(url('/akademi-air'))) : url('/akademi-air') ?>" class="hover:text-cyan-300 transition-colors">Smart Water Academy &amp; Kuis</a></li>
+          <li><a href="<?= $footerIsGuest ? url('/login?redirect=' . urlencode(url('/tantangan'))) : url('/tantangan') ?>" class="hover:text-cyan-300 transition-colors">Tantangan Hemat Air 7 Hari</a></li>
+          <li><a href="<?= $footerIsGuest ? url('/login?redirect=' . urlencode(url('/tentang'))) : url('/tentang') ?>" class="hover:text-cyan-300 transition-colors">Tentang Ekosistem Smart Water</a></li>
         </ul>
       </div>
 

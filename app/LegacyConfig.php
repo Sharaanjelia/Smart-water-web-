@@ -2205,8 +2205,14 @@ switch ($SWC_PAGE_MODULE) {
             exit;
         }
 
+        try {
+            $hasUsersTable = class_exists(\Illuminate\Support\Facades\Schema::class) && \Illuminate\Support\Facades\Schema::hasTable('users');
+        } catch (\Throwable $e) {
+            $hasUsersTable = false;
+        }
+
         $authDbUser = class_exists(\Illuminate\Support\Facades\Auth::class) ? \Illuminate\Support\Facades\Auth::user() : null;
-        if (!$authDbUser && function_exists('session') && session()->has('swc_user.id')) {
+        if ($hasUsersTable && !$authDbUser && function_exists('session') && session()->has('swc_user.id')) {
             $sessionUid = session('swc_user.id');
             if ($sessionUid && class_exists(\App\Models\User::class)) {
                 $authDbUser = \App\Models\User::find($sessionUid);
@@ -2216,10 +2222,28 @@ switch ($SWC_PAGE_MODULE) {
             }
         }
 
+        if ($hasUsersTable && !$authDbUser && !empty($_SESSION['swc_user'])) {
+            $sessionUid = $_SESSION['swc_user']['id'] ?? ($_SESSION['swc_user']['user_id'] ?? null);
+            if (!$sessionUid && !empty($_SESSION['swc_user']['email']) && class_exists(\App\Models\User::class)) {
+                $authDbUser = \App\Models\User::where('email', $_SESSION['swc_user']['email'])->first();
+            } elseif ($sessionUid && class_exists(\App\Models\User::class)) {
+                $authDbUser = \App\Models\User::find($sessionUid);
+            }
+            if ($authDbUser && class_exists(\Illuminate\Support\Facades\Auth::class)) {
+                \Illuminate\Support\Facades\Auth::setUser($authDbUser);
+                if (function_exists('session')) {
+                    session(['swc_user' => \App\Services\AuthService::formatUserData($authDbUser)]);
+                    session(['swc_role' => $authDbUser->roles->first()?->name ?? 'customer']);
+                }
+            }
+        }
+
         if ($authDbUser && class_exists(\App\Services\AuthService::class)) {
             $currentUser = \App\Services\AuthService::formatUserData($authDbUser);
             $_SESSION['swc_user'] = $currentUser;
             $_SESSION['swc_role'] = $currentUser['role'];
+        } elseif (!empty($_SESSION['swc_user']) && is_array($_SESSION['swc_user'])) {
+            $currentUser = $_SESSION['swc_user'];
         } else {
             $currentUser = null;
             $_SESSION['swc_user'] = null;
@@ -2230,28 +2254,30 @@ switch ($SWC_PAGE_MODULE) {
         }
         $allComplaints = $_SESSION['swc_complaints'];
         
-        function calculateGolongan2ABill(float $volume): array
-        {
-            $v = max(0.0, $volume);
-            $b1M3 = min($v, 10.0);
-            $b1Cost = (int) round($b1M3 * 5000);
-        
-            $b2M3 = max(0.0, min($v - 10.0, 10.0));
-            $b2Cost = (int) round($b2M3 * 6200);
-        
-            $b3M3 = max(0.0, $v - 20.0);
-            $b3Cost = (int) round($b3M3 * 7800);
-        
-            return [
-                'b1M3'     => round($b1M3, 1),
-                'b1Cost'   => $b1Cost,
-                'b2M3'     => round($b2M3, 1),
-                'b2Cost'   => $b2Cost,
-                'b3M3'     => round($b3M3, 1),
-                'b3Cost'   => $b3Cost,
-                'adminFee' => 0,
-                'total'    => $b1Cost + $b2Cost + $b3Cost,
-            ];
+        if (!function_exists('calculateGolongan2ABill')) {
+            function calculateGolongan2ABill(float $volume): array
+            {
+                $v = max(0.0, $volume);
+                $b1M3 = min($v, 10.0);
+                $b1Cost = (int) round($b1M3 * 5000);
+            
+                $b2M3 = max(0.0, min($v - 10.0, 10.0));
+                $b2Cost = (int) round($b2M3 * 6200);
+            
+                $b3M3 = max(0.0, $v - 20.0);
+                $b3Cost = (int) round($b3M3 * 7800);
+            
+                return [
+                    'b1M3'     => round($b1M3, 1),
+                    'b1Cost'   => $b1Cost,
+                    'b2M3'     => round($b2M3, 1),
+                    'b2Cost'   => $b2Cost,
+                    'b3M3'     => round($b3M3, 1),
+                    'b3Cost'   => $b3Cost,
+                    'adminFee' => 0,
+                    'total'    => $b1Cost + $b2Cost + $b3Cost,
+                ];
+            }
         }
         
         if (!function_exists('e')) {
@@ -2261,9 +2287,11 @@ switch ($SWC_PAGE_MODULE) {
             }
         }
         
-        function formatRupiah(int $val): string
-        {
-            return 'Rp ' . number_format($val, 0, ',', '.');
+        if (!function_exists('formatRupiah')) {
+            function formatRupiah(int $val): string
+            {
+                return 'Rp ' . number_format($val, 0, ',', '.');
+            }
         }
         
         break;

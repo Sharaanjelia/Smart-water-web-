@@ -4,6 +4,8 @@
  * Terhubung ke Database MySQL (disposisi tiket, validasi meteran AI-OCR, pengumuman, audit trail).
  */
 
+require_once __DIR__ . '/_bootstrap.php';
+
 use App\Models\Complaint;
 use App\Models\ComplaintHistory;
 use App\Models\MeterReading;

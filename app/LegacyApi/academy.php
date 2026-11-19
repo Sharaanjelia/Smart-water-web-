@@ -4,6 +4,8 @@
  * Terhubung ke Database MySQL via AcademyController & Eloquent ORM.
  */
 
+require_once __DIR__ . '/_bootstrap.php';
+
 use App\Http\Controllers\AcademyController;
 
 if (!headers_sent()) {

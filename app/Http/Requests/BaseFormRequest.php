@@ -86,22 +86,17 @@ abstract class BaseFormRequest extends FormRequest
     }
 
     /**
-     * Check if the current user/actor has staff or admin privilege.
+     * Check if the current user/actor has staff or admin privilege for complaint operations.
+     * Hanya Admin dan Petugas Lapangan yang berhak menangani pengaduan.
      */
     protected function isStaffOrAdmin(): bool
     {
         $actor = $this->currentActor();
         if ($actor) {
-            if (method_exists($actor, 'isStaff') && $actor->isStaff()) {
-                return true;
-            }
-            if (method_exists($actor, 'hasRole') && $actor->hasRole(['admin', 'staff'])) {
-                return true;
-            }
+            return $actor->isAdmin() || $actor->isFieldOfficer();
         }
 
-        $sessionRole = session('swc_role') ?? ($_SESSION['swc_role'] ?? null);
-        return in_array($sessionRole, ['admin', 'staff'], true);
+        return false;
     }
 
     /**

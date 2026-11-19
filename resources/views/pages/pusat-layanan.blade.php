@@ -21,6 +21,7 @@ require_once $legacySharedPath . '/brand_logo.php';
  * Sesuai persis dengan ServiceCenterView.tsx baris 31-245
  */
 
+if (!function_exists('renderFacilityWaterTowerIllustration')) {
 function renderFacilityWaterTowerIllustration(): void
 {
     ?>
@@ -108,7 +109,9 @@ function renderFacilityWaterTowerIllustration(): void
     </div>
     <?php
 }
+}
 
+if (!function_exists('renderSearchTicketIllustration')) {
 function renderSearchTicketIllustration(): void
 {
     ?>
@@ -134,7 +137,9 @@ function renderSearchTicketIllustration(): void
     </div>
     <?php
 }
+}
 
+if (!function_exists('renderCustomerSupportIllustration')) {
 function renderCustomerSupportIllustration(): void
 {
     ?>
@@ -189,6 +194,7 @@ function renderCustomerSupportIllustration(): void
       </svg>
     </div>
     <?php
+}
 }
 
 
@@ -327,14 +333,16 @@ if (!$displayedTicket) {
 }
 $ticketCount = count($myTickets) > 0 ? count($myTickets) : 1;
 
-function getPillBadgeClassForCard(string $status): string
-{
-    return match ($status) {
-        'BARU'                   => 'bg-[#e0f2fe] text-[#0369a1]',
-        'DIPROSES'               => 'bg-[#fef3c7] text-[#b45309]',
-        'MENUNGGU TINDAK LANJUT' => 'bg-[#f3e8ff] text-[#7e22ce]',
-        default                  => 'bg-[#dcfce7] text-[#15803d]',
-    };
+if (!function_exists('getPillBadgeClassForCard')) {
+    function getPillBadgeClassForCard(string $status): string
+    {
+        return match ($status) {
+            'BARU'                   => 'bg-[#e0f2fe] text-[#0369a1]',
+            'DIPROSES'               => 'bg-[#fef3c7] text-[#b45309]',
+            'MENUNGGU TINDAK LANJUT' => 'bg-[#f3e8ff] text-[#7e22ce]',
+            default                  => 'bg-[#dcfce7] text-[#15803d]',
+        };
+    }
 }
 ?>
 <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">

@@ -122,6 +122,26 @@ class AuthService
     }
 
     /**
+     * Tentukan URL pengalihan (redirect) berdasarkan role akun pengguna di database.
+     */
+    public static function getRedirectForUser(?User $user): string
+    {
+        if (!$user) {
+            return url('/login');
+        }
+
+        $role = $user->primaryRoleName();
+
+        return match ($role) {
+            'admin'          => url('/admin-dashboard'),
+            'scada_operator' => url('/water-monitoring'),
+            'field_officer'  => url('/admin-dashboard'),
+            'staff'          => url('/admin-dashboard'),
+            default          => url('/user'),
+        };
+    }
+
+    /**
      * Bersihkan seluruh sesi login aplikasi (Laravel Auth & PHP Session).
      */
     public static function performLogout(): void

@@ -33,62 +33,74 @@ if ($isGuest) {
     $activeRole = 'customer';
 }
 
-// Konfigurasi Navigasi Berdasarkan 3 Peran: Guest (Publik), Customer (Warga), Admin (Petugas)
-if ($activeRole === 'admin') {
-    $headerLogoHref = url('/admin-dashboard');
-    $NAV_ITEMS = [
-        ['id' => 'admin-dashboard',      'label' => 'Dashboard Petugas'],
-        ['id' => 'water-monitoring',     'label' => 'SCADA Terpusat'],
-        ['id' => 'reservoir-detail',     'label' => 'Tandon Reservoir'],
-        ['id' => 'distribution-network', 'label' => 'Jaringan Pipa'],
-        ['id' => 'layanan',              'label' => 'Pengaduan Tiket'],
-    ];
-} elseif ($activeRole === 'customer') {
-    $headerLogoHref = url('/beranda');
-    $NAV_ITEMS = [
-        ['id' => 'beranda',         'label' => 'Beranda'],
-        ['id' => 'layanan',         'label' => 'Pusat Layanan'],
-        ['id' => 'ai-ocr',          'label' => 'AI OCR'],
-        ['id' => 'akademi',         'label' => 'Akademi Air'],
-        ['id' => 'tentang',         'label' => 'Tentang PDAM'],
-        ['id' => 'tantangan',       'label' => 'Tantangan Air'],
+// Konfigurasi Navigasi Publik / Pelanggan (Tetap konsisten untuk seluruh pengunjung halaman publik)
+$headerLogoHref = url('/beranda');
+$NAV_ITEMS = [
+    ['id' => 'beranda',         'label' => 'Beranda'],
+    ['id' => 'layanan',         'label' => 'Pusat Layanan'],
+    ['id' => 'ai-ocr',          'label' => 'AI OCR'],
+    ['id' => 'akademi',         'label' => 'Akademi Air'],
+    ['id' => 'tentang',         'label' => 'Tentang PDAM'],
+    ['id' => 'tantangan',       'label' => 'Tantangan Air'],
+];
+
+if ($isGuest) {
+    // Sesuai aturan akses: Guest hanya dapat mengakses Beranda.
+    // Ketika Guest menekan Pusat Layanan, AI OCR, Akademi Air, Tentang PDAM, atau Tantangan Air,
+    // diarahkan ke halaman login terlebih dahulu.
+    $navRoutes = [
+        'beranda'              => url('/beranda'),
+        'layanan'              => url('/login?redirect=' . urlencode(url('/pusat-layanan'))),
+        'pusat-layanan'        => url('/login?redirect=' . urlencode(url('/pusat-layanan'))),
+        'ai-ocr'               => url('/login?redirect=' . urlencode(url('/report-meter'))),
+        'report-meter'         => url('/login?redirect=' . urlencode(url('/report-meter'))),
+        'meter-reading'        => url('/login?redirect=' . urlencode(url('/report-meter'))),
+        'akademi'              => url('/login?redirect=' . urlencode(url('/akademi-air'))),
+        'akademi-air'          => url('/login?redirect=' . urlencode(url('/akademi-air'))),
+        'tentang'              => url('/login?redirect=' . urlencode(url('/tentang'))),
+        'tentang-pdam'         => url('/login?redirect=' . urlencode(url('/tentang'))),
+        'tantangan'            => url('/login?redirect=' . urlencode(url('/tantangan'))),
+        'tantangan-air'        => url('/login?redirect=' . urlencode(url('/tantangan'))),
+        'profil'               => url('/user'),
+        'profile'              => url('/user'),
+        'user'                 => url('/user'),
+        'data-pelanggan'       => url('/user?tab=info'),
+        'wallet'               => url('/login'),
+        'settings'             => url('/login'),
+        'admin'                => url('/admin-dashboard'),
+        'auth'                 => url('/login'),
     ];
 } else {
-    // Mode Tamu / Publik (Belum Login)
-    $headerLogoHref = url('/beranda');
-    $NAV_ITEMS = [
-        ['id' => 'beranda',         'label' => 'Beranda'],
-        ['id' => 'layanan',         'label' => 'Pusat Layanan'],
-        ['id' => 'ai-ocr',          'label' => 'AI OCR'],
-        ['id' => 'akademi',         'label' => 'Akademi Air'],
-        ['id' => 'tentang',         'label' => 'Tentang PDAM'],
-        ['id' => 'tantangan',       'label' => 'Tantangan Air'],
+    $navRoutes = [
+        'beranda'              => url('/beranda'),
+        'layanan'              => url('/pusat-layanan'),
+        'pusat-layanan'        => url('/pusat-layanan'),
+        'ai-ocr'               => url('/report-meter'),
+        'report-meter'         => url('/report-meter'),
+        'meter-reading'        => url('/report-meter'),
+        'bill'                 => url('/bill'),
+        'water-condition'      => url('/water-condition'),
+        'notification'         => url('/notification'),
+        'admin-dashboard'      => url('/admin-dashboard'),
+        'water-monitoring'     => url('/water-monitoring'),
+        'reservoir-detail'     => url('/reservoir-detail'),
+        'distribution-network' => url('/distribution-network'),
+        'akademi'              => url('/akademi-air'),
+        'akademi-air'          => url('/akademi-air'),
+        'tantangan'            => url('/tantangan'),
+        'tantangan-air'        => url('/tantangan'),
+        'tentang'              => url('/tentang'),
+        'tentang-pdam'         => url('/tentang'),
+        'profil'               => url('/user'),
+        'profile'              => url('/user'),
+        'user'                 => url('/user'),
+        'data-pelanggan'       => url('/user?tab=info'),
+        'wallet'               => url('/wallet'),
+        'settings'             => url('/user?tab=privasi'),
+        'admin'                => url('/admin-dashboard'),
+        'auth'                 => url('/login'),
     ];
 }
-
-$navRoutes = [
-    'beranda'              => url('/beranda'),
-    'layanan'              => url('/pusat-layanan'),
-    'ai-ocr'               => url('/report-meter'),
-    'report-meter'         => url('/report-meter'),
-    'meter-reading'        => url('/report-meter'),
-    'bill'                 => url('/bill'),
-    'water-condition'      => url('/water-condition'),
-    'notification'         => url('/notification'),
-    'admin-dashboard'      => url('/admin-dashboard'),
-    'water-monitoring'     => url('/water-monitoring'),
-    'reservoir-detail'     => url('/reservoir-detail'),
-    'distribution-network' => url('/distribution-network'),
-    'akademi'              => url('/akademi-air'),
-    'tantangan'            => url('/tantangan'),
-    'tentang'              => url('/tentang'),
-    'profil'               => url('/profile'),
-    'profile'              => url('/profile'),
-    'wallet'               => url('/wallet'),
-    'settings'             => url('/settings'),
-    'admin'                => url('/admin-dashboard'),
-    'auth'                 => url('/login'),
-];
 ?>
 <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4 sm:gap-6">
@@ -96,11 +108,6 @@ $navRoutes = [
     <!-- Brand Logo -->
     <div class="flex items-center gap-3">
       <?php renderBrandLogo('md', false, $headerLogoHref); ?>
-      <?php if ($activeRole === 'admin'): ?>
-        <span class="hidden xl:inline-flex items-center px-2 py-0.5 rounded-md bg-slate-900 border border-slate-700 text-cyan-400 text-[10px] font-mono font-bold tracking-wider">
-          COMMAND CENTER
-        </span>
-      <?php endif; ?>
     </div>
 
     <!-- Menu Navigasi Utama -->
@@ -165,78 +172,70 @@ $navRoutes = [
         ?>
 
         <!-- Dropdown Menu Profil Warga Terpadu -->
-        <div class="relative" id="userProfileDropdownWrap">
-          <button
-            type="button"
-            id="userProfileDropdownBtn"
-            onclick="toggleUserDropdown(event)"
-            class="flex items-center gap-2 py-1 pl-1 pr-2.5 rounded-full border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 transition-all cursor-pointer shadow-2xs group"
-            aria-expanded="false"
-            aria-label="Menu Pengguna"
-          >
-            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-600 to-sky-400 text-white shadow-xs flex items-center justify-center text-xs font-bold shrink-0">
-              <?= e($currentInitial) ?>
-            </div>
-            <div class="hidden lg:flex flex-col text-left">
-              <span class="text-xs font-bold text-slate-800 leading-tight truncate max-w-[125px]">
-                <?= e($currentDisplayName) ?>
-              </span>
-              <span class="text-[10px] font-mono text-slate-400 leading-none">
-                Pelanggan PDAM
-              </span>
-            </div>
-            <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 transition-transform duration-200" id="userDropdownChevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="m6 9 6 6 6-6"/>
-            </svg>
-          </button>
+        <div class="relative flex items-center" id="userProfileDropdownWrap">
+          <div class="flex items-center rounded-full border border-slate-200 hover:border-cyan-400 bg-white hover:bg-cyan-50/30 transition-all shadow-2xs">
+            <!-- Klik Profil (Avatar & Nama) Langsung Membuka Halaman Profil Pelanggan -->
+            <a
+              href="<?= url('/user') ?>"
+              class="flex items-center gap-2 py-1 pl-1 pr-2 rounded-l-full cursor-pointer group"
+              title="Buka Profil & Dashboard Pelanggan"
+            >
+              <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-600 to-sky-400 text-white shadow-xs flex items-center justify-center text-xs font-bold shrink-0 group-hover:scale-105 transition-transform">
+                <?= e($currentInitial) ?>
+              </div>
+              <div class="hidden lg:flex flex-col text-left">
+                <span class="text-xs font-bold text-slate-800 leading-tight truncate max-w-[125px] group-hover:text-cyan-700 transition-colors">
+                  <?= e($currentDisplayName) ?>
+                </span>
+                <span class="text-[10px] font-mono text-slate-400 leading-none">
+                  Pelanggan PDAM
+                </span>
+              </div>
+            </a>
 
-          <!-- Popover Menu Dropdown Pelanggan -->
+            <!-- Tombol Panah Dropdown Khusus Logout -->
+            <button
+              type="button"
+              id="userProfileDropdownBtn"
+              onclick="toggleUserDropdown(event)"
+              class="h-[38px] px-2 border-l border-slate-100 rounded-r-full hover:bg-slate-100/80 transition-colors cursor-pointer text-slate-400 hover:text-slate-700 flex items-center justify-center"
+              aria-expanded="false"
+              aria-label="Menu Opsi Akun"
+              title="Menu Akun & Logout"
+            >
+              <svg class="w-3.5 h-3.5 transition-transform duration-200" id="userDropdownChevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m6 9 6 6 6-6"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Popover Menu Dropdown Pelanggan (Hanya Keluar / Logout) -->
           <div
             id="userProfileDropdownMenu"
-            class="hidden absolute right-0 mt-2 w-72 rounded-2xl bg-white border border-slate-200 shadow-xl z-50 overflow-hidden animate-fade-zoom"
+            class="hidden absolute right-0 top-full mt-2 w-64 rounded-2xl bg-white border border-slate-200 shadow-xl z-50 overflow-hidden animate-fade-zoom"
           >
-            <div class="p-4 bg-slate-50/80 border-b border-slate-100">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 to-sky-400 text-white shadow-xs flex items-center justify-center text-sm font-bold shrink-0">
+            <div class="p-3.5 bg-slate-50/80 border-b border-slate-100">
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-600 to-sky-400 text-white shadow-xs flex items-center justify-center text-sm font-bold shrink-0">
                   <?= e($currentInitial) ?>
                 </div>
                 <div class="min-w-0 flex-1">
                   <p class="text-xs font-bold text-slate-900 truncate"><?= e($currentDisplayName) ?></p>
                   <p class="text-[11px] text-slate-500 font-mono truncate"><?= e($headerUser['email'] ?? 'budi.santoso@warga.payakumbuh.go.id') ?></p>
-                  <div class="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-full bg-cyan-50 text-cyan-800 border border-cyan-200 text-[10px] font-semibold">
+                  <div class="inline-flex items-center gap-1 mt-1 px-1.5 py-0.5 rounded-full bg-cyan-50 text-cyan-800 border border-cyan-200 text-[10px] font-semibold">
                     <?= 'Meter: ' . e($headerUser['meterNumber'] ?? '04-01000') ?>
                   </div>
                 </div>
               </div>
-
-              <div class="mt-3 pt-2.5 border-t border-slate-200/60 flex items-center justify-between text-xs">
-                <span class="text-slate-500 font-medium">Saldo Dompet:</span>
-                <span id="headerWalletBalance" data-swc="wallet-balance" class="font-black text-emerald-600 font-mono">Rp 2.500.000</span>
-              </div>
             </div>
 
-            <div class="p-2 space-y-0.5 text-xs text-slate-700">
-              <a href="<?= url('/profile') ?>" class="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-slate-100 transition-colors">
-                <svg class="w-4 h-4 text-cyan-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                <span class="font-medium">Profil &amp; Data Pelanggan</span>
-              </a>
-              <a href="<?= url('/wallet') ?>" class="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-slate-100 transition-colors">
-                <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
-                <span class="font-medium">Dompet Saldo &amp; Restitusi</span>
-              </a>
-              <a href="<?= url('/settings') ?>" class="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-slate-100 transition-colors">
-                <svg class="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-                <span class="font-medium">Pengaturan Notifikasi &amp; PIN</span>
-              </a>
-            </div>
-
-            <!-- Tombol Logout Warga -->
-            <div class="p-2 border-t border-slate-100">
+            <!-- Hanya Tombol Logout Warga -->
+            <div class="p-1.5">
               <a
                 href="<?= url('/logout') ?>"
-                class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-rose-600 hover:bg-rose-50 font-bold text-xs transition-colors"
+                class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-rose-600 hover:bg-rose-50 font-bold text-xs transition-colors"
               >
-                <svg class="w-4 h-4 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+                <svg class="w-4 h-4 text-rose-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
                 <span>Keluar dari Akun (Logout)</span>
               </a>
             </div>
@@ -248,11 +247,17 @@ $navRoutes = [
         <!-- AKSI MODE ADMIN / PETUGAS (SETELAH LOGIN)      -->
         <!-- ============================================== -->
         
-        <!-- Live Telemetry Badge -->
-        <div class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-700 text-cyan-400 text-[11px] font-mono font-semibold">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>SCADA NORMAL &middot; 3.2 BAR</span>
-        </div>
+        <!-- Tombol Akses Dashboard Admin (Sidebar) -->
+        <a
+          href="<?= url('/admin-dashboard') ?>"
+          class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 border border-slate-700 transition-all shadow-xs cursor-pointer"
+          title="Buka Panel Dashboard Admin / Petugas (Sidebar)"
+        >
+          <svg class="w-3.5 h-3.5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>
+          </svg>
+          <span>Panel Admin &rarr;</span>
+        </a>
 
         <?php
           $currentDisplayName = $headerUser['name'] ?? $headerUser['fullName'] ?? 'Ahmad Pratama';
@@ -377,21 +382,11 @@ $navRoutes = [
         </a>
       <?php elseif ($activeRole === 'customer'): ?>
         <a
-          href="<?= url('/profile') ?>"
-          class="w-full text-left px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
+          href="<?= url('/user') ?>"
+          class="w-full text-left px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
         >
           <svg class="w-4 h-4 text-cyan-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          <span>Profil &amp; Data Pelanggan</span>
-        </a>
-        <a
-          href="<?= url('/wallet') ?>"
-          class="w-full text-left px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-slate-50 flex items-center justify-between cursor-pointer"
-        >
-          <span class="flex items-center gap-2">
-            <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
-            <span>Dompet Saldo</span>
-          </span>
-          <span class="text-xs font-bold text-emerald-600 font-mono">Rp 2.500.000</span>
+          <span>Profil &amp; Dashboard Pelanggan</span>
         </a>
         <a
           href="<?= url('/logout') ?>"

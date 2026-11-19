@@ -11,8 +11,8 @@ class VerifyPaymentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // Only Admin or Staff can verify/reject payments
-        return $this->user() && ($this->user()->isAdmin() || $this->user()->isStaff());
+        // Only Admin can verify/reject payments
+        return $this->user() && $this->user()->isAdmin();
     }
 
     /**

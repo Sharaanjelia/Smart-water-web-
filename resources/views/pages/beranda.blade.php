@@ -11,6 +11,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
 
 require_once $legacySharedPath . '/brand_logo.php';
 $activeUser = $_SESSION['swc_user'] ?? (function_exists('session') ? session('swc_user') : null);
+$isGuest = empty($activeUser) && !\Illuminate\Support\Facades\Auth::check();
 ?>
 <!doctype html>
 <html lang="id">
@@ -56,7 +57,7 @@ $activeUser = $_SESSION['swc_user'] ?? (function_exists('session') ? session('sw
           <!-- ======================================================== -->
           <section
             id="hero-section"
-            class="group relative overflow-hidden min-h-[580px] flex items-center justify-center pt-20 pb-24 border-b border-slate-900/30"
+            class="group relative overflow-hidden min-h-[540px] flex items-center justify-center pt-16 sm:pt-20 pb-10 sm:pb-12 border-b border-slate-900/30"
           >
             <!-- Background Images with Crossfade & Subtle Zoom Animation -->
             <div class="absolute inset-0 z-0 overflow-hidden bg-slate-950">
@@ -95,66 +96,39 @@ $activeUser = $_SESSION['swc_user'] ?? (function_exists('session') ? session('sw
                 Temukan informasi layanan air, pelajari cara menggunakan air dengan bijak, dan ikuti aksi nyata untuk membantu menjaga sumber daya air Kota Payakumbuh.
               </p>
 
-              <!-- 3 CTAs: Centered -->
+              <!-- 3 CTAs: Centered (Teks Saja) -->
               <div class="flex flex-wrap items-center justify-center gap-3.5 pt-2">
                 <a
-                  href="<?= url('/pusat-layanan') ?>"
-                  class="px-6 py-3 rounded-xl text-xs font-bold text-slate-950 bg-cyan-400 hover:bg-cyan-300 transition-all shadow-lg shadow-cyan-400/25 hover:shadow-cyan-400/40 hover:scale-[1.02] flex items-center gap-2 cursor-pointer"
+                  href="<?= $isGuest ? url('/login?redirect=' . urlencode(url('/pusat-layanan'))) : url('/pusat-layanan') ?>"
+                  class="px-6 py-3 rounded-xl text-xs font-bold text-slate-950 bg-cyan-400 hover:bg-cyan-300 transition-all shadow-lg shadow-cyan-400/25 hover:shadow-cyan-400/40 hover:scale-[1.02] flex items-center justify-center cursor-pointer"
                 >
                   <span>Jelajahi Layanan</span>
-                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 12h14"/>
-                    <path d="m12 5 7 7-7 7"/>
-                  </svg>
                 </a>
 
                 <a
-                  href="<?= url('/akademi-air') ?>"
-                  class="px-6 py-3 rounded-xl text-xs font-semibold text-white bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 transition-all hover:scale-[1.02] flex items-center gap-2 shadow-sm cursor-pointer"
+                  href="<?= $isGuest ? url('/login?redirect=' . urlencode(url('/akademi-air'))) : url('/akademi-air') ?>"
+                  class="px-6 py-3 rounded-xl text-xs font-semibold text-white bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 transition-all hover:scale-[1.02] flex items-center justify-center shadow-sm cursor-pointer"
                 >
-                  <svg class="w-4 h-4 text-cyan-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/>
-                    <path d="M22 10v6"/>
-                    <path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>
-                  </svg>
                   <span>Mulai Belajar</span>
                 </a>
 
                 <a
-                  href="<?= url('/tantangan') ?>"
-                  class="px-6 py-3 rounded-xl text-xs font-semibold text-white bg-slate-900/60 hover:bg-slate-900/80 backdrop-blur-md border border-white/20 transition-all hover:scale-[1.02] flex items-center gap-2 shadow-sm cursor-pointer"
+                  href="<?= $isGuest ? url('/login?redirect=' . urlencode(url('/tantangan'))) : url('/tantangan') ?>"
+                  class="px-6 py-3 rounded-xl text-xs font-semibold text-white bg-slate-900/60 hover:bg-slate-900/80 backdrop-blur-md border border-white/20 transition-all hover:scale-[1.02] flex items-center justify-center shadow-sm cursor-pointer"
                 >
-                  <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
-                  </svg>
                   <span>Ikuti Tantangan</span>
                 </a>
               </div>
 
-              <!-- 3 Feature Highlights: Centered with glassmorphism -->
-              <div class="pt-8 border-t border-white/20 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-slate-100">
-                <div class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-slate-950/40 backdrop-blur-md border border-white/15 shadow-sm">
-                  <svg class="w-4 h-4 text-cyan-300 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
-                    <path d="m9 12 2 2 4-4"/>
-                  </svg>
+              <!-- 3 Feature Highlights: Centered with glassmorphism (Tanpa Garis & Ikon Dihapus) -->
+              <div class="pt-5 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-slate-100">
+                <div class="flex items-center justify-center px-4 py-2.5 rounded-xl bg-slate-950/40 backdrop-blur-md border border-white/15 shadow-sm">
                   <span class="font-medium text-white">Sumber Air Gunung Sago &amp; Batang Agam</span>
                 </div>
-                <div class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-slate-950/40 backdrop-blur-md border border-white/15 shadow-sm">
-                  <svg class="w-4 h-4 text-emerald-300 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path d="m9 12 2 2 4-4"/>
-                  </svg>
+                <div class="flex items-center justify-center px-4 py-2.5 rounded-xl bg-slate-950/40 backdrop-blur-md border border-white/15 shadow-sm">
                   <span class="font-medium text-white">Tiket Pelayanan Transparan</span>
                 </div>
-                <div class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-slate-950/40 backdrop-blur-md border border-white/15 shadow-sm">
-                  <svg class="w-4 h-4 text-amber-300 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>
-                    <path d="M20 3v4"/>
-                    <path d="M22 5h-4"/>
-                    <path d="M4 17v2"/>
-                    <path d="M5 18H3"/>
-                  </svg>
+                <div class="flex items-center justify-center px-4 py-2.5 rounded-xl bg-slate-950/40 backdrop-blur-md border border-white/15 shadow-sm">
                   <span class="font-medium text-white">Gamifikasi &amp; Reward XP Warga</span>
                 </div>
               </div>
@@ -163,25 +137,17 @@ $activeUser = $_SESSION['swc_user'] ?? (function_exists('session') ? session('sw
           </section>
 
           <!-- ======================================================== -->
-          <!-- 2. PROGRAM UNGGULAN — KARTU MISI 01-04                    -->
+          <!-- 2. KARTU MISI STRATEGIS 01-04                             -->
           <!-- ======================================================== -->
-          <section id="program-unggulan" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="relative overflow-hidden py-12 sm:py-16 px-6 sm:px-10 lg:px-12 rounded-[32px] bg-gradient-to-b from-[#f8fbff] via-[#fcfeff] to-[#f6f9fc] border border-slate-100 shadow-[0_4px_25px_-5px_rgba(0,0,0,0.02)]">
+          <section id="program-unggulan" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 sm:-mt-8">
+            <div class="relative overflow-hidden pt-7 pb-10 sm:pt-9 sm:pb-12 px-6 sm:px-10 lg:px-12 rounded-[32px] bg-gradient-to-b from-[#f8fbff] via-[#fcfeff] to-[#f6f9fc] border border-slate-100 shadow-[0_4px_25px_-5px_rgba(0,0,0,0.02)]">
               <!-- Subtle Ambient Pastel Glows -->
               <div class="absolute -top-24 -left-24 w-80 h-80 bg-sky-100/40 rounded-full blur-3xl pointer-events-none"></div>
               <div class="absolute -top-20 -right-20 w-80 h-80 bg-emerald-100/35 rounded-full blur-3xl pointer-events-none"></div>
               <div class="absolute -bottom-24 right-1/4 w-80 h-80 bg-purple-100/30 rounded-full blur-3xl pointer-events-none"></div>
 
-              <!-- Section Heading & Subtitle -->
-              <div class="text-center max-w-3xl mx-auto space-y-3 mb-10 sm:mb-14 relative z-10">
-                <div class="inline-flex items-center justify-center gap-3">
-                  <span class="h-[2px] w-8 sm:w-10 bg-[#1d82f5] rounded-full"></span>
-                  <span class="text-xs sm:text-sm font-bold tracking-[0.22em] text-[#1d82f5] uppercase font-sans">
-                    PROGRAM UNGGULAN
-                  </span>
-                  <span class="h-[2px] w-8 sm:w-10 bg-[#1d82f5] rounded-full"></span>
-                </div>
-
+              <!-- Section Heading & Subtitle (Tanpa Teks Program Unggulan & Lebih Dekat ke Atas) -->
+              <div class="text-center max-w-3xl mx-auto space-y-2 mb-7 sm:mb-9 relative z-10">
                 <h2 class="text-2xl sm:text-3xl lg:text-[34px] font-extrabold text-[#0c1e3c] tracking-tight">
                   Mewujudkan Kota Payakumbuh yang Lebih Cerdas
                 </h2>
@@ -516,35 +482,101 @@ $activeUser = $_SESSION['swc_user'] ?? (function_exists('session') ? session('sw
           </section>
 
           <!-- ======================================================== -->
-          <!-- 5. TARGET PENCAPAIAN KOMUNITAS                           -->
+          <!-- 5. FITUR UTAMA PLATFORM SMART WATER                      -->
           <!-- ======================================================== -->
-          <section id="target-komunitas" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-            <div class="text-center max-w-2xl mx-auto space-y-2">
-              <span class="text-xs font-bold uppercase tracking-wider text-cyan-800">
-                Tolok Ukur Keberhasilan
-              </span>
-              <h2 class="text-2xl font-bold text-slate-900">
-                Target Capaian Kolektif Komunitas Payakumbuh
+          <section id="fitur-platform" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+            <div class="text-center max-w-3xl mx-auto space-y-3">
+              <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                Semua Kebutuhan Air, Lebih Mudah dalam Satu Platform
               </h2>
-              <p class="text-xs text-slate-500">
-                Indikator dampak nyata yang kita tuju bersama demi masa depan air kota kita.
+              <p class="text-xs sm:text-sm text-slate-500 max-w-2xl mx-auto leading-relaxed">
+                Nikmati kemudahan mengakses layanan, memantau penggunaan air, dan meningkatkan pengetahuan tentang air.
               </p>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <?php foreach ($COMMUNITY_TARGETS as $target): ?>
-                <div class="bg-white rounded-2xl border border-slate-200 p-6 text-center space-y-2 shadow-xs">
-                  <span class="text-3xl font-extrabold font-mono <?= e($target['color_class']) ?> tabular-nums">
-                    <?= e($target['value']) ?>
-                  </span>
-                  <h4 class="text-xs font-bold text-slate-900">
-                    <?= e($target['title']) ?>
-                  </h4>
-                  <p class="text-[11px] text-slate-500">
-                    <?= e($target['desc']) ?>
+              <!-- Kartu 1: Pusat Layanan -->
+              <a
+                href="<?= $isGuest ? url('/login?redirect=' . urlencode(url('/pusat-layanan'))) : url('/pusat-layanan') ?>"
+                class="group bg-white rounded-2xl border border-slate-200/90 hover:border-cyan-400 p-6 text-center space-y-3.5 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col items-center justify-between"
+              >
+                <div class="w-12 h-12 rounded-2xl bg-cyan-50 text-cyan-700 group-hover:bg-cyan-600 group-hover:text-white transition-colors flex items-center justify-center shrink-0">
+                  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="20" height="14" x="2" y="7" rx="2" ry="2"/>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                  </svg>
+                </div>
+                <div class="space-y-1.5 flex-1 flex flex-col justify-center">
+                  <h3 class="text-sm font-bold text-slate-900 group-hover:text-cyan-800 transition-colors">
+                    Pusat Layanan
+                  </h3>
+                  <p class="text-[11px] text-slate-500 leading-relaxed">
+                    Kelola informasi pelanggan, laporan meter, tagihan, dan pengaduan.
                   </p>
                 </div>
-              <?php endforeach; ?>
+              </a>
+
+              <!-- Kartu 2: AI OCR Meter -->
+              <a
+                href="<?= $isGuest ? url('/login?redirect=' . urlencode(url('/report-meter'))) : url('/report-meter') ?>"
+                class="group bg-white rounded-2xl border border-slate-200/90 hover:border-cyan-400 p-6 text-center space-y-3.5 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col items-center justify-between"
+              >
+                <div class="w-12 h-12 rounded-2xl bg-sky-50 text-sky-700 group-hover:bg-sky-600 group-hover:text-white transition-colors flex items-center justify-center shrink-0">
+                  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                    <circle cx="12" cy="13" r="4"/>
+                  </svg>
+                </div>
+                <div class="space-y-1.5 flex-1 flex flex-col justify-center">
+                  <h3 class="text-sm font-bold text-slate-900 group-hover:text-sky-800 transition-colors">
+                    AI OCR Meter
+                  </h3>
+                  <p class="text-[11px] text-slate-500 leading-relaxed">
+                    Bantu membaca angka meter air melalui foto secara digital.
+                  </p>
+                </div>
+              </a>
+
+              <!-- Kartu 3: Akademi Air -->
+              <a
+                href="<?= $isGuest ? url('/login?redirect=' . urlencode(url('/akademi-air'))) : url('/akademi-air') ?>"
+                class="group bg-white rounded-2xl border border-slate-200/90 hover:border-cyan-400 p-6 text-center space-y-3.5 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col items-center justify-between"
+              >
+                <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-700 group-hover:bg-indigo-600 group-hover:text-white transition-colors flex items-center justify-center shrink-0">
+                  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                    <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                  </svg>
+                </div>
+                <div class="space-y-1.5 flex-1 flex flex-col justify-center">
+                  <h3 class="text-sm font-bold text-slate-900 group-hover:text-indigo-800 transition-colors">
+                    Akademi Air
+                  </h3>
+                  <p class="text-[11px] text-slate-500 leading-relaxed">
+                    Pelajari pengetahuan air melalui materi dan kuis edukatif.
+                  </p>
+                </div>
+              </a>
+
+              <!-- Kartu 4: Tantangan Air -->
+              <a
+                href="<?= $isGuest ? url('/login?redirect=' . urlencode(url('/tantangan'))) : url('/tantangan') ?>"
+                class="group bg-white rounded-2xl border border-slate-200/90 hover:border-cyan-400 p-6 text-center space-y-3.5 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col items-center justify-between"
+              >
+                <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-700 group-hover:bg-amber-600 group-hover:text-white transition-colors flex items-center justify-center shrink-0">
+                  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+                  </svg>
+                </div>
+                <div class="space-y-1.5 flex-1 flex flex-col justify-center">
+                  <h3 class="text-sm font-bold text-slate-900 group-hover:text-amber-800 transition-colors">
+                    Tantangan Air
+                  </h3>
+                  <p class="text-[11px] text-slate-500 leading-relaxed">
+                    Ikuti tantangan hemat air dan kumpulkan poin edukasi.
+                  </p>
+                </div>
+              </a>
             </div>
           </section>
 
@@ -571,13 +603,13 @@ $activeUser = $_SESSION['swc_user'] ?? (function_exists('session') ? session('sw
 
               <div class="flex flex-wrap items-center justify-center gap-4 pt-2 relative z-10">
                 <a
-                  href="<?= url('/report-meter') ?>"
+                  href="<?= $isGuest ? url('/login?redirect=' . urlencode(url('/report-meter'))) : url('/report-meter') ?>"
                   class="btn-shimmer relative px-8 py-3.5 rounded-2xl text-xs sm:text-sm font-extrabold text-slate-950 bg-cyan-400 hover:bg-cyan-300 shadow-xl shadow-cyan-400/25 transition-all hover:scale-105 cursor-pointer"
                 >
                   Coba Lapor Meter Mandiri AI Sekarang &rarr;
                 </a>
                 <a
-                  href="<?= url('/pusat-layanan') ?>"
+                  href="<?= $isGuest ? url('/login?redirect=' . urlencode(url('/pusat-layanan'))) : url('/pusat-layanan') ?>"
                   class="px-7 py-3.5 rounded-2xl text-xs sm:text-sm font-bold text-white bg-white/10 hover:bg-white/20 border border-white/20 transition-all hover:scale-105 cursor-pointer backdrop-blur-md"
                 >
                   Pusat Bantuan &amp; Pengaduan

@@ -11,7 +11,8 @@ class ValidateMeterReadingRequest extends BaseFormRequest
      */
     public function authorize(): bool
     {
-        return $this->isStaffOrAdmin();
+        $actor = $this->currentActor();
+        return $actor && ($actor->isAdmin() || $actor->isScadaOperator());
     }
 
     /**

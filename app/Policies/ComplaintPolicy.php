@@ -44,8 +44,7 @@ class ComplaintPolicy
     /**
      * Menentukan apakah pengguna berhak memperbarui status tiket pengaduan.
      * - Admin: memiliki wewenang penuh atas seluruh tiket kota.
-     * - Staf: hanya berhak jika tiket belum ditugaskan (klaim) atau ditugaskan kepada dirinya sendiri.
-     * - Staf A dilarang memperbarui tiket yang ditugaskan kepada Staf B.
+     * - Petugas Lapangan: hanya berhak jika tiket secara resmi ditugaskan kepada dirinya.
      */
     public function update(User $user, Complaint $complaint): bool
     {
@@ -53,10 +52,7 @@ class ComplaintPolicy
             return true;
         }
 
-        if ($user->isStaff()) {
-            if ($complaint->assigned_to === null) {
-                return true;
-            }
+        if ($user->isFieldOfficer()) {
             return (int)$complaint->assigned_to === (int)$user->id;
         }
 
@@ -65,30 +61,17 @@ class ComplaintPolicy
 
     /**
      * Menentukan apakah pengguna berhak menugaskan / mendisposisikan tiket pengaduan.
-     * - Admin: berhak menugaskan/menugaskan ulang tiket apa pun.
-     * - Staf: berhak jika tiket belum ditugaskan atau ditugaskan kepada dirinya sendiri.
-     * - Staf lain tidak berhak merebut/menugaskan ulang tiket milik rekannya.
+     * - Hanya Admin yang berwenang menugaskan / mendisposisikan tiket pengaduan.
      */
     public function assign(User $user, Complaint $complaint): bool
     {
-        if ($user->isAdmin()) {
-            return true;
-        }
-
-        if ($user->isStaff()) {
-            if ($complaint->assigned_to === null) {
-                return true;
-            }
-            return (int)$complaint->assigned_to === (int)$user->id;
-        }
-
-        return false;
+        return $user->isAdmin();
     }
 
     /**
      * Menentukan apakah pengguna berhak memberikan tanggapan / catatan penanganan pada tiket.
      * - Admin: wewenang supervisi penuh.
-     * - Staf: hanya teknisi yang ditugaskan (atau belum ditugaskan).
+     * - Petugas Lapangan: hanya petugas yang ditugaskan resmi pada tiket bersangkutan.
      */
     public function respond(User $user, Complaint $complaint): bool
     {
@@ -96,10 +79,7 @@ class ComplaintPolicy
             return true;
         }
 
-        if ($user->isStaff()) {
-            if ($complaint->assigned_to === null) {
-                return true;
-            }
+        if ($user->isFieldOfficer()) {
             return (int)$complaint->assigned_to === (int)$user->id;
         }
 
@@ -109,7 +89,7 @@ class ComplaintPolicy
     /**
      * Menentukan apakah pengguna berhak menyelesaikan atau menolak tiket pengaduan.
      * - Admin: wewenang supervisi penuh.
-     * - Staf: hanya teknisi yang ditugaskan resmi (atau belum ditugaskan).
+     * - Petugas Lapangan: hanya petugas yang ditugaskan resmi pada tiket bersangkutan.
      */
     public function resolve(User $user, Complaint $complaint): bool
     {
@@ -117,10 +97,7 @@ class ComplaintPolicy
             return true;
         }
 
-        if ($user->isStaff()) {
-            if ($complaint->assigned_to === null) {
-                return true;
-            }
+        if ($user->isFieldOfficer()) {
             return (int)$complaint->assigned_to === (int)$user->id;
         }
 

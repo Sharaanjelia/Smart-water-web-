@@ -23,12 +23,14 @@ Route::get('/pusat-layanan', fn () => $renderPage('pusat-layanan'));
 Route::get('/akademi', fn () => $renderPage('akademi-air'));
 Route::get('/akademi-air', fn () => $renderPage('akademi-air'));
 Route::get('/tantangan', fn () => $renderPage('tantangan'));
+Route::get('/tantangan-air', fn () => redirect(url('/tantangan')));
 Route::get('/tentang', fn () => $renderPage('tentang'));
-Route::get('/login', fn () => $renderPage('login-daftar'))->name('login');
+Route::get('/tentang-pdam', fn () => redirect(url('/tentang')));
+Route::get('/login', [SmartWaterPortalController::class, 'loginForm'])->name('login');
 Route::post('/login', [SmartWaterPortalController::class, 'handleLogin'])->name('login.post');
-Route::get('/login-daftar', fn () => $renderPage('login-daftar'));
-Route::get('/daftar', fn () => $renderPage('login-daftar'))->name('daftar');
-Route::get('/register', fn () => $renderPage('login-daftar'))->name('register');
+Route::get('/login-daftar', [SmartWaterPortalController::class, 'loginForm']);
+Route::get('/daftar', [SmartWaterPortalController::class, 'loginForm'])->name('daftar');
+Route::get('/register', [SmartWaterPortalController::class, 'loginForm'])->name('register');
 Route::post('/register', [SmartWaterPortalController::class, 'handleRegister'])->name('register.post');
 Route::post('/daftar', [SmartWaterPortalController::class, 'handleRegister']);
 Route::any('/logout', [SmartWaterPortalController::class, 'logout'])->name('logout');
@@ -39,9 +41,31 @@ Route::post('/admin-login', [SmartWaterPortalController::class, 'handleAdminLogi
 Route::get('/petugas/login', [SmartWaterPortalController::class, 'adminLoginForm']);
 Route::get('/admin/login', [SmartWaterPortalController::class, 'adminLoginForm']);
 Route::get('/chat-ai', fn () => $renderPage('chat-ai'));
-Route::get('/admin', fn () => $renderPage('admin'))->middleware('role:admin,staff');
-Route::get('/user', fn () => $renderPage('user'));
-Route::get('/profil', fn () => redirect($basePath('/profile')));
+Route::get('/admin', fn () => $renderPage('admin'))->middleware('role:admin,field_officer,scada_operator,staff');
+Route::get('/user', fn () => $renderPage('user'))->name('user');
+Route::get('/profil', function () {
+    $q = request()->getQueryString();
+    return redirect(url('/user' . ($q ? '?' . $q : '')));
+})->name('profil');
+Route::get('/customer-profile', function () {
+    $q = request()->getQueryString();
+    return redirect(url('/user' . ($q ? '?' . $q : '')));
+})->name('customer-profile');
+Route::get('/data-pelanggan', function () {
+    return redirect(url('/user?tab=info'));
+})->name('data-pelanggan');
+Route::get('/akun-saya', function () {
+    return redirect(url('/user'));
+})->name('akun-saya');
+Route::get('/profil-saya', function () {
+    return redirect(url('/user'));
+})->name('profil-saya');
+Route::get('/masuk-pelanggan', function () {
+    if (\Illuminate\Support\Facades\Auth::check() || !empty(session('swc_user')) || !empty($_SESSION['swc_user'])) {
+        return redirect(url('/user'));
+    }
+    return redirect(url('/login'));
+})->name('masuk-pelanggan');
 
 // ==========================================
 // RUTE SMART WATER PORTAL (Pelanggan & Admin)
@@ -65,7 +89,7 @@ Route::get('/payment-method', [SmartWaterPortalController::class, 'paymentMethod
 Route::get('/payment-instruction', [SmartWaterPortalController::class, 'paymentInstruction'])->name('payment-instruction');
 Route::get('/payment-success', [SmartWaterPortalController::class, 'paymentSuccess'])->name('payment-success');
 Route::post('/payment/submit-manual', [PaymentController::class, 'store'])->name('payment.store');
-Route::post('/admin/payments/{payment}/verify', [PaymentController::class, 'verify'])->name('admin.payments.verify')->middleware('role:admin,staff');
+Route::post('/admin/payments/{payment}/verify', [PaymentController::class, 'verify'])->name('admin.payments.verify')->middleware('role:admin');
 
 // 4. Layanan, Monitoring & Profil Pengguna
 Route::get('/water-condition', [SmartWaterPortalController::class, 'waterCondition'])->name('water-condition');
@@ -74,9 +98,12 @@ Route::get('/profile', [SmartWaterPortalController::class, 'profile'])->name('pr
 Route::get('/wallet', [SmartWaterPortalController::class, 'wallet'])->name('wallet');
 Route::get('/settings', [SmartWaterPortalController::class, 'settings'])->name('settings');
 
-// 5. Portal Petugas / Admin & SCADA IoT (Terproteksi RoleMiddleware)
-Route::middleware('role:admin,staff')->group(function () {
+// 5. Portal Petugas / Admin & SCADA IoT (Terproteksi RoleMiddleware Granular)
+Route::middleware('role:admin,field_officer,scada_operator,staff')->group(function () {
     Route::get('/admin-dashboard', [SmartWaterPortalController::class, 'adminDashboard'])->name('admin-dashboard');
+});
+
+Route::middleware('role:admin,scada_operator,staff')->group(function () {
     Route::get('/water-monitoring', [SmartWaterPortalController::class, 'waterMonitoring'])->name('water-monitoring');
     Route::get('/reservoir-detail', [SmartWaterPortalController::class, 'reservoirDetail'])->name('reservoir-detail');
     Route::get('/distribution-network', [SmartWaterPortalController::class, 'distributionNetwork'])->name('distribution-network');
@@ -123,9 +150,13 @@ $executeLegacyApi = static function (string $script) {
     if (function_exists('session')) {
         if (session()->has('swc_user') && empty($_SESSION['swc_user'])) {
             $_SESSION['swc_user'] = session('swc_user');
+        } elseif (!empty($_SESSION['swc_user']) && !session()->has('swc_user')) {
+            session(['swc_user' => $_SESSION['swc_user']]);
         }
         if (session()->has('swc_role') && empty($_SESSION['swc_role'])) {
             $_SESSION['swc_role'] = session('swc_role');
+        } elseif (!empty($_SESSION['swc_role']) && !session()->has('swc_role')) {
+            session(['swc_role' => $_SESSION['swc_role']]);
         }
     }
 

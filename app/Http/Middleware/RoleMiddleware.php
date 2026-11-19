@@ -18,13 +18,22 @@ class RoleMiddleware
         $user = $request->user() ?? Auth::user();
 
         // Fallback resolver untuk sesi pengguna legacy jika Auth belum terikat
-        if (!$user && function_exists('session') && session()->has('swc_user.id')) {
-            $sessionUserId = session('swc_user.id');
-            if ($sessionUserId) {
+        if (!$user) {
+            if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+                @session_start();
+            }
+            $sessionUserId = (function_exists('session') && session()->has('swc_user.id'))
+                ? session('swc_user.id')
+                : ($_SESSION['swc_user']['id'] ?? ($_SESSION['swc_user']['user_id'] ?? null));
+
+            if (!$sessionUserId && !empty($_SESSION['swc_user']['email'])) {
+                $user = User::where('email', $_SESSION['swc_user']['email'])->first();
+            } elseif ($sessionUserId) {
                 $user = User::find($sessionUserId);
-                if ($user) {
-                    Auth::setUser($user);
-                }
+            }
+
+            if ($user) {
+                Auth::setUser($user);
             }
         }
 
@@ -37,14 +46,10 @@ class RoleMiddleware
                 ], 401);
             }
 
-            if (in_array('admin', $roles, true) || in_array('staff', $roles, true)) {
-                return redirect(url('/admin-login'))->with('error', 'Halaman ini khusus untuk Petugas & Operator PDAM. Silakan masuk dengan akun kedinasan Anda.');
-            }
-
             return redirect(url('/login'))->with('error', 'Silakan masuk akun terlebih dahulu.');
         }
 
-        // 2. Pemeriksaan Otorisasi Role (RBAC)
+        // 2. Pemeriksaan Otorisasi Role (RBAC Berbasis Database MySQL)
         if (!empty($roles) && !$user->hasRole($roles)) {
             if ($request->expectsJson() || $request->is('api/*') || $request->isJson()) {
                 return response()->json([
@@ -53,12 +58,14 @@ class RoleMiddleware
                 ], 403);
             }
 
-            // Jika pengguna adalah Pelanggan yang mencoba mengakses area operasional Admin/Staff
-            if ($user->hasRole('customer') && (in_array('admin', $roles, true) || in_array('staff', $roles, true))) {
+            // Jika pengguna adalah Pelanggan yang mencoba mengakses area operasional internal
+            if ($user->isCustomer()) {
                 return redirect(url('/user'))->with('error', 'Akses ditolak: Anda tidak memiliki wewenang administrator.');
             }
 
-            abort(403, 'Akses Ditolak: Anda tidak memiliki izin untuk membuka halaman ini.');
+            // Jika staf internal mencoba membuka modul di luar kewenangannya (misal Field Officer membuka SCADA)
+            $destination = \App\Services\AuthService::getRedirectForUser($user);
+            return redirect($destination)->with('error', 'Akses ditolak: Anda tidak memiliki hak akses ke modul ini.');
         }
 
         return $next($request);

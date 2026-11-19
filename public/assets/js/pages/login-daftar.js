@@ -16,12 +16,11 @@ function escapeHtml(str) {
 }
 
 // ---------------------------------------------------------------------------
-// 1. AUTH MODE SWITCHER (login | register | forgot-password | admin-login)
+// 1. AUTH MODE SWITCHER (login | register | forgot-password)
 // ---------------------------------------------------------------------------
 function switchAuthMode(mode) {
   if (mode === 'admin-login') {
-    window.location.href = getAppBaseUrl('/admin-login');
-    return;
+    mode = 'login';
   }
   currentAuthMode = mode;
   ['login', 'register', 'forgot-password'].forEach((m) => {
@@ -36,9 +35,9 @@ function switchAuthMode(mode) {
     }
     if (tabBtn) {
       if (m === mode) {
-        tabBtn.className = 'py-2.5 px-2 rounded-xl transition-all cursor-pointer bg-white text-slate-900 shadow-xs font-bold';
+        tabBtn.className = 'py-2.5 px-3 rounded-xl transition-all cursor-pointer bg-white text-slate-900 shadow-xs font-bold';
       } else {
-        tabBtn.className = 'py-2.5 px-2 rounded-xl transition-all cursor-pointer text-slate-500 hover:text-slate-900 font-semibold truncate';
+        tabBtn.className = 'py-2.5 px-3 rounded-xl transition-all cursor-pointer text-slate-500 hover:text-slate-900 font-semibold';
       }
     }
   });
@@ -96,6 +95,27 @@ function getAppBaseUrl(path) {
   return path;
 }
 
+function resolveRedirectUrl(rawRedirect, fallbackPath) {
+  let targetPath = fallbackPath || '/user';
+  if (rawRedirect) {
+    try {
+      if (typeof rawRedirect === 'string' && (rawRedirect.startsWith('http://') || rawRedirect.startsWith('https://'))) {
+        const parsed = new URL(rawRedirect);
+        targetPath = parsed.pathname;
+      } else {
+        targetPath = String(rawRedirect);
+      }
+      targetPath = targetPath.replace(/^\/smart-water\/public/, '').replace(/^\/smart-water/, '');
+      if (!targetPath.startsWith('/')) {
+        targetPath = '/' + targetPath;
+      }
+    } catch (err) {
+      targetPath = fallbackPath || '/user';
+    }
+  }
+  return getAppBaseUrl(targetPath);
+}
+
 function showToastNotification(message, type = 'success') {
   let toast = document.getElementById('swc-toast-notice');
   if (!toast) {
@@ -140,11 +160,14 @@ function renderSessionBanner() {
   if (roleEl) roleEl.textContent = currentUser.isAdmin ? 'Petugas / Admin PDAM Tirta Sago' : (currentUser.role || 'Pelanggan Smart Water');
   if (metaEl) metaEl.textContent = `${currentUser.email || ''} · ${currentUser.meterNumber || ''}`;
   if (primaryLinkEl) {
-    if (currentUser.isAdmin) {
+    if (currentUser.isAdmin || currentUser.role === 'admin' || currentUser.role === 'field_officer') {
       primaryLinkEl.setAttribute('href', getAppBaseUrl('/admin-dashboard'));
-      primaryLinkEl.innerHTML = 'Buka Panel Admin SCADA &rarr;';
+      primaryLinkEl.innerHTML = 'Buka Panel Admin / Petugas &rarr;';
+    } else if (currentUser.role === 'scada_operator') {
+      primaryLinkEl.setAttribute('href', getAppBaseUrl('/water-monitoring'));
+      primaryLinkEl.innerHTML = 'Buka Monitoring SCADA &rarr;';
     } else {
-      primaryLinkEl.setAttribute('href', getAppBaseUrl('/report-meter'));
+      primaryLinkEl.setAttribute('href', getAppBaseUrl('/user'));
       primaryLinkEl.innerHTML = 'Buka Portal Pelanggan &rarr;';
     }
   }
@@ -196,7 +219,13 @@ async function handleLoginSubmit(event) {
     renderSessionBanner();
     showToastNotification('Berhasil masuk! Mengalihkan ke sistem...', 'success');
     
-    const targetUrl = data.redirect || (currentUser.isAdmin ? getAppBaseUrl('/admin-dashboard') : getAppBaseUrl('/report-meter'));
+    let fallbackPath = '/user';
+    if (currentUser.role === 'scada_operator') {
+      fallbackPath = '/water-monitoring';
+    } else if (currentUser.isAdmin || currentUser.role === 'admin' || currentUser.role === 'field_officer') {
+      fallbackPath = '/admin-dashboard';
+    }
+    const targetUrl = resolveRedirectUrl(data.redirect, fallbackPath);
     setTimeout(() => {
       window.location.href = targetUrl;
     }, 600);
@@ -223,7 +252,7 @@ async function handleGoogleSignIn() {
       renderSessionBanner();
       showToastNotification('Masuk dengan Google berhasil! Mengalihkan...', 'success');
       setTimeout(() => {
-        window.location.href = data.redirect || getAppBaseUrl('/report-meter');
+        window.location.href = resolveRedirectUrl(data.redirect, '/user');
       }, 600);
     }
   } catch (e) {
@@ -254,7 +283,7 @@ async function handleRegisterSubmit(event) {
     showError('reg-error', 'reg-error-text', 'Kata sandi minimal 6 karakter.');
     return;
   }
-  if ($password !== confirmPassword && password !== confirmPassword) {
+  if (password !== confirmPassword) {
     showError('reg-error', 'reg-error-text', 'Konfirmasi kata sandi tidak cocok.');
     return;
   }
@@ -296,7 +325,7 @@ async function handleRegisterSubmit(event) {
     renderSessionBanner();
     showToastNotification('Pendaftaran berhasil! Selamat datang di Smart Water.', 'success');
     setTimeout(() => {
-      window.location.href = data.redirect || getAppBaseUrl('/report-meter');
+      window.location.href = resolveRedirectUrl(data.redirect, '/user');
     }, 600);
   } catch (e) {
     showError('reg-error', 'reg-error-text', 'Gagal menghubungi server PHP. Pastikan server PHP lokal aktif.');
@@ -339,113 +368,16 @@ async function handleForgotSubmit(event) {
 }
 
 async function handleAdminLoginSubmit(event) {
-  event.preventDefault();
-  hideAllErrors();
-
-  const identifier = document.getElementById('admin-identifier')?.value.trim() || '';
-  const password = document.getElementById('admin-password')?.value || '';
-
-  if (!identifier) {
-    showError('admin-error', 'admin-error-text', 'Masukkan email dinas atau NIP petugas Anda.');
-    return;
-  }
-  if (!password) {
-    showError('admin-error', 'admin-error-text', 'Masukkan kata sandi akun petugas.');
-    return;
-  }
-
-  try {
-    const res = await fetch(getAppBaseUrl('/api/auth.php'), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'admin_login', identifier, password }),
-    });
-    const data = await res.json();
-    if (!res.ok || !data.ok) {
-      showError('admin-error', 'admin-error-text', data.error || 'Gagal masuk portal admin.');
-      return;
-    }
-    currentUser = data.user;
-    renderSessionBanner();
-    showToastNotification('Login Petugas PDAM berhasil! Membuka SCADA...', 'success');
-    setTimeout(() => {
-      window.location.href = data.redirect || getAppBaseUrl('/admin-dashboard');
-    }, 600);
-  } catch (e) {
-    showError('admin-error', 'admin-error-text', 'Gagal menghubungi server PHP.');
-  }
+  if (event) event.preventDefault();
+  window.location.href = getAppBaseUrl('/login');
 }
 
 async function handleInstantCustomerDemo() {
-  hideAllErrors();
-  const idInput = document.getElementById('login-identifier');
-  const pwInput = document.getElementById('login-password');
-  if (idInput) idInput.value = 'budi.santoso@warga.payakumbuh.go.id';
-  if (pwInput) pwInput.value = 'Pelanggan123!';
-
-  const btn = document.getElementById('login-submit-btn');
-  if (btn) {
-    btn.disabled = true;
-    btn.textContent = 'Memverifikasi...';
-  }
-
-  try {
-    const res = await fetch(getAppBaseUrl('/api/auth.php'), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'login', identifier: 'budi.santoso@warga.payakumbuh.go.id', password: 'Pelanggan123!' }),
-    });
-    const data = await res.json();
-    if (data.ok && data.user) {
-      currentUser = data.user;
-      renderSessionBanner();
-      showToastNotification('Berhasil masuk sebagai Budi Santoso!', 'success');
-      setTimeout(() => {
-        window.location.href = data.redirect || getAppBaseUrl('/report-meter');
-      }, 500);
-    } else {
-      showError('login-error', 'login-error-text', data.error || 'Gagal masuk akun.');
-      if (btn) {
-        btn.disabled = false;
-        btn.textContent = 'Masuk';
-      }
-    }
-  } catch (e) {
-    showError('login-error', 'login-error-text', 'Gagal memproses verifikasi autentikasi.');
-    if (btn) {
-      btn.disabled = false;
-      btn.textContent = 'Masuk';
-    }
-  }
+  // Demo login removed - all logins authenticate via database
 }
 
 async function handleInstantAdminDemo() {
-  hideAllErrors();
-  const idInput = document.getElementById('admin-identifier');
-  const pwInput = document.getElementById('admin-password');
-  if (idInput) idInput.value = 'ahmad.pratama@tirtasago.id';
-  if (pwInput) pwInput.value = 'Petugas123!';
-
-  try {
-    const res = await fetch(getAppBaseUrl('/api/auth.php'), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'admin_login', identifier: 'ahmad.pratama@tirtasago.id', password: 'Petugas123!' }),
-    });
-    const data = await res.json();
-    if (data.ok && data.user) {
-      currentUser = data.user;
-      renderSessionBanner();
-      showToastNotification('Login Petugas PDAM berhasil! Membuka SCADA...', 'success');
-      setTimeout(() => {
-        window.location.href = data.redirect || getAppBaseUrl('/admin-dashboard');
-      }, 600);
-    } else {
-      showError('admin-error', 'admin-error-text', data.error || 'Gagal masuk portal petugas.');
-    }
-  } catch (e) {
-    showError('admin-error', 'admin-error-text', 'Gagal menghubungi server autentikasi.');
-  }
+  // Demo login removed - all logins authenticate via database
 }
 
 async function handleLogoutSession() {
@@ -460,7 +392,7 @@ async function handleLogoutSession() {
     renderSessionBanner();
     showToastNotification('Anda telah keluar dari akun.', 'info');
     setTimeout(() => {
-      window.location.href = (data && data.redirect) ? data.redirect : getAppBaseUrl('/login');
+      window.location.href = resolveRedirectUrl(data && data.redirect, '/login');
     }, 500);
   } catch (e) {
     window.location.href = getAppBaseUrl('/logout');
@@ -674,8 +606,17 @@ async function sendTirtaBotMessage(text) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (currentUser && (currentUser.id || currentUser.email)) {
+    let fallback = '/user';
+    if (currentUser.role === 'scada_operator') {
+      fallback = '/water-monitoring';
+    } else if (currentUser.isAdmin || currentUser.role === 'admin' || currentUser.role === 'field_officer') {
+      fallback = '/admin-dashboard';
+    }
+    window.location.href = getAppBaseUrl(fallback);
+    return;
+  }
   switchAuthMode(currentAuthMode);
-  renderSessionBanner();
   loadChatHistory();
   renderChatMessages();
 });

@@ -4,6 +4,8 @@
  * Terhubung langsung ke Database MySQL via ComplaintController & Eloquent ORM.
  */
 
+require_once __DIR__ . '/_bootstrap.php';
+
 use App\Http\Controllers\ComplaintController;
 use Illuminate\Http\Request;
 

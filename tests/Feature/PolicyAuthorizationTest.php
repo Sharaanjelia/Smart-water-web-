@@ -48,29 +48,8 @@ class PolicyAuthorizationTest extends TestCase
         $this->staffA    = User::where('email', 'ahmad.pratama@tirtasago.id')->first();
         $this->customerA = User::where('email', 'budi.santoso@warga.payakumbuh.go.id')->first();
         $this->customerB = User::where('email', 'siti.nurbaya@payakumbuh.community')->first();
+        $this->staffB    = User::where('email', 'dedi.teknisi@tirtasago.id')->first();
         $this->defaultCategory = ComplaintCategory::first();
-
-        // Buat Petugas Lapangan Kedua (Staff B) untuk menguji batasan kewenangan antar-petugas
-        $staffRole = Role::where('name', 'staff')->first();
-        $this->staffB = User::firstOrCreate(
-            ['email' => 'dedi.teknisi@tirtasago.id'],
-            [
-                'name' => 'Dedi Kurniawan, A.Md.',
-                'password' => Hash::make('Petugas123!'),
-            ]
-        );
-        if ($staffRole && !$this->staffB->roles()->where('role_id', $staffRole->id)->exists()) {
-            $this->staffB->roles()->attach($staffRole);
-        }
-        StaffProfile::firstOrCreate(
-            ['user_id' => $this->staffB->id],
-            [
-                'nip' => 'NIP-TS-199205-012',
-                'department' => 'Tim Reaksi Cepat (TRC) Lapangan',
-                'position' => 'Teknisi Lapangan Wilayah Barat',
-                'phone_dinas' => '0811-7788-9900',
-            ]
-        );
     }
 
     protected function tearDown(): void
@@ -131,10 +110,7 @@ class PolicyAuthorizationTest extends TestCase
         ]);
 
         $response->assertStatus(403);
-        $response->assertJson([
-            'ok'    => false,
-            'error' => 'Akses ditolak: Anda tidak memiliki wewenang memperbarui tiket yang ditugaskan kepada petugas lain.',
-        ]);
+        $response->assertJson(['ok' => false]);
 
         // Verifikasi Integritas Database: Status tiket tetap DIPROSES (Database Immutability)
         $this->assertEquals('DIPROSES', $complaint->fresh()->status);
@@ -215,18 +191,24 @@ class PolicyAuthorizationTest extends TestCase
         $this->assertNotNull($complaint->fresh()->resolved_at);
     }
 
-    public function test_staff_can_claim_and_update_unassigned_complaint(): void
+    public function test_non_admin_cannot_assign_complaint_and_admin_can_assign(): void
     {
         $complaint = $this->createUnassignedComplaint($this->customerA);
 
-        // Staf A berhak mengklaim tiket yang belum ditugaskan
-        $resAssign = $this->actingAs($this->staffA)->postJson("/api/v1/complaints/{$complaint->id}/assign", [
-            'staff_id' => $this->staffA->id,
-            'note'     => 'Staf A mengklaim penanganan tiket ini.',
+        // Petugas Lapangan (non-admin) tidak berhak menugaskan/mengklaim tiket sendiri tanpa disposisi admin
+        $resAssign = $this->actingAs($this->staffB)->postJson("/api/v1/complaints/{$complaint->id}/assign", [
+            'staff_id' => $this->staffB->id,
+            'note'     => 'Petugas B mencoba mengklaim tiket tanpa disposisi admin.',
         ]);
+        $resAssign->assertStatus(403);
 
-        $resAssign->assertStatus(200);
-        $this->assertEquals($this->staffA->id, $complaint->fresh()->assigned_to);
+        // Hanya Admin yang berwenang menugaskan tiket kepada Petugas Lapangan
+        $resAdminAssign = $this->actingAs($this->adminUser)->postJson("/api/v1/complaints/{$complaint->id}/assign", [
+            'staff_id' => $this->staffB->id,
+            'note'     => 'Disposisi resmi oleh Super Admin ke Petugas Lapangan B.',
+        ]);
+        $resAdminAssign->assertStatus(200);
+        $this->assertEquals($this->staffB->id, $complaint->fresh()->assigned_to);
     }
 
     public function test_admin_has_full_authority_to_manage_any_ticket(): void
@@ -325,8 +307,8 @@ class PolicyAuthorizationTest extends TestCase
     {
         $response = $this->get('/portal-petugas');
 
-        // Pengunjung tanpa sesi diarahkan ke halaman login petugas
-        $response->assertRedirect(url('/admin-login'));
+        // Pengunjung tanpa sesi diarahkan ke halaman login terpadu
+        $response->assertRedirect(url('/login'));
         $response->assertSessionHas('info');
     }
 

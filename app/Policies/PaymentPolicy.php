@@ -12,7 +12,7 @@ class PaymentPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdmin() || $user->isStaff();
+        return $user->isAdmin();
     }
 
     /**
@@ -20,7 +20,7 @@ class PaymentPolicy
      */
     public function view(User $user, Payment $payment): bool
     {
-        if ($user->isAdmin() || $user->isStaff()) {
+        if ($user->isAdmin()) {
             return true;
         }
 
@@ -37,9 +37,10 @@ class PaymentPolicy
 
     /**
      * Determine whether the user can verify or reject the payment.
+     * Hanya Administrator yang berwenang memvalidasi dan memverifikasi pembayaran.
      */
     public function verify(User $user, Payment $payment): bool
     {
-        return $user->isAdmin() || $user->isStaff();
+        return $user->isAdmin();
     }
 }

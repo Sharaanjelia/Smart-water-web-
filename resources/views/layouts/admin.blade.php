@@ -8,9 +8,36 @@ $currentTab = $currentTab ?? 'admin-dashboard';
 $legacySharedPath = resource_path('views/shared');
 require_once $legacySharedPath . '/brand_logo.php';
 
-$officerName = $currentUser['name'] ?? ($currentUser['fullName'] ?? 'Ahmad Pratama, S.T.');
-$officerNip = $currentUser['staffId'] ?? ($currentUser['nip'] ?? 'NIP: 198804-004');
-$officerId = $currentUser['adminId'] ?? ($currentUser['id'] ?? 'ADMIN-04');
+$authUser = Auth::user();
+$isAdmin = $authUser ? $authUser->isAdmin() : false;
+$isScada = $authUser ? $authUser->isScadaOperator() : false;
+$isField = $authUser ? $authUser->isFieldOfficer() : false;
+$isLegacyStaff = $authUser ? $authUser->hasRole('staff') : false;
+
+$officerName = $authUser ? $authUser->name : ($currentUser['name'] ?? ($currentUser['fullName'] ?? 'Petugas PDAM'));
+$staffProfile = $authUser?->staffProfile;
+
+if ($isAdmin) {
+    $headerRoleBadge = 'COMMAND CENTER • SUPER ADMINISTRATOR';
+    $sidebarRoleLabel = 'Super Administrator';
+    $officerNip = $staffProfile?->nip ?? ($currentUser['nip'] ?? 'NIP: TS-198402-089');
+    $officerSubtitle = 'ID Petugas: ' . ($staffProfile?->nip ?? 'ADMIN-01') . ' • Divisi: Transmisi, Distribusi & SCADA';
+} elseif ($isScada) {
+    $headerRoleBadge = 'COMMAND CENTER • OPERATOR SCADA';
+    $sidebarRoleLabel = 'Operator SCADA';
+    $officerNip = $staffProfile?->nip ?? ($currentUser['nip'] ?? 'NIP: 198804-004');
+    $officerSubtitle = 'ID Petugas: ' . ($staffProfile?->nip ?? 'SCADA-01') . ' • Divisi: Seksi Pengolahan Air & SCADA';
+} elseif ($isField) {
+    $headerRoleBadge = 'PORTAL OPERASIONAL • PETUGAS LAPANGAN & TRC';
+    $sidebarRoleLabel = 'Petugas Lapangan / TRC';
+    $officerNip = $staffProfile?->nip ?? 'Petugas Lapangan TRC';
+    $officerSubtitle = 'ID Petugas: FIELD-TRC • Unit: Tim Reaksi Cepat PDAM Tirta Sago';
+} else {
+    $headerRoleBadge = 'COMMAND CENTER • OPERASIONAL PDAM';
+    $sidebarRoleLabel = 'Staf Operasional';
+    $officerNip = $staffProfile?->nip ?? ($currentUser['nip'] ?? 'Staf Internal');
+    $officerSubtitle = 'Staf Operasional PDAM Tirta Sago';
+}
 ?>
 <!DOCTYPE html>
 <html lang="id" class="h-full bg-slate-50">
@@ -62,20 +89,20 @@ $officerId = $currentUser['adminId'] ?? ($currentUser['id'] ?? 'ADMIN-04');
   <!-- ============================================== -->
   <aside
     id="adminSidebar"
-    class="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-200 flex flex-col justify-between transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0 lg:static shrink-0 shadow-xl lg:shadow-none select-none"
+    class="fixed inset-y-0 left-0 z-50 w-72 bg-gradient-to-b from-[#06304E] via-[#025A8B] to-[#0284C7] text-white border-r border-sky-400/20 flex flex-col justify-between transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0 lg:static shrink-0 shadow-2xl lg:shadow-none select-none"
   >
     <!-- Bagian Atas: Brand & Node Identity -->
-    <div class="p-5 border-b border-slate-100 space-y-3">
+    <div class="p-5 border-b border-white/10 space-y-3">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-600 to-sky-500 shadow-md shadow-cyan-600/20 flex items-center justify-center shrink-0">
-            <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <div class="w-10 h-10 rounded-2xl bg-white/15 backdrop-blur-md shadow-md border border-white/25 flex items-center justify-center shrink-0">
+            <svg class="w-6 h-6 text-cyan-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>
             </svg>
           </div>
           <div>
-            <span class="font-extrabold text-slate-900 text-base tracking-tight block">Smart Water</span>
-            <span class="text-[11px] font-mono text-cyan-600 block -mt-1 font-bold">KOTA PAYAKUMBUH</span>
+            <span class="font-black text-white text-base tracking-tight block">Smart Water</span>
+            <span class="text-[10px] font-mono text-cyan-200 block -mt-0.5 font-bold tracking-wider">KOTA PAYAKUMBUH</span>
           </div>
         </div>
 
@@ -83,7 +110,7 @@ $officerId = $currentUser['adminId'] ?? ($currentUser['id'] ?? 'ADMIN-04');
         <button
           type="button"
           onclick="toggleAdminSidebar()"
-          class="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 cursor-pointer"
+          class="lg:hidden p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-white/10 cursor-pointer transition-colors"
           aria-label="Tutup Menu"
         >
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
@@ -91,180 +118,187 @@ $officerId = $currentUser['adminId'] ?? ($currentUser['id'] ?? 'ADMIN-04');
       </div>
 
       <!-- SCADA Node Status Pill -->
-      <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between text-[10px] font-mono">
-        <div class="flex items-center gap-1.5 text-slate-600">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+      <div class="p-2.5 rounded-xl bg-white/10 backdrop-blur-xs border border-white/15 flex items-center justify-between text-[10px] font-mono">
+        <div class="flex items-center gap-1.5 text-sky-100">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           <span class="font-medium">NODE: IPA-PYK-01</span>
         </div>
-        <span class="text-cyan-700 font-bold">ONLINE</span>
+        <span class="text-cyan-200 font-bold">ONLINE</span>
       </div>
     </div>
 
     <!-- Bagian Tengah: Menu Navigasi Utama -->
-    <nav class="flex-1 overflow-y-auto px-3.5 py-4 space-y-6 text-xs">
+    <nav class="flex-1 overflow-y-auto px-3.5 py-4 space-y-2 text-xs">
       
-      <!-- Group 1: OPERASIONAL UTAMA -->
-      <div class="space-y-1">
-        <span class="px-3 text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest block mb-2">
-          OPERASIONAL HARIAN
+      @if($isAdmin || $isScada || $isLegacyStaff)
+      <!-- 1.0 Dashboard Utama / Ringkasan Card -->
+      <a
+        id="sidebarNavOverview"
+        href="{{ url('/admin-dashboard?tab=overview') }}"
+        class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-150 group {{ ($currentTab === 'admin-dashboard' && ($subTab ?? 'overview') === 'overview') ? 'bg-white/20 text-white font-bold border border-white/30 shadow-xs backdrop-blur-md' : 'text-sky-100/85 hover:text-white hover:bg-white/10 border border-transparent font-semibold' }}"
+      >
+        <svg class="w-4 h-4 {{ ($currentTab === 'admin-dashboard' && ($subTab ?? 'overview') === 'overview') ? 'text-cyan-200' : 'text-sky-200 group-hover:text-cyan-200' }} shrink-0 transition-colors duration-150" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>
+        </svg>
+        <span>Ringkasan Dashboard</span>
+      </a>
+      @endif
+
+      @if($isAdmin || $isScada || $isLegacyStaff)
+      <!-- 1.1 Dashboard & Validasi Meter -->
+      <a
+        id="sidebarNavVerify"
+        href="{{ url('/admin-dashboard?tab=verify') }}"
+        class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-150 group {{ ($currentTab === 'admin-dashboard' && ($subTab ?? 'overview') === 'verify') ? 'bg-white/20 text-white font-bold border border-white/30 shadow-xs backdrop-blur-md' : 'text-sky-100/85 hover:text-white hover:bg-white/10 border border-transparent font-semibold' }}"
+      >
+        <svg class="w-4 h-4 {{ ($currentTab === 'admin-dashboard' && ($subTab ?? 'overview') === 'verify') ? 'text-cyan-200' : 'text-sky-200 group-hover:text-cyan-200' }} shrink-0 transition-colors duration-150" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/>
+        </svg>
+        <span class="flex-1">Validasi Meter &amp; Kas</span>
+        <span
+          id="sidebarPendingBadge"
+          data-swc="pending-meter-count"
+          class="px-2 py-0.5 rounded-full text-[10px] font-mono font-black bg-cyan-400 text-slate-900 shadow-2xs"
+          title="Antrean laporan meter AI-OCR yang menunggu verifikasi"
+        >
+          3
         </span>
+      </a>
+      @endif
 
-        <!-- 1.1 Dashboard & Validasi Meter -->
-        <a
-          id="sidebarNavVerify"
-          href="{{ url('/admin-dashboard?tab=verify') }}"
-          class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-colors duration-150 group {{ ($currentTab === 'admin-dashboard' && ($subTab ?? 'verify') === 'verify') ? 'bg-cyan-50 text-cyan-900 border border-cyan-200/90 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 border border-transparent font-semibold' }}"
-        >
-          <svg class="w-4 h-4 {{ ($currentTab === 'admin-dashboard' && ($subTab ?? 'verify') === 'verify') ? 'text-cyan-600' : 'text-slate-400 group-hover:text-cyan-600' }} shrink-0 transition-colors duration-150" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/>
-          </svg>
-          <span class="flex-1">Validasi Meter &amp; Kas</span>
-          <span
-            id="sidebarPendingBadge"
-            data-swc="pending-meter-count"
-            class="px-2 py-0.5 rounded-full text-[10px] font-mono font-black bg-cyan-600 text-white shadow-2xs"
-            title="Antrean laporan meter AI-OCR yang menunggu verifikasi"
-          >
-            3
-          </span>
-        </a>
+      @if($isAdmin)
+      <!-- 1.2 Manajemen Tagihan -->
+      <a
+        id="sidebarNavBills"
+        href="{{ url('/admin-dashboard?tab=bills') }}"
+        class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-150 group {{ ($currentTab === 'admin-dashboard' && ($subTab ?? 'overview') === 'bills') ? 'bg-white/20 text-white font-bold border border-white/30 shadow-xs backdrop-blur-md' : 'text-sky-100/85 hover:text-white hover:bg-white/10 border border-transparent font-semibold' }}"
+      >
+        <svg class="w-4 h-4 {{ ($currentTab === 'admin-dashboard' && ($subTab ?? 'overview') === 'bills') ? 'text-cyan-200' : 'text-sky-200 group-hover:text-cyan-200' }} shrink-0 transition-colors duration-150" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/>
+        </svg>
+        <span>Penerimaan Tagihan</span>
+      </a>
+      @endif
 
-        <!-- 1.2 Manajemen Tagihan -->
-        <a
-          id="sidebarNavBills"
-          href="{{ url('/admin-dashboard?tab=bills') }}"
-          class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-colors duration-150 group {{ ($currentTab === 'admin-dashboard' && ($subTab ?? 'verify') === 'bills') ? 'bg-cyan-50 text-cyan-900 border border-cyan-200/90 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 border border-transparent font-semibold' }}"
-        >
-          <svg class="w-4 h-4 {{ ($currentTab === 'admin-dashboard' && ($subTab ?? 'verify') === 'bills') ? 'text-emerald-600' : 'text-slate-400 group-hover:text-emerald-600' }} shrink-0 transition-colors duration-150" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/>
-          </svg>
-          <span>Penerimaan Tagihan</span>
-        </a>
+      @if($isAdmin || $isField || $isLegacyStaff)
+      <!-- 1.3 Database Pelanggan -->
+      <a
+        id="sidebarNavCustomers"
+        href="{{ url('/admin-dashboard?tab=customers') }}"
+        class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-150 group {{ ($currentTab === 'admin-dashboard' && ($subTab ?? 'overview') === 'customers') ? 'bg-white/20 text-white font-bold border border-white/30 shadow-xs backdrop-blur-md' : 'text-sky-100/85 hover:text-white hover:bg-white/10 border border-transparent font-semibold' }}"
+      >
+        <svg class="w-4 h-4 {{ ($currentTab === 'admin-dashboard' && ($subTab ?? 'overview') === 'customers') ? 'text-cyan-200' : 'text-sky-200 group-hover:text-cyan-200' }} shrink-0 transition-colors duration-150" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        <span>Database Sambungan</span>
+      </a>
+      @endif
 
-        <!-- 1.3 Database Pelanggan -->
-        <a
-          id="sidebarNavCustomers"
-          href="{{ url('/admin-dashboard?tab=customers') }}"
-          class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-colors duration-150 group {{ ($currentTab === 'admin-dashboard' && ($subTab ?? 'verify') === 'customers') ? 'bg-cyan-50 text-cyan-900 border border-cyan-200/90 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 border border-transparent font-semibold' }}"
-        >
-          <svg class="w-4 h-4 {{ ($currentTab === 'admin-dashboard' && ($subTab ?? 'verify') === 'customers') ? 'text-sky-600' : 'text-slate-400 group-hover:text-sky-600' }} shrink-0 transition-colors duration-150" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-          </svg>
-          <span>Database Sambungan</span>
-        </a>
-      </div>
+      <!-- Divider Halus -->
+      <div class="my-2 border-t border-white/10"></div>
 
-      <!-- Group 2: SCADA TELEMETRI IoT -->
-      <div class="space-y-1">
-        <span class="px-3 text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest block mb-2">
-          SCADA &amp; HIDROLIKA
-        </span>
+      @if($isAdmin || $isScada || $isLegacyStaff)
+      <!-- 2.1 Konsol SCADA Terpusat -->
+      <a
+        href="{{ url('/water-monitoring') }}"
+        class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-150 group {{ $currentTab === 'water-monitoring' ? 'bg-white/20 text-white font-bold border border-white/30 shadow-xs backdrop-blur-md' : 'text-sky-100/85 hover:text-white hover:bg-white/10 border border-transparent font-semibold' }}"
+      >
+        <svg class="w-4 h-4 {{ $currentTab === 'water-monitoring' ? 'text-cyan-200' : 'text-sky-200 group-hover:text-cyan-200' }} shrink-0 transition-colors duration-150" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+        </svg>
+        <span>Monitoring SCADA Terpusat</span>
+      </a>
 
-        <!-- 2.1 Konsol SCADA Terpusat -->
-        <a
-          href="{{ url('/water-monitoring') }}"
-          class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-colors duration-150 group {{ $currentTab === 'water-monitoring' ? 'bg-cyan-50 text-cyan-900 border border-cyan-200/90 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 border border-transparent font-semibold' }}"
-        >
-          <svg class="w-4 h-4 {{ $currentTab === 'water-monitoring' ? 'text-cyan-600' : 'text-slate-400 group-hover:text-cyan-600' }} shrink-0 transition-colors duration-150" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-          </svg>
-          <span>Monitoring SCADA Terpusat</span>
-        </a>
+      <!-- 2.2 Reservoir IPA Batang Agam -->
+      <a
+        href="{{ url('/reservoir-detail') }}"
+        class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-150 group {{ $currentTab === 'reservoir-detail' ? 'bg-white/20 text-white font-bold border border-white/30 shadow-xs backdrop-blur-md' : 'text-sky-100/85 hover:text-white hover:bg-white/10 border border-transparent font-semibold' }}"
+      >
+        <svg class="w-4 h-4 {{ $currentTab === 'reservoir-detail' ? 'text-cyan-200' : 'text-sky-200 group-hover:text-cyan-200' }} shrink-0 transition-colors duration-150" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" x2="12" y1="22" y2="12"/>
+        </svg>
+        <span>Reservoir Batang Agam</span>
+      </a>
 
-        <!-- 2.2 Reservoir IPA Batang Agam -->
-        <a
-          href="{{ url('/reservoir-detail') }}"
-          class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-colors duration-150 group {{ $currentTab === 'reservoir-detail' ? 'bg-cyan-50 text-cyan-900 border border-cyan-200/90 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 border border-transparent font-semibold' }}"
-        >
-          <svg class="w-4 h-4 {{ $currentTab === 'reservoir-detail' ? 'text-cyan-600' : 'text-slate-400 group-hover:text-cyan-600' }} shrink-0 transition-colors duration-150" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" x2="12" y1="22" y2="12"/>
-          </svg>
-          <span>Reservoir Batang Agam</span>
-        </a>
+      <!-- 2.3 Jaringan Pipa Distribusi -->
+      <a
+        href="{{ url('/distribution-network') }}"
+        class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-150 group {{ $currentTab === 'distribution-network' ? 'bg-white/20 text-white font-bold border border-white/30 shadow-xs backdrop-blur-md' : 'text-sky-100/85 hover:text-white hover:bg-white/10 border border-transparent font-semibold' }}"
+      >
+        <svg class="w-4 h-4 {{ $currentTab === 'distribution-network' ? 'text-cyan-200' : 'text-sky-200 group-hover:text-cyan-200' }} shrink-0 transition-colors duration-150" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/><circle cx="19" cy="6" r="2"/><circle cx="5" cy="6" r="2"/><circle cx="12" cy="19" r="2"/>
+          <line x1="12" x2="12" y1="15" y2="17"/><line x1="10" x2="6.5" y1="10" y2="7.5"/><line x1="14" x2="17.5" y1="10" y2="7.5"/>
+        </svg>
+        <span>Jaringan Pipa Distribusi</span>
+      </a>
+      @endif
 
-        <!-- 2.3 Jaringan Pipa Distribusi -->
-        <a
-          href="{{ url('/distribution-network') }}"
-          class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-colors duration-150 group {{ $currentTab === 'distribution-network' ? 'bg-cyan-50 text-cyan-900 border border-cyan-200/90 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 border border-transparent font-semibold' }}"
-        >
-          <svg class="w-4 h-4 {{ $currentTab === 'distribution-network' ? 'text-cyan-600' : 'text-slate-400 group-hover:text-cyan-600' }} shrink-0 transition-colors duration-150" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="3"/><circle cx="19" cy="6" r="2"/><circle cx="5" cy="6" r="2"/><circle cx="12" cy="19" r="2"/>
-            <line x1="12" x2="12" y1="15" y2="17"/><line x1="10" x2="6.5" y1="10" y2="7.5"/><line x1="14" x2="17.5" y1="10" y2="7.5"/>
-          </svg>
-          <span>Jaringan Pipa Distribusi</span>
-        </a>
-      </div>
+      <!-- Divider Halus -->
+      <div class="my-2 border-t border-white/10"></div>
 
-      <!-- Group 3: LAYANAN & PENGALIHAN -->
-      <div class="space-y-1">
-        <span class="px-3 text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest block mb-2">
-          LAYANAN PUBLIK
-        </span>
+      @if($isAdmin || $isField || $isLegacyStaff)
+      <!-- 3.1 Pengaduan Tiket -->
+      <a
+        href="{{ url('/pusat-layanan') }}"
+        class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-sky-100/85 hover:text-white hover:bg-white/10 border border-transparent transition-all duration-150 group"
+      >
+        <svg class="w-4 h-4 text-sky-200 group-hover:text-amber-300 shrink-0 transition-colors duration-150" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v5Z"/><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"/>
+        </svg>
+        <span>Pusat Tiket Gangguan</span>
+      </a>
+      @endif
 
-        <!-- 3.1 Pengaduan Tiket -->
-        <a
-          href="{{ url('/pusat-layanan') }}"
-          class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 border border-transparent transition-colors duration-150 group"
-        >
-          <svg class="w-4 h-4 text-slate-400 group-hover:text-amber-500 shrink-0 transition-colors duration-150" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v5Z"/><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"/>
-          </svg>
-          <span>Pusat Tiket Gangguan</span>
-        </a>
+      <!-- 3.2 Profil Petugas -->
+      <a
+        id="sidebarNavProfile"
+        href="{{ url('/admin-dashboard?tab=profile') }}"
+        class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-150 group {{ ($currentTab === 'admin-dashboard' && ($subTab ?? 'overview') === 'profile') ? 'bg-white/20 text-white font-bold border border-white/30 shadow-xs backdrop-blur-md' : 'text-sky-100/85 hover:text-white hover:bg-white/10 border border-transparent font-semibold' }}"
+      >
+        <svg class="w-4 h-4 {{ ($currentTab === 'admin-dashboard' && ($subTab ?? 'overview') === 'profile') ? 'text-cyan-200' : 'text-sky-200 group-hover:text-cyan-200' }} shrink-0 transition-colors duration-150" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+        </svg>
+        <span>Profil Petugas</span>
+      </a>
 
-        <!-- 3.2 Beralih ke Tampilan Warga -->
-        <a
-          href="{{ url('/beranda') }}"
-          class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 hover:text-cyan-700 hover:bg-cyan-50/60 transition-colors duration-150 border border-dashed border-slate-200"
-          title="Buka tampilan sisi pelanggan / masyarakat"
-        >
-          <svg class="w-4 h-4 text-cyan-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" x2="3" y1="12" y2="12"/>
-          </svg>
-          <span>Buka Tampilan Warga</span>
-        </a>
-      </div>
-        >
-          <svg class="w-4 h-4 text-slate-400 group-hover:text-amber-500 shrink-0 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v5Z"/><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"/>
-          </svg>
-          <span>Pusat Tiket Gangguan</span>
-        </a>
-
-        <!-- 3.2 Beralih ke Tampilan Warga -->
-        <a
-          href="{{ url('/beranda') }}"
-          class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 hover:text-cyan-700 hover:bg-cyan-50/60 transition-all border border-dashed border-slate-200"
-          title="Buka tampilan sisi pelanggan / masyarakat"
-        >
-          <svg class="w-4 h-4 text-cyan-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" x2="3" y1="12" y2="12"/>
-          </svg>
-          <span>Buka Tampilan Warga</span>
-        </a>
-      </div>
+      <!-- 3.3 Beralih ke Tampilan Warga -->
+      <a
+        href="{{ url('/beranda') }}"
+        class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-sky-100/90 hover:text-white hover:bg-white/15 transition-all duration-150 border border-dashed border-white/25 mt-2"
+        title="Buka tampilan sisi pelanggan / masyarakat"
+      >
+        <svg class="w-4 h-4 text-cyan-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" x2="3" y1="12" y2="12"/>
+        </svg>
+        <span>Buka Tampilan Warga</span>
+      </a>
 
     </nav>
 
     <!-- Bagian Bawah: Profil Petugas & Logout -->
-    <div class="p-4 border-t border-slate-100 bg-slate-50/80 space-y-3">
-      <!-- Identitas Petugas Aktif -->
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-600 to-sky-400 text-white flex items-center justify-center font-black text-sm shrink-0 shadow-xs">
-          A
+    <div class="p-3.5 border-t border-white/10 bg-black/15 space-y-2.5">
+      <!-- Identitas Petugas Aktif (Klik untuk buka profil) -->
+      <a
+        href="{{ url('/admin-dashboard?tab=profile') }}"
+        class="flex items-center gap-3 p-2 rounded-xl hover:bg-white/10 transition-colors group cursor-pointer"
+        title="Buka Profil Petugas"
+      >
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-400 to-sky-300 text-slate-900 flex items-center justify-center font-black text-sm shrink-0 shadow-xs">
+          <?= strtoupper(substr(e($officerName), 0, 1)) ?>
         </div>
         <div class="min-w-0 flex-1">
-          <p class="text-xs font-bold text-slate-900 truncate"><?= e($officerName) ?></p>
-          <p class="text-[10px] font-mono text-cyan-700 font-semibold truncate"><?= e($officerNip) ?></p>
+          <p class="text-xs font-bold text-white group-hover:text-cyan-200 transition-colors truncate"><?= e($officerName) ?></p>
+          <p class="text-[10px] font-mono text-cyan-200/90 font-semibold truncate"><?= e($officerNip) ?></p>
         </div>
-      </div>
+        <svg class="w-4 h-4 text-white/50 group-hover:text-white transition-colors shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+      </a>
 
       <!-- Tombol Keluar Petugas -->
       <a
         href="{{ url('/logout?to=admin') }}"
-        class="w-full py-2 px-3 rounded-xl bg-white hover:bg-rose-50 text-slate-600 hover:text-rose-600 border border-slate-200 hover:border-rose-200 text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-2xs"
+        class="w-full py-2 px-3 rounded-xl bg-white/10 hover:bg-rose-600/90 text-white border border-white/15 hover:border-transparent text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-2xs backdrop-blur-xs"
       >
-        <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+        <svg class="w-3.5 h-3.5 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
         <span>Keluar Portal Petugas</span>
       </a>
     </div>
@@ -298,7 +332,7 @@ $officerId = $currentUser['adminId'] ?? ($currentUser['id'] ?? 'ADMIN-04');
 
         <div class="hidden sm:block">
           <span class="text-[10px] font-mono text-cyan-700 font-bold uppercase tracking-wider block">
-            COMMAND CENTER &bull; OPERATOR SCADA
+            <?= e($headerRoleBadge) ?>
           </span>
           <h2 class="text-xs sm:text-sm font-extrabold text-slate-900 tracking-tight">
             Perumda Air Minum Tirta Sago Kota Payakumbuh

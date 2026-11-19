@@ -106,6 +106,14 @@ function switchProfileTab(tab) {
     }
   });
 
+  if (window.history && window.history.replaceState) {
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('tab', tab);
+      window.history.replaceState({}, '', url.toString());
+    } catch (e) {}
+  }
+
   const topEl = document.getElementById('profile-content-top');
   if (topEl) topEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -605,4 +613,14 @@ document.addEventListener('DOMContentLoaded', () => {
   renderProfileComplaints();
   loadChatHistory();
   renderChatMessages();
+
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialTab = urlParams.get('tab') || window.location.hash.replace('#', '');
+    if (initialTab && ['beranda', 'info', 'laporan', 'pengaduan', 'belajar', 'privasi', 'lencana'].includes(initialTab)) {
+      switchProfileTab(initialTab);
+    }
+  } catch (e) {
+    // URL parsing fallback
+  }
 });

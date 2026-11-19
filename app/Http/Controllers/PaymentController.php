@@ -25,7 +25,7 @@ class PaymentController extends Controller
     {
         $user = $request->user();
 
-        if ($user->isAdmin() || $user->isStaff()) {
+        if ($user->isAdmin()) {
             $payments = $this->paymentService->listPayments(
                 $request->input('status'),
                 $request->input('per_page', 15)

@@ -22,7 +22,7 @@ class BillController extends Controller
     {
         $user = $request->user();
 
-        if ($user->isAdmin() || $user->isStaff()) {
+        if ($user->isAdmin()) {
             $bills = Bill::with(['details', 'latestPayment'])
                 ->orderBy('id', 'desc')
                 ->paginate($request->input('per_page', 15));

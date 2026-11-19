@@ -1,3 +1,9 @@
+@php
+    if (!headers_sent()) {
+        header('Location: ' . url('/login'), true, 302);
+        exit;
+    }
+@endphp
 <!doctype html>
 <html lang="id">
   <head>

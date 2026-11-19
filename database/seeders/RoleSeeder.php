@@ -16,9 +16,19 @@ class RoleSeeder extends Seeder
                 'description' => 'Akses penuh ke Command Center SCADA, disposisi tiket pengaduan, dan manajemen seluruh data sistem.',
             ],
             [
+                'name' => 'scada_operator',
+                'display_name' => 'Operator PDAM & SCADA',
+                'description' => 'Operator teknis pengolahan air, telemetri reservoir, dan verifikator baca meter AI-OCR.',
+            ],
+            [
+                'name' => 'field_officer',
+                'display_name' => 'Petugas Lapangan (TRC)',
+                'description' => 'Teknisi lapangan, survei sambungan baru, pencatatan fisik meteran, dan tindak lanjut aduan warga.',
+            ],
+            [
                 'name' => 'staff',
-                'display_name' => 'Petugas & Operator SCADA',
-                'description' => 'Operator teknis, verifikator AI-OCR meteran warga, dan petugas tindak lanjut lapangan.',
+                'display_name' => 'Petugas & Operator SCADA (Legacy)',
+                'description' => 'Role transisi untuk kompatibilitas ke belakang.',
             ],
             [
                 'name' => 'customer',

@@ -66,15 +66,41 @@ class User extends Authenticatable
         return $this->hasRole('admin');
     }
 
+    public function isScadaOperator(): bool
+    {
+        return $this->hasRole('scada_operator');
+    }
+
+    public function isFieldOfficer(): bool
+    {
+        return $this->hasRole('field_officer');
+    }
+
+    public function isCustomer(): bool
+    {
+        return $this->hasRole('customer');
+    }
+
+    public function isInternalStaff(): bool
+    {
+        return $this->hasRole(['admin', 'scada_operator', 'field_officer', 'staff']);
+    }
+
     public function isStaff(): bool
     {
-        return $this->hasRole(['admin', 'staff']);
+        return $this->isInternalStaff();
     }
 
     public function primaryRoleName(): string
     {
-        if ($this->hasRole('admin')) {
+        if ($this->isAdmin()) {
             return 'admin';
+        }
+        if ($this->isScadaOperator()) {
+            return 'scada_operator';
+        }
+        if ($this->isFieldOfficer()) {
+            return 'field_officer';
         }
         if ($this->hasRole('staff')) {
             return 'staff';

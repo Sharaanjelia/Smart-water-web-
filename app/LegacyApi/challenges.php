@@ -4,6 +4,8 @@
  * Terhubung ke Database MySQL via ChallengeController & Eloquent ORM.
  */
 
+require_once __DIR__ . '/_bootstrap.php';
+
 use App\Http\Controllers\ChallengeController;
 
 if (!headers_sent()) {

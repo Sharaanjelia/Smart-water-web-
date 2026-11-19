@@ -24,6 +24,7 @@ use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class ApiResourceTest extends TestCase
@@ -38,6 +39,7 @@ class ApiResourceTest extends TestCase
     public function test_complaint_resource_transforms_correctly(): void
     {
         $user = User::where('email', 'budi.santoso@warga.payakumbuh.go.id')->first();
+        Auth::login($user);
         $cat = ComplaintCategory::first();
 
         $complaint = Complaint::create([
@@ -79,6 +81,14 @@ class ApiResourceTest extends TestCase
         $this->assertNotEmpty($data['updates']);
         $this->assertEquals('BARU', $data['updates'][0]['status']);
         $this->assertEquals('Budi Santoso', $data['updates'][0]['actor']);
+
+        // Uji Proteksi PII: Masking otomatis saat diakses oleh publik / pengunjung umum
+        Auth::logout();
+        $publicData = (new ComplaintResource($complaint))->resolve();
+        $this->assertNotEquals('Budi Santoso', $publicData['userName']);
+        $this->assertStringContainsString('*', $publicData['userName']);
+        $this->assertStringContainsString('****', $publicData['userPhone']);
+        $this->assertStringContainsString('Disamarkan', $publicData['address']);
     }
 
     /**

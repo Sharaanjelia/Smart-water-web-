@@ -3,6 +3,13 @@
 @section('title', 'Portal Petugas & Admin SCADA')
 
 @section('content')
+@php
+    $authUser = Auth::user();
+    $isAdmin = $isAdmin ?? ($authUser ? $authUser->isAdmin() : false);
+    $isScada = $isScada ?? ($authUser ? $authUser->isScadaOperator() : false);
+    $isField = $isField ?? ($authUser ? $authUser->isFieldOfficer() : false);
+    $isLegacyStaff = $isLegacyStaff ?? ($authUser ? $authUser->hasRole('staff') : false);
+@endphp
 <div class="max-w-6xl mx-auto space-y-6">
 
     <!-- HEADER PETUGAS & ROLE OPERATOR -->
@@ -15,13 +22,13 @@
             </div>
             <div class="space-y-0.5">
                 <span class="text-[10px] text-cyan-100 font-mono font-bold uppercase tracking-[0.2em] block">
-                    PORTAL OPERATOR & PETUGAS PDAM
+                    {{ $headerRoleBadge ?? 'PORTAL OPERATOR & PETUGAS PDAM' }}
                 </span>
                 <h1 class="text-xl sm:text-2xl font-black text-white">
-                    Ahmad Pratama, S.T.
+                    {{ $officerName ?? 'Petugas PDAM' }}
                 </h1>
                 <p class="text-xs text-cyan-50 font-mono">
-                    ID Petugas: ADMIN-04 • NIP: 198804-004 • Divisi SCADA & Distribusi
+                    {{ $officerSubtitle ?? 'PDAM Tirta Sago Kota Payakumbuh' }}
                 </p>
             </div>
         </div>
@@ -42,14 +49,212 @@
         </div>
     </div>
 
+    @if($isAdmin || $isScada || $isLegacyStaff)
+    <!-- ============================================== -->
+    <!-- TAB 0: RINGKASAN DASHBOARD (OVERVIEW)          -->
+    <!-- ============================================== -->
+    <div id="overviewTab" class="{{ ($subTab ?? 'overview') === 'overview' ? '' : 'hidden' }} space-y-6">
+        <!-- 1. METRIC STAT CARDS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <!-- Card 1: Validasi Meter AI-OCR -->
+            <div class="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between space-y-3 group">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-bold text-cyan-800 uppercase tracking-wider bg-cyan-50 border border-cyan-100 px-2.5 py-1 rounded-full">
+                        AI-OCR METER
+                    </span>
+                    <div class="w-9 h-9 rounded-xl bg-cyan-500/10 text-cyan-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></svg>
+                    </div>
+                </div>
+                <div>
+                    <span class="text-3xl font-mono font-black text-slate-900" id="overviewPendingCount">{{ $pendingReportsCount ?? 3 }}</span>
+                    <span class="text-xs text-slate-500 block mt-0.5">Laporan perlu validasi</span>
+                </div>
+                <div class="pt-2 border-t border-slate-100">
+                    <a href="{{ url('/admin-dashboard?tab=verify') }}" class="text-xs font-bold text-[#0284C7] hover:text-[#0369A1] inline-flex items-center gap-1.5">
+                        <span>Buka Antrean Validasi</span>
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 2: SCADA & Hidrolika -->
+            <div class="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between space-y-3 group">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-bold text-emerald-800 uppercase tracking-wider bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-full flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        SCADA TELEMETRI
+                    </span>
+                    <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                    </div>
+                </div>
+                <div>
+                    <span class="text-3xl font-mono font-black text-slate-900">3.2 <span class="text-base font-bold text-slate-500">BAR</span></span>
+                    <span class="text-xs text-emerald-700 font-semibold block mt-0.5">Reservoir 84% (Stabil Normal)</span>
+                </div>
+                <div class="pt-2 border-t border-slate-100">
+                    <a href="{{ url('/water-monitoring') }}" class="text-xs font-bold text-[#0284C7] hover:text-[#0369A1] inline-flex items-center gap-1.5">
+                        <span>Pantau Konsol SCADA</span>
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 3: Kas & Keuangan Tagihan -->
+            <div class="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between space-y-3 group">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-bold text-emerald-800 uppercase tracking-wider bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-full">
+                        KAS BULAN INI
+                    </span>
+                    <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+                    </div>
+                </div>
+                <div>
+                    <span class="text-2xl sm:text-2xl font-mono font-black text-emerald-950">Rp 48.4M</span>
+                    <span class="text-xs text-slate-500 block mt-0.5">88.7% tagihan terbayar</span>
+                </div>
+                <div class="pt-2 border-t border-slate-100">
+                    <a href="{{ url('/admin-dashboard?tab=bills') }}" class="text-xs font-bold text-[#0284C7] hover:text-[#0369A1] inline-flex items-center gap-1.5">
+                        <span>Kelola Penerimaan Kas</span>
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 4: Pelanggan & Pengaduan -->
+            <div class="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between space-y-3 group">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-bold text-sky-800 uppercase tracking-wider bg-sky-50 border border-sky-100 px-2.5 py-1 rounded-full">
+                        SAMBUNGAN &amp; TIKET
+                    </span>
+                    <div class="w-9 h-9 rounded-xl bg-sky-500/10 text-sky-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                    </div>
+                </div>
+                <div>
+                    <span class="text-3xl font-mono font-black text-slate-900">{{ $totalCustomersCount ?? 1248 }}</span>
+                    <span class="text-xs text-slate-500 block mt-0.5">{{ $totalComplaintsCount ?? 2 }} tiket gangguan aktif</span>
+                </div>
+                <div class="pt-2 border-t border-slate-100">
+                    <a href="{{ url('/admin-dashboard?tab=customers') }}" class="text-xs font-bold text-[#0284C7] hover:text-[#0369A1] inline-flex items-center gap-1.5">
+                        <span>Database Sambungan</span>
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 2. QUICK ACTIONS & SHORTCUTS -->
+        <div class="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-xs space-y-4">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Pintasan Tindakan Cepat (Quick Actions)</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <a
+                    href="{{ url('/admin-dashboard?tab=verify') }}"
+                    class="p-4 rounded-2xl bg-cyan-50/70 hover:bg-cyan-100/70 border border-cyan-100 text-cyan-900 transition-all flex flex-col items-center justify-center text-center gap-2 group cursor-pointer"
+                >
+                    <div class="w-10 h-10 rounded-xl bg-white shadow-2xs flex items-center justify-center text-cyan-600 group-hover:scale-110 transition-transform">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></svg>
+                    </div>
+                    <span class="text-xs font-bold">Validasi Meter</span>
+                    <span class="text-[10px] text-cyan-700 font-medium">Periksa foto &amp; OCR</span>
+                </a>
+
+                <a
+                    href="{{ url('/admin-dashboard?tab=bills') }}"
+                    class="p-4 rounded-2xl bg-emerald-50/70 hover:bg-emerald-100/70 border border-emerald-100 text-emerald-900 transition-all flex flex-col items-center justify-center text-center gap-2 group cursor-pointer"
+                >
+                    <div class="w-10 h-10 rounded-xl bg-white shadow-2xs flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+                    </div>
+                    <span class="text-xs font-bold">Rekonsiliasi Kas</span>
+                    <span class="text-[10px] text-emerald-700 font-medium">Verifikasi tagihan</span>
+                </a>
+
+                <a
+                    href="{{ url('/reservoir-detail') }}"
+                    class="p-4 rounded-2xl bg-sky-50/70 hover:bg-sky-100/70 border border-sky-100 text-sky-900 transition-all flex flex-col items-center justify-center text-center gap-2 group cursor-pointer"
+                >
+                    <div class="w-10 h-10 rounded-xl bg-white shadow-2xs flex items-center justify-center text-sky-600 group-hover:scale-110 transition-transform">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                    </div>
+                    <span class="text-xs font-bold">Tandon Reservoir</span>
+                    <span class="text-[10px] text-sky-700 font-medium">Level Batang Agam</span>
+                </a>
+
+                <a
+                    href="{{ url('/pusat-layanan') }}"
+                    class="p-4 rounded-2xl bg-amber-50/70 hover:bg-amber-100/70 border border-amber-100 text-amber-900 transition-all flex flex-col items-center justify-center text-center gap-2 group cursor-pointer"
+                >
+                    <div class="w-10 h-10 rounded-xl bg-white shadow-2xs flex items-center justify-center text-amber-600 group-hover:scale-110 transition-transform">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v5Z"/></svg>
+                    </div>
+                    <span class="text-xs font-bold">Tiket Pengaduan</span>
+                    <span class="text-[10px] text-amber-700 font-medium">Disposisi &amp; tangani</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 3. LIVE ACTIVITY FEED -->
+        <div class="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-xs space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Aktivitas Operasional Terkini</h3>
+                <span class="text-[11px] font-mono text-slate-400">Pembaruan Real-Time</span>
+            </div>
+            <div class="divide-y divide-slate-100 text-xs">
+                <div class="py-3 flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                            ✓
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-800">Pembayaran Tagihan Terverifikasi</p>
+                            <p class="text-slate-500 text-[11px]">Budi Santoso (1234567890) melunasi tagihan periode berjalan sebesar Rp 150.800.</p>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-mono text-slate-400 shrink-0">10 mnt lalu</span>
+                </div>
+                <div class="py-3 flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-cyan-50 text-cyan-600 flex items-center justify-center font-bold">
+                            📷
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-800">Laporan Meter Mandiri AI-OCR Baru</p>
+                            <p class="text-slate-500 text-[11px]">Ibu Siti Nurbaya mengunggah foto meteran (15.0 m³). Status: Menunggu Validasi.</p>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-mono text-slate-400 shrink-0">24 mnt lalu</span>
+                </div>
+                <div class="py-3 flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-sky-50 text-sky-600 flex items-center justify-center font-bold">
+                            ⚙
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-800">Telemetri Sensor Hidrolika Normal</p>
+                            <p class="text-slate-500 text-[11px]">Tekanan transmisi pipa distribusi zona DIST-A tercatat stabil di 3.2 BAR.</p>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-mono text-slate-400 shrink-0">1 jam lalu</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    @if($isAdmin || $isScada || $isLegacyStaff)
     <!-- TAB 1: VERIFIKASI LAPOR METER (DINAMIS REAKTIF) -->
-    <div id="verifyTab" class="space-y-4">
+    <div id="verifyTab" class="{{ ($subTab ?? 'overview') === 'verify' ? '' : 'hidden' }} space-y-4">
         <div class="flex items-center justify-between">
             <h3 class="text-sm font-extrabold text-slate-800">
                 Antrean Verifikasi Foto Meter AI-OCR Pelanggan
             </h3>
             <span class="text-xs font-mono text-slate-400" id="adminPendingSummary">
-                3 Laporan Perlu Validasi Petugas
+                {{ $pendingReportsCount ?? 3 }} Laporan Perlu Validasi Petugas
             </span>
         </div>
 
@@ -57,9 +262,11 @@
             <!-- Dirender secara dinamis oleh JavaScript -->
         </div>
     </div>
+    @endif
 
+    @if($isAdmin)
     <!-- TAB 2: MANAJEMEN TAGIHAN (DINAMIS REAKTIF) -->
-    <div id="billsTab" class="hidden space-y-4">
+    <div id="billsTab" class="{{ ($subTab ?? 'verify') === 'bills' ? '' : 'hidden' }} space-y-4">
         <!-- Summary Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="p-5 rounded-3xl bg-emerald-50 border border-emerald-200 space-y-1">
@@ -126,9 +333,11 @@
             </div>
         </div>
     </div>
+    @endif
 
+    @if($isAdmin || $isField || $isLegacyStaff)
     <!-- TAB 3: DATABASE PELANGGAN -->
-    <div id="customersTab" class="hidden space-y-4">
+    <div id="customersTab" class="{{ ($subTab ?? 'verify') === 'customers' ? '' : 'hidden' }} space-y-4">
         <div class="bg-white rounded-3xl border border-slate-200/90 p-5 shadow-xs space-y-4">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <input
@@ -167,6 +376,83 @@
                     <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs self-start sm:self-auto">
                         Sambungan Aktif
                     </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- ============================================== -->
+    <!-- TAB 4: PROFIL PETUGAS / ADMIN                  -->
+    <!-- ============================================== -->
+    <div id="profileTab" class="{{ ($subTab ?? 'overview') === 'profile' ? '' : 'hidden' }} space-y-6">
+        <!-- Hero Profile Card -->
+        <div class="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-7 shadow-xs">
+            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5 text-center sm:text-left">
+                <div class="w-20 h-20 rounded-3xl bg-gradient-to-tr from-[#0284C7] to-cyan-500 text-white flex items-center justify-center font-black text-3xl shadow-lg shadow-sky-600/20 shrink-0">
+                    <?= strtoupper(substr(e($officerName ?? 'H'), 0, 1)) ?>
+                </div>
+                <div class="space-y-1.5 flex-1">
+                    <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                        <h2 class="text-xl font-extrabold text-slate-900">{{ $officerName ?? 'Ir. Hendra Pratama, S.T.' }}</h2>
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-cyan-50 text-cyan-800 border border-cyan-200">
+                            {{ $headerRoleBadge ?? 'ADMIN SCADA' }}
+                        </span>
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                            AKTIF
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-500 font-mono">{{ $officerNip ?? 'ADM-04-SCADA' }} &bull; {{ $officerSubtitle ?? 'admin@tirtasago.id' }}</p>
+                    <p class="text-xs text-slate-600 leading-relaxed max-w-xl">
+                        Koordinator SCADA dan Administrator Sistem Smart Water Perumda Air Minum Tirta Sago Kota Payakumbuh.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detail Informasi Kedinasan -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-white rounded-3xl border border-slate-200/90 p-5 shadow-xs space-y-4">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Informasi Kedinasan</h3>
+                <div class="space-y-3 text-xs divide-y divide-slate-100">
+                    <div class="pt-2 flex justify-between">
+                        <span class="text-slate-500">Instansi</span>
+                        <span class="font-bold text-slate-800">Perumda Air Minum Tirta Sago</span>
+                    </div>
+                    <div class="pt-2 flex justify-between">
+                        <span class="text-slate-500">Unit / Instalasi</span>
+                        <span class="font-bold text-slate-800">IPA Batang Agam</span>
+                    </div>
+                    <div class="pt-2 flex justify-between">
+                        <span class="text-slate-500">Wilayah Kerja</span>
+                        <span class="font-bold text-slate-800">Kota Payakumbuh</span>
+                    </div>
+                    <div class="pt-2 flex justify-between">
+                        <span class="text-slate-500">Sistem Keamanan</span>
+                        <span class="font-bold text-cyan-800 font-mono">RBAC Granular Security</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl border border-slate-200/90 p-5 shadow-xs space-y-4">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Keamanan &amp; Sesi Akses</h3>
+                <div class="space-y-3 text-xs divide-y divide-slate-100">
+                    <div class="pt-2 flex justify-between">
+                        <span class="text-slate-500">Status Otentikasi</span>
+                        <span class="font-bold text-emerald-700">Sesi Sah Terverifikasi</span>
+                    </div>
+                    <div class="pt-2 flex justify-between">
+                        <span class="text-slate-500">Waktu Masuk</span>
+                        <span class="font-mono text-slate-800">Hari ini, {{ now()->format('H:i') }} WIB</span>
+                    </div>
+                    <div class="pt-2 flex justify-between">
+                        <span class="text-slate-500">Alamat Jaringan</span>
+                        <span class="font-mono text-slate-800">127.0.0.1 (Local Server)</span>
+                    </div>
+                    <div class="pt-2 flex justify-between">
+                        <span class="text-slate-500">Perlindungan PII</span>
+                        <span class="font-bold text-sky-800">Aktif (Data Masking)</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -370,7 +656,9 @@ function bindSidebarTab(id, tabName) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    renderAdminDashboard();
+    if (document.getElementById('verifyTab')) {
+        renderAdminDashboard();
+    }
 
     bindSidebarTab('sidebarNavVerify', 'verify');
     bindSidebarTab('sidebarNavBills', 'bills');
@@ -378,7 +666,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Baca tab aktif dari URL query parameter ?tab=... atau hash #...
     const urlParams = new URLSearchParams(window.location.search);
-    const initialTab = urlParams.get('tab') || window.location.hash.replace('#', '') || '{{ $subTab ?? "verify" }}';
+    const initialTab = urlParams.get('tab') || window.location.hash.replace('#', '') || '{{ $subTab ?? ($isField ? "customers" : "verify") }}';
     switchAdminTab(initialTab, false);
 });
 

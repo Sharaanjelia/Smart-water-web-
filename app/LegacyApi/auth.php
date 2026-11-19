@@ -4,6 +4,8 @@
  * Menggunakan Laravel Eloquent ORM & Bcrypt Password Hashing.
  */
 
+require_once __DIR__ . '/_bootstrap.php';
+
 use App\Models\User;
 use App\Services\AuthService;
 use Illuminate\Support\Facades\Auth;
@@ -41,6 +43,7 @@ if ((!$raw || $raw === '') && function_exists('request')) {
 $body = json_decode($raw ?: '{}', true);
 if (!is_array($body)) {
     $respondJson(['error' => 'Invalid JSON payload'], 400);
+    return;
 }
 
 $action = (string)($body['action'] ?? '');
@@ -80,9 +83,7 @@ if ($action === 'login') {
 
     $userData = AuthService::syncSession($user);
     $role = $userData['role'];
-    $redirectUrl = in_array($role, ['admin', 'staff'], true)
-        ? $getUrl('/admin-dashboard')
-        : $getUrl('/report-meter');
+    $redirectUrl = AuthService::getRedirectForUser($user);
 
     $respondJson([
         'ok'       => true,
@@ -141,7 +142,7 @@ if ($action === 'register') {
         'ok'       => true,
         'user'     => $userData,
         'role'     => 'customer',
-        'redirect' => $getUrl('/report-meter'),
+        'redirect' => $getUrl('/user'),
     ]);
     return;
 }
@@ -197,7 +198,7 @@ if ($action === 'admin_login') {
         'ok'       => true,
         'user'     => $userData,
         'role'     => $userData['role'],
-        'redirect' => $getUrl('/admin-dashboard'),
+        'redirect' => AuthService::getRedirectForUser($user),
     ]);
     return;
 }
