@@ -61,6 +61,30 @@ if (!$authUser) {
 }
 
 switch ($action) {
+    case 'update_avatar':
+        $avatarData = trim((string) ($payload['avatar'] ?? ''));
+        if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+            @session_start();
+        }
+        $_SESSION['swc_user_avatar'] = $avatarData;
+        if (isset($_SESSION['swc_user']) && is_array($_SESSION['swc_user'])) {
+            $_SESSION['swc_user']['avatar'] = $avatarData;
+        }
+        if (function_exists('session')) {
+            session(['swc_user_avatar' => $avatarData]);
+            $sUser = session('swc_user');
+            if (is_array($sUser)) {
+                $sUser['avatar'] = $avatarData;
+                session(['swc_user' => $sUser]);
+            }
+        }
+        echo json_encode([
+            'ok'      => true,
+            'message' => 'Foto profil berhasil diperbarui!',
+            'avatar'  => $avatarData,
+        ]);
+        return;
+
     case 'update_contact':
         $phone   = trim((string) ($payload['phone'] ?? ''));
         $email   = trim((string) ($payload['email'] ?? ''));

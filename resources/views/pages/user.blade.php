@@ -156,8 +156,18 @@ require $legacySharedPath . '/header.php';
           <!-- User Mini Card -->
           <div class="bg-white/92 backdrop-blur-md p-4 rounded-2xl border border-white/80 shadow-md shadow-sky-950/5 space-y-2">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-full bg-[#0284C7] flex items-center justify-center text-white text-base font-bold shrink-0 shadow-xs">
-                <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <div class="relative group cursor-pointer" onclick="switchProfileTab('foto')" title="Klik untuk ganti foto profil">
+                <div class="user-avatar-display w-10 h-10 rounded-full bg-gradient-to-tr from-cyan-600 to-sky-400 flex items-center justify-center text-white text-base font-bold shrink-0 shadow-xs overflow-hidden border border-white/80 group-hover:scale-105 transition-transform">
+                  <?php if (!empty($currentUser['avatar'])): ?>
+                    <img src="<?= e($currentUser['avatar']) ?>" alt="Foto Profil" class="w-full h-full object-cover rounded-full" />
+                  <?php else: ?>
+                    <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  <?php endif; ?>
+                </div>
+                <!-- Camera Badge -->
+                <div class="absolute -bottom-1 -right-1 w-4.5 h-4.5 rounded-full bg-cyan-600 group-hover:bg-cyan-700 text-white flex items-center justify-center border border-white shadow-xs transition-colors">
+                  <svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                </div>
               </div>
               <div class="overflow-hidden">
                 <h3 class="text-sm font-bold text-[#0F2C59] truncate leading-tight"><?= e($currentUser['name'] ?? 'Pelanggan') ?></h3>
@@ -174,13 +184,13 @@ require $legacySharedPath . '/header.php';
           <!-- Navigation Links -->
           <?php
           $activeProfileTab = request()->query('tab', 'beranda');
-          if (!in_array($activeProfileTab, ['beranda', 'info', 'laporan', 'pengaduan', 'belajar', 'privasi', 'lencana'], true)) {
+          if (!in_array($activeProfileTab, ['beranda', 'info', 'foto', 'laporan', 'pengaduan', 'belajar', 'privasi', 'lencana'], true)) {
               $activeProfileTab = 'beranda';
           }
           $getNavBtnClass = function (string $tab) use ($activeProfileTab): string {
               return $activeProfileTab === $tab
-                  ? 'profile-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-all cursor-pointer bg-[#E3EFFB] text-[#0284C7] font-bold shadow-2xs'
-                  : 'profile-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-slate-50';
+                   ? 'profile-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-all cursor-pointer bg-[#E3EFFB] text-[#0284C7] font-bold shadow-2xs'
+                   : 'profile-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-slate-50';
           };
           ?>
           <div class="bg-white/92 backdrop-blur-md p-2.5 rounded-2xl border border-white/80 shadow-md shadow-sky-950/5 space-y-1">
@@ -195,6 +205,16 @@ require $legacySharedPath . '/header.php';
               <div class="flex items-center gap-3">
                 <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 <span class="text-left">Informasi Akun &amp; Data Pelanggan</span>
+              </div>
+            </button>
+
+            <button type="button" data-ptab="foto" onclick="switchProfileTab('foto')" class="<?= $getNavBtnClass('foto') ?>">
+              <div class="flex items-center gap-3">
+                <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                  <circle cx="12" cy="13" r="4"/>
+                </svg>
+                <span class="text-left">Foto Profil &amp; Avatar</span>
               </div>
             </button>
 
@@ -591,6 +611,160 @@ require $legacySharedPath . '/header.php';
                   <div class="md:col-span-4 text-xs font-medium text-slate-900 leading-relaxed bind-user-address"><?= e($currentUser['address'] ?? 'Kota Payakumbuh') ?></div>
                   <div class="md:col-span-4 text-[11px] text-slate-400">Alamat ini otomatis menjadi rujukan petugas jika Anda melaporkan gangguan pipa.</div>
                 </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ======================================================== -->
+          <!-- 2B. TAB: FOTO PROFIL & AVATAR                            -->
+          <!-- ======================================================== -->
+          <section id="profile-tab-foto" class="profile-tab-panel <?= $activeProfileTab === 'foto' ? '' : 'hidden' ?> space-y-6">
+            <div class="bg-white/92 backdrop-blur-md rounded-3xl border border-white/80 p-6 sm:p-7 shadow-md shadow-sky-950/5 space-y-6">
+              
+              <!-- Header Section -->
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2 text-xs text-slate-400 font-medium">
+                    <span>Profil Pelanggan</span>
+                    <span>/</span>
+                    <span class="text-[#0284C7] font-semibold">Foto Profil &amp; Avatar</span>
+                  </div>
+                  <h2 class="text-xl font-extrabold text-slate-900 tracking-tight">Kelola Foto Profil Pelanggan</h2>
+                  <p class="text-xs text-slate-500">
+                    Sesuaikan foto profil akun Anda dengan mengunggah foto pribadi dari galeri perangkat atau memilih avatar karakter resmi Smart Water.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Main Grid: Foto Aktif & Upload vs Preset Avatars -->
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Left: Foto Profil Aktif & Upload Card -->
+                <div class="lg:col-span-5 bg-gradient-to-b from-sky-50/70 to-white rounded-2xl p-6 border border-sky-100/80 shadow-xs flex flex-col items-center text-center space-y-5">
+                  <div class="relative group">
+                    <div id="avatarBigPreview" class="w-32 h-32 rounded-full ring-4 ring-white shadow-xl shadow-sky-950/10 overflow-hidden bg-gradient-to-tr from-cyan-600 via-sky-500 to-blue-600 flex items-center justify-center text-white text-4xl font-extrabold transition-transform duration-300 group-hover:scale-105">
+                      <?php if (!empty($currentUser['avatar'])): ?>
+                        <img src="<?= e($currentUser['avatar']) ?>" alt="Foto Profil" class="w-full h-full object-cover" />
+                      <?php else: ?>
+                        <svg class="w-16 h-16 text-white/90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                      <?php endif; ?>
+                    </div>
+                    <button type="button" onclick="document.getElementById('avatarFileInput').click()" class="absolute bottom-1 right-1 p-2 rounded-full bg-[#0284C7] hover:bg-[#0369A1] text-white shadow-md transition-transform hover:scale-110 cursor-pointer" title="Pilih Foto dari Perangkat">
+                      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                        <circle cx="12" cy="13" r="4"/>
+                      </svg>
+                    </button>
+                  </div>
+
+                  <div>
+                    <h3 class="font-extrabold text-slate-900 text-base"><?= e($currentUser['name'] ?? 'Pelanggan') ?></h3>
+                    <p class="text-xs text-slate-500 font-mono mt-0.5"><?= e($currentUser['email'] ?? 'pelanggan@smartwater.id') ?></p>
+                    <span class="inline-flex items-center gap-1.5 mt-2 px-2.5 py-0.5 rounded-full bg-sky-100 text-[#0284C7] text-[11px] font-bold">
+                      <span class="w-1.5 h-1.5 rounded-full bg-[#0284C7] animate-pulse"></span>
+                      No. Meter: <?= e($currentUser['meterNumber'] ?? '01000') ?>
+                    </span>
+                  </div>
+
+                  <!-- File Input Hidden -->
+                  <input type="file" id="avatarFileInput" accept="image/png,image/jpeg,image/webp,image/jpg" class="hidden" onchange="handleAvatarFileSelect(event)" />
+
+                  <div class="w-full space-y-2 pt-2">
+                    <button type="button" onclick="document.getElementById('avatarFileInput').click()" class="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-[#0284C7] hover:bg-[#0369A1] transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer active:scale-[0.98]">
+                      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                      <span>Unggah Foto dari Perangkat</span>
+                    </button>
+                    
+                    <button type="button" onclick="removeCustomAvatar()" class="w-full py-2 px-4 rounded-xl text-xs font-semibold text-slate-600 hover:text-red-600 hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-colors flex items-center justify-center gap-2 cursor-pointer">
+                      <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                      <span>Gunakan Avatar Bawaan (Reset)</span>
+                    </button>
+                  </div>
+
+                  <p class="text-[11px] text-slate-400 leading-relaxed text-center">
+                    Format gambar JPG, PNG, WEBP maks. 3 MB. Foto langsung tersinkron di navbar, sidebar, dan akun Anda.
+                  </p>
+                </div>
+
+                <!-- Right: Preset Avatars Grid -->
+                <div class="lg:col-span-7 bg-white rounded-2xl p-6 border border-slate-100 shadow-xs space-y-4">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h4 class="text-sm font-bold text-slate-900">Pilih Avatar Karakter Smart Water</h4>
+                      <p class="text-xs text-slate-500">Pilih salah satu ikon tematik resmi khas Tirta Sago Payakumbuh.</p>
+                    </div>
+                    <span class="text-[10px] font-bold text-sky-700 bg-sky-50 px-2.5 py-1 rounded-full border border-sky-100">6 Koleksi</span>
+                  </div>
+
+                  <div class="grid grid-cols-2 sm:grid-cols-3 gap-3.5 pt-2">
+                    <!-- Preset 1: Tirta Alami -->
+                    <button type="button" onclick="selectPresetAvatar('tirta-alami')" class="preset-avatar-btn group p-3.5 rounded-2xl border-2 border-slate-100 hover:border-[#0284C7] bg-slate-50/50 hover:bg-sky-50/40 transition-all text-center flex flex-col items-center gap-2.5 cursor-pointer">
+                      <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-cyan-500 to-sky-400 flex items-center justify-center text-white shadow-sm group-hover:scale-110 transition-transform">
+                        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                      </div>
+                      <div>
+                        <div class="text-xs font-bold text-slate-800 group-hover:text-[#0284C7]">Tirta Alami</div>
+                        <div class="text-[10px] text-slate-400">Mata Air Bersih</div>
+                      </div>
+                    </button>
+
+                    <!-- Preset 2: Detektif Pipa -->
+                    <button type="button" onclick="selectPresetAvatar('detektif-pipa')" class="preset-avatar-btn group p-3.5 rounded-2xl border-2 border-slate-100 hover:border-[#0284C7] bg-slate-50/50 hover:bg-sky-50/40 transition-all text-center flex flex-col items-center gap-2.5 cursor-pointer">
+                      <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-sm group-hover:scale-110 transition-transform">
+                        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                      </div>
+                      <div>
+                        <div class="text-xs font-bold text-slate-800 group-hover:text-[#0284C7]">Detektif Pipa</div>
+                        <div class="text-[10px] text-slate-400">Siaga Kebocoran</div>
+                      </div>
+                    </button>
+
+                    <!-- Preset 3: Hulu Sago -->
+                    <button type="button" onclick="selectPresetAvatar('hulu-sago')" class="preset-avatar-btn group p-3.5 rounded-2xl border-2 border-slate-100 hover:border-[#0284C7] bg-slate-50/50 hover:bg-sky-50/40 transition-all text-center flex flex-col items-center gap-2.5 cursor-pointer">
+                      <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-white shadow-sm group-hover:scale-110 transition-transform">
+                        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg>
+                      </div>
+                      <div>
+                        <div class="text-xs font-bold text-slate-800 group-hover:text-[#0284C7]">Hulu Sago</div>
+                        <div class="text-[10px] text-slate-400">Gunung &amp; Alam</div>
+                      </div>
+                    </button>
+
+                    <!-- Preset 4: Siswa Akademi -->
+                    <button type="button" onclick="selectPresetAvatar('siswa-akademi')" class="preset-avatar-btn group p-3.5 rounded-2xl border-2 border-slate-100 hover:border-[#0284C7] bg-slate-50/50 hover:bg-sky-50/40 transition-all text-center flex flex-col items-center gap-2.5 cursor-pointer">
+                      <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-400 flex items-center justify-center text-white shadow-sm group-hover:scale-110 transition-transform">
+                        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                      </div>
+                      <div>
+                        <div class="text-xs font-bold text-slate-800 group-hover:text-[#0284C7]">Siswa Akademi</div>
+                        <div class="text-[10px] text-slate-400">Literasi Pintar</div>
+                      </div>
+                    </button>
+
+                    <!-- Preset 5: Warga Teladan -->
+                    <button type="button" onclick="selectPresetAvatar('warga-teladan')" class="preset-avatar-btn group p-3.5 rounded-2xl border-2 border-slate-100 hover:border-[#0284C7] bg-slate-50/50 hover:bg-sky-50/40 transition-all text-center flex flex-col items-center gap-2.5 cursor-pointer">
+                      <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 flex items-center justify-center text-white shadow-sm group-hover:scale-110 transition-transform">
+                        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+                      </div>
+                      <div>
+                        <div class="text-xs font-bold text-slate-800 group-hover:text-[#0284C7]">Warga Teladan</div>
+                        <div class="text-[10px] text-slate-400">Pahlawan Air</div>
+                      </div>
+                    </button>
+
+                    <!-- Preset 6: Pelanggan Resmi -->
+                    <button type="button" onclick="selectPresetAvatar('pelanggan-resmi')" class="preset-avatar-btn group p-3.5 rounded-2xl border-2 border-slate-100 hover:border-[#0284C7] bg-slate-50/50 hover:bg-sky-50/40 transition-all text-center flex flex-col items-center gap-2.5 cursor-pointer">
+                      <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-slate-700 to-slate-900 flex items-center justify-center text-white shadow-sm group-hover:scale-110 transition-transform">
+                        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                      </div>
+                      <div>
+                        <div class="text-xs font-bold text-slate-800 group-hover:text-[#0284C7]">Pelanggan Resmi</div>
+                        <div class="text-[10px] text-slate-400">Akun Terverifikasi</div>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
               </div>
             </div>
           </section>

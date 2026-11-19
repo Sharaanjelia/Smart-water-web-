@@ -40,35 +40,33 @@ require $legacySharedPath . '/header.php';
         <div id="academy-main-view" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
           <!-- Top Hero / Banner Section -->
-          <div class="group relative overflow-hidden rounded-3xl text-white p-6 sm:p-10 shadow-lg border border-slate-800">
-            <!-- Background Image dengan Scenic Lake & Dark Cyan Scrim -->
+          <div class="group relative overflow-hidden rounded-3xl text-white p-6 sm:p-10 shadow-xl border border-sky-900/30">
+            <!-- Background Image: Danau Biru Jernih Alami (Terang, Jernih, dan Jelas) -->
             <div class="absolute inset-0 z-0">
               <img
-                src="<?= asset('assets/images/hero-lake-serene.jpg') ?>"
-                alt="Latar Belakang Smart Water Academy"
-                class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-1000 ease-out"
+                src="<?= asset('assets/images/hero-lake-bright.jpg') ?>"
+                alt="Smart Water Academy"
+                class="w-full h-full object-cover object-[center_45%] group-hover:scale-105 transition-transform duration-700 ease-out"
               />
-              <div class="absolute inset-0 bg-gradient-to-r from-slate-950/92 via-slate-900/85 to-cyan-950/70 backdrop-blur-[0.5px]"></div>
+              <!-- Scrim Halus: Gelap hanya di kiri untuk keterbacaan teks, sisi kanan transparan penuh agar foto terlihat sangat jernih -->
+              <div class="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/40 to-transparent"></div>
+              <div class="absolute inset-0 bg-sky-950/10 pointer-events-none"></div>
             </div>
 
             <div class="relative z-10 max-w-2xl space-y-3">
-              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-semibold border border-cyan-400/30 backdrop-blur-xs">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-950/50 text-cyan-300 text-xs font-semibold border border-cyan-400/40 backdrop-blur-md shadow-xs">
                 <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/>
                   <path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>
                 </svg>
                 <span>Pusat Edukasi &amp; Literasi Konservasi</span>
               </div>
-              <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight drop-shadow-sm">
+              <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight drop-shadow-md">
                 Smart Water Academy Payakumbuh
               </h1>
-              <p class="text-xs sm:text-sm text-slate-200 leading-relaxed drop-shadow-xs">
+              <p class="text-xs sm:text-sm text-slate-100 font-medium leading-relaxed drop-shadow-sm max-w-xl">
                 Tingkatkan pengetahuan tentang siklus air Gunung Sago, deteksi kebocoran mandiri di rumah, dan kuasai kebiasaan hemat air dengan modul interaktif &amp; kuis berhadiah XP.
               </p>
-            </div>
-
-            <div class="absolute right-0 bottom-0 top-0 w-1/3 opacity-20 pointer-events-none hidden md:block z-0">
-              <div class="w-96 h-96 rounded-full bg-gradient-to-tr from-cyan-400 to-sky-200 blur-3xl transform translate-x-20"></div>
             </div>
           </div>
 

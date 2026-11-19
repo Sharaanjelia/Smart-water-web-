@@ -169,6 +169,7 @@ if ($isGuest) {
         <?php
           $currentDisplayName = $headerUser['name'] ?? $headerUser['fullName'] ?? 'Budi Santoso';
           $currentInitial = strtoupper(substr($currentDisplayName, 0, 1) ?: 'B');
+          $currentAvatar = $headerUser['avatar'] ?? ($_SESSION['swc_user_avatar'] ?? null);
         ?>
 
         <!-- Dropdown Menu Profil Warga Terpadu -->
@@ -180,8 +181,12 @@ if ($isGuest) {
               class="flex items-center gap-2 py-1 pl-1 pr-2 rounded-l-full cursor-pointer group"
               title="Buka Profil & Dashboard Pelanggan"
             >
-              <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-600 to-sky-400 text-white shadow-xs flex items-center justify-center text-xs font-bold shrink-0 group-hover:scale-105 transition-transform">
-                <?= e($currentInitial) ?>
+              <div class="user-header-avatar w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-600 to-sky-400 text-white shadow-xs flex items-center justify-center text-xs font-bold shrink-0 group-hover:scale-105 transition-transform overflow-hidden">
+                <?php if (!empty($currentAvatar)): ?>
+                  <img src="<?= e($currentAvatar) ?>" alt="<?= e($currentDisplayName) ?>" class="w-full h-full object-cover rounded-full" />
+                <?php else: ?>
+                  <span class="avatar-initial"><?= e($currentInitial) ?></span>
+                <?php endif; ?>
               </div>
               <div class="hidden lg:flex flex-col text-left">
                 <span class="text-xs font-bold text-slate-800 leading-tight truncate max-w-[125px] group-hover:text-cyan-700 transition-colors">
@@ -216,8 +221,12 @@ if ($isGuest) {
           >
             <div class="p-3.5 bg-slate-50/80 border-b border-slate-100">
               <div class="flex items-center gap-2.5">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-600 to-sky-400 text-white shadow-xs flex items-center justify-center text-sm font-bold shrink-0">
-                  <?= e($currentInitial) ?>
+                <div class="user-dropdown-avatar w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-600 to-sky-400 text-white shadow-xs flex items-center justify-center text-sm font-bold shrink-0 overflow-hidden">
+                  <?php if (!empty($currentAvatar)): ?>
+                    <img src="<?= e($currentAvatar) ?>" alt="<?= e($currentDisplayName) ?>" class="w-full h-full object-cover rounded-xl" />
+                  <?php else: ?>
+                    <span class="avatar-initial"><?= e($currentInitial) ?></span>
+                  <?php endif; ?>
                 </div>
                 <div class="min-w-0 flex-1">
                   <p class="text-xs font-bold text-slate-900 truncate"><?= e($currentDisplayName) ?></p>
@@ -462,6 +471,25 @@ function toggleMobileMenu() {
     }
   }
 }
+
+// Sinkronisasi Foto Profil Kustom dari LocalStorage
+(function syncGlobalUserAvatar() {
+  function applyAvatar() {
+    try {
+      const customAvatar = localStorage.getItem('swc_user_avatar');
+      if (customAvatar) {
+        document.querySelectorAll('.user-header-avatar, .user-dropdown-avatar').forEach((el) => {
+          el.innerHTML = `<img src="${customAvatar}" alt="Foto Profil" class="w-full h-full object-cover rounded-full" />`;
+        });
+      }
+    } catch (e) {}
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyAvatar);
+  } else {
+    applyAvatar();
+  }
+})();
 </script>
 
 <?php if (empty($GLOBALS['SWC_STORE_INCLUDED'])): $GLOBALS['SWC_STORE_INCLUDED'] = true; ?>

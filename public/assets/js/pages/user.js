@@ -609,15 +609,155 @@ async function sendTirtaBotMessage(text) {
   }
 }
 
+/* ================= PENGELOLAAN FOTO PROFIL & AVATAR ================= */
+const PRESET_AVATAR_SVGS = {
+  'tirta-alami': 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2306B6D4"/><stop offset="100%" stop-color="%230284C7"/></linearGradient></defs><circle cx="50" cy="50" r="50" fill="url(%23g1)"/><path d="M50 20 C50 20 68 45 68 58 C68 68 60 76 50 76 C40 76 32 68 32 58 C32 45 50 20 50 20 Z" fill="white"/><ellipse cx="44" cy="50" rx="4" ry="7" fill="rgba(255,255,255,0.4)" transform="rotate(-20 44 50)"/></svg>',
+  'detektif-pipa': 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%232563EB"/><stop offset="100%" stop-color="%234F46E5"/></linearGradient></defs><circle cx="50" cy="50" r="50" fill="url(%23g2)"/><circle cx="45" cy="45" r="18" fill="none" stroke="white" stroke-width="6"/><line x1="58" y1="58" x2="74" y2="74" stroke="white" stroke-width="7" stroke-linecap="round"/><circle cx="45" cy="45" r="6" fill="%2367E8F9"/></svg>',
+  'hulu-sago': 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2310B981"/><stop offset="100%" stop-color="%230D9488"/></linearGradient></defs><circle cx="50" cy="50" r="50" fill="url(%23g3)"/><polygon points="50,22 24,70 76,70" fill="white"/><polygon points="50,22 40,42 50,38 60,42" fill="%23A7F3D0"/><circle cx="50" cy="52" r="4" fill="%23047857"/></svg>',
+  'siswa-akademi': 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23F59E0B"/><stop offset="100%" stop-color="%23EAB308"/></linearGradient></defs><circle cx="50" cy="50" r="50" fill="url(%23g4)"/><polygon points="50,28 80,44 50,60 20,44" fill="white"/><path d="M30 52 L30 68 Q50 80 70 68 L70 52" fill="none" stroke="white" stroke-width="4" stroke-linecap="round"/><path d="M78 45 L78 65" stroke="white" stroke-width="3" stroke-linecap="round"/></svg>',
+  'warga-teladan': 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g5" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%238B5CF6"/><stop offset="100%" stop-color="%23EC4899"/></linearGradient></defs><circle cx="50" cy="50" r="50" fill="url(%23g5)"/><circle cx="50" cy="42" r="16" fill="white"/><polygon points="50,34 54,40 60,40 55,44 57,50 50,46 43,50 45,44 40,40 46,40" fill="%23F59E0B"/><path d="M40 55 L34 76 L50 68 L66 76 L60 55" fill="white"/></svg>',
+  'pelanggan-resmi': 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g6" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23334155"/><stop offset="100%" stop-color="%230F172A"/></linearGradient></defs><circle cx="50" cy="50" r="50" fill="url(%23g6)"/><circle cx="50" cy="40" r="15" fill="white"/><path d="M26 78 C26 62 36 56 50 56 C64 56 74 62 74 78 Z" fill="white"/><circle cx="70" cy="36" r="8" fill="%2338BDF8"/><polyline points="66 36 69 39 74 33" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+};
+
+function updateAllAvatarElements(avatarUrl) {
+  const bigPreview = document.getElementById('avatarBigPreview');
+  if (bigPreview) {
+    if (avatarUrl) {
+      bigPreview.innerHTML = `<img src="${avatarUrl}" alt="Foto Profil" class="w-full h-full object-cover rounded-full" />`;
+    } else {
+      bigPreview.innerHTML = `<svg class="w-16 h-16 text-white/90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+    }
+  }
+
+  document.querySelectorAll('.user-avatar-display').forEach((el) => {
+    if (avatarUrl) {
+      el.innerHTML = `<img src="${avatarUrl}" alt="Foto Profil" class="w-full h-full object-cover rounded-full" />`;
+    } else {
+      el.innerHTML = `<svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+    }
+  });
+
+  document.querySelectorAll('.user-header-avatar, .user-dropdown-avatar').forEach((el) => {
+    if (avatarUrl) {
+      el.innerHTML = `<img src="${avatarUrl}" alt="Foto Profil" class="w-full h-full object-cover rounded-full" />`;
+    } else {
+      const initial = (userState?.name || 'A').charAt(0).toUpperCase();
+      el.textContent = initial;
+    }
+  });
+}
+
+async function persistAvatar(avatarUrl) {
+  try {
+    if (avatarUrl) {
+      localStorage.setItem('swc_user_avatar', avatarUrl);
+    } else {
+      localStorage.removeItem('swc_user_avatar');
+    }
+
+    if (userState) {
+      userState.avatar = avatarUrl || null;
+    }
+
+    await fetch(getAppBaseUrl('/api/profile.php'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'update_avatar',
+        avatar: avatarUrl || ''
+      })
+    });
+  } catch (err) {
+    console.warn('Gagal sinkronisasi avatar ke server:', err);
+  }
+}
+
+async function selectPresetAvatar(key) {
+  const svgData = PRESET_AVATAR_SVGS[key];
+  if (!svgData) return;
+
+  updateAllAvatarElements(svgData);
+  await persistAvatar(svgData);
+  showProfileToast('Avatar profil berhasil diubah!');
+}
+
+function handleAvatarFileSelect(event) {
+  const file = event.target?.files?.[0];
+  if (!file) return;
+
+  if (file.size > 5 * 1024 * 1024) {
+    alert('Ukuran file foto maksimal adalah 5MB.');
+    event.target.value = '';
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const rawDataUrl = e.target.result;
+    
+    // Optimalkan ukuran gambar melalui kanvas
+    const img = new Image();
+    img.onload = async function() {
+      const maxDim = 320;
+      let width = img.width;
+      let height = img.height;
+
+      if (width > height) {
+        if (width > maxDim) {
+          height = Math.round((height * maxDim) / width);
+          width = maxDim;
+        }
+      } else {
+        if (height > maxDim) {
+          width = Math.round((width * maxDim) / height);
+          height = maxDim;
+        }
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+
+      const optimizedDataUrl = canvas.toDataURL('image/jpeg', 0.88);
+      updateAllAvatarElements(optimizedDataUrl);
+      await persistAvatar(optimizedDataUrl);
+      showProfileToast('Foto profil berhasil diunggah & disimpan!');
+      if (event.target) event.target.value = '';
+    };
+    img.src = rawDataUrl;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function removeCustomAvatar() {
+  updateAllAvatarElements('');
+  await persistAvatar('');
+  showProfileToast('Foto profil dikembalikan ke setelan bawaan.');
+}
+
+window.handleAvatarFileSelect = handleAvatarFileSelect;
+window.selectPresetAvatar = selectPresetAvatar;
+window.removeCustomAvatar = removeCustomAvatar;
+
 document.addEventListener('DOMContentLoaded', () => {
   renderProfileComplaints();
   loadChatHistory();
   renderChatMessages();
 
+  // Sinkronisasi avatar tersimpan dari localStorage
+  try {
+    const savedAvatar = localStorage.getItem('swc_user_avatar');
+    if (savedAvatar) {
+      updateAllAvatarElements(savedAvatar);
+    }
+  } catch (e) {}
+
   try {
     const urlParams = new URLSearchParams(window.location.search);
     const initialTab = urlParams.get('tab') || window.location.hash.replace('#', '');
-    if (initialTab && ['beranda', 'info', 'laporan', 'pengaduan', 'belajar', 'privasi', 'lencana'].includes(initialTab)) {
+    if (initialTab && ['beranda', 'info', 'foto', 'laporan', 'pengaduan', 'belajar', 'privasi', 'lencana'].includes(initialTab)) {
       switchProfileTab(initialTab);
     }
   } catch (e) {
