@@ -30,9 +30,6 @@
                         </svg>
                         <span>Bacaan Meter Sebelumnya</span>
                     </div>
-                    <span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                        Terverifikasi PDAM
-                    </span>
                 </div>
 
                 <!-- Visualizer Odometer Meteran Air Mekanis -->
@@ -148,11 +145,10 @@
 
             <!-- Panel Khusus Web Desktop: Drag and Drop Upload Foto -->
             <div class="bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs space-y-4">
-                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="border-b border-slate-100 pb-3">
                     <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wide">
                         Atau Unggah Foto dari Komputer
                     </h4>
-                    <span class="text-[10px] text-slate-400 font-mono">JPG / PNG</span>
                 </div>
 
                 <form action="{{ url('/meter-result') }}" method="GET" enctype="multipart/form-data" class="space-y-3">

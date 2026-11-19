@@ -83,13 +83,6 @@ require_once $legacySharedPath . '/brand_logo.php';
         <!-- LEFT COLUMN: HERO INFORMATION & SCENIC ILLUSTRATION -->
         <div class="lg:col-span-7 space-y-6">
           <div class="space-y-3">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 backdrop-blur-md border border-white/80 text-[#0284C7] text-[11px] font-bold shadow-xs">
-              <svg class="w-3.5 h-3.5 text-sky-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
-                <path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/>
-              </svg>
-              <span>Ekosistem Perumda Tirta Sago Kota Payakumbuh</span>
-            </div>
             <h1 class="text-3xl sm:text-4xl lg:text-[40px] font-black text-[#0F2C59] tracking-tight leading-[1.15] drop-shadow-xs">
               Selamat Datang di <br class="hidden sm:inline" />
               Smart Water

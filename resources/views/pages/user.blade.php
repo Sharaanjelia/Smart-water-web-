@@ -166,7 +166,6 @@ require $legacySharedPath . '/header.php';
                     <svg class="w-2.5 h-2.5 text-emerald-600 stroke-[3]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                     <span>Pelanggan Terverifikasi</span>
                   </span>
-                  <span class="px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold">2A</span>
                 </div>
               </div>
             </div>
@@ -279,10 +278,6 @@ require $legacySharedPath . '/header.php';
               </div>
 
               <div class="relative z-10 space-y-2">
-                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/80 border border-sky-200/80 text-[11px] font-bold text-[#0284C7]">
-                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
-                  <span>Dashboard Mandiri Pelanggan Payakumbuh</span>
-                </div>
                 <h1 class="text-2xl sm:text-3xl font-extrabold text-[#0F2C59] tracking-tight"><?= e($currentUser['name'] ?? 'Pelanggan') ?></h1>
                 <p class="text-xs sm:text-sm font-semibold text-slate-700"><?= e($currentUser['role'] ?? 'Pelanggan PDAM') ?></p>
 

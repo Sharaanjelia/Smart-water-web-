@@ -297,9 +297,16 @@ require $legacySharedPath . '/header.php';
       </div>
     </div>
 
-    <!-- Kolom Kanan: Ilustrasi Fasilitas Air Bersih & Menara Tirta Sago -->
+    <!-- Kolom Kanan: Foto Sumber Air Jernih Tirta Sago -->
     <div class="lg:col-span-5 flex justify-center lg:justify-end">
-      <?php renderFacilityWaterTowerIllustration(); ?>
+      <div class="relative w-full max-w-[420px] h-[250px] sm:h-[290px] rounded-3xl overflow-hidden shadow-xl border-4 border-white/90 group">
+        <img
+          src="<?= asset('assets/images/service-center-water.jpg') ?>"
+          alt="Sumber Air Bersih Perumda Tirta Sago"
+          class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent pointer-events-none"></div>
+      </div>
     </div>
   </div>
 </section>
