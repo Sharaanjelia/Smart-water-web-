@@ -32,30 +32,27 @@
                     </div>
                 </div>
 
-                <!-- Visualizer Odometer Meteran Air Mekanis -->
-                <div class="bg-slate-900 rounded-2xl p-5 text-center space-y-3 shadow-inner">
-                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest block">
-                        Stand Odometer Terakhir (Bulan Lalu)
-                    </span>
-
-                    <!-- Kotak Odometer 5 Digit Mekanik -->
-                    <div class="inline-flex items-center justify-center gap-1.5 bg-black p-2.5 rounded-xl border-2 border-slate-700 shadow-lg">
-                        @php $digits = str_split($latestMeterValue ?? '01000'); @endphp
-                        @foreach($digits as $idx => $d)
-                            <div class="w-10 h-14 bg-slate-950 rounded-lg border border-slate-800 flex items-center justify-center relative overflow-hidden shadow-sm">
-                                <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1px] bg-slate-800/80 pointer-events-none"></div>
-                                <span class="font-mono font-black text-2xl text-white tracking-wider {{ $idx >= 3 ? 'text-amber-400' : 'text-white' }}">
-                                    {{ $d }}
-                                </span>
-                            </div>
-                        @endforeach
-                        <div class="pl-2 font-mono font-bold text-sm text-cyan-400">
-                            m³
+                <!-- Foto Fisik Meteran Air Sebelumnya -->
+                <div class="space-y-3">
+                    <div class="relative w-full h-[220px] sm:h-[260px] rounded-2xl overflow-hidden border border-slate-200 shadow-sm group">
+                        <img
+                            src="{{ asset('assets/images/physical-water-meter.jpg') }}"
+                            alt="Meteran Air Fisik PDAM"
+                            class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                        />
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent pointer-events-none"></div>
+                        <div class="absolute bottom-3 inset-x-3 flex items-center justify-between text-white">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-black/60 backdrop-blur-md border border-white/20 text-xs font-mono font-bold">
+                                <span class="text-cyan-300">Stand Terakhir:</span> {{ $latestMeterValue ?? '01000' }} m³
+                            </span>
+                            <span class="text-[11px] text-slate-300 font-medium">
+                                Meteran Fisik PDAM
+                            </span>
                         </div>
                     </div>
 
-                    <p class="text-[11px] text-slate-400 font-medium">
-                        ⚠️ Pastikan angka yang Anda foto hari ini <strong class="text-white">lebih besar atau sama</strong> dengan angka di atas.
+                    <p class="text-[11px] text-slate-500 font-medium text-center">
+                        ⚠️ Pastikan angka yang Anda foto hari ini <strong class="text-slate-800">lebih besar atau sama</strong> dengan stand terakhir.
                     </p>
                 </div>
             </div>
