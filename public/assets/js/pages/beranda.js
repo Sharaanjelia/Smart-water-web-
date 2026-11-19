@@ -507,11 +507,50 @@
     }, 250);
   };
 
+  // =========================================================
+  // 5. CINEMATIC SCROLL REVEAL (INTERSECTION OBSERVER)
+  // =========================================================
+  function initScrollReveal() {
+    const reveals = document.querySelectorAll(
+      '.scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .scroll-reveal-scale'
+    );
+    if (!reveals.length) return;
+
+    if (!('IntersectionObserver' in window)) {
+      reveals.forEach((el) => el.classList.add('is-revealed'));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-revealed');
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: '0px 0px -40px 0px',
+        threshold: 0.08,
+      }
+    );
+
+    reveals.forEach((el) => observer.observe(el));
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('calcPeople')) {
       window.calculateWaterUsage();
     }
+    initScrollReveal();
   });
+
+  // Fallback in case DOM is already loaded
+  if (document.readyState === 'interactive' || document.readyState === 'complete') {
+    initScrollReveal();
+  }
 
   renderChatMessages();
 })();

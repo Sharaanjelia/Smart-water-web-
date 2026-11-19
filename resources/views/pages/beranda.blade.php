@@ -137,484 +137,693 @@ $isGuest = empty($activeUser) && !\Illuminate\Support\Facades\Auth::check();
           </section>
 
           <!-- ======================================================== -->
-          <!-- 2. KARTU MISI STRATEGIS 01-04                             -->
+          <!-- 2. SECTION: MEWUJUDKAN KOTA PAYAKUMBUH YANG LEBIH CERDAS -->
           <!-- ======================================================== -->
-          <section id="program-unggulan" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 sm:-mt-8">
-            <div class="relative overflow-hidden pt-7 pb-10 sm:pt-9 sm:pb-12 px-6 sm:px-10 lg:px-12 rounded-[32px] bg-gradient-to-b from-[#f8fbff] via-[#fcfeff] to-[#f6f9fc] border border-slate-100 shadow-[0_4px_25px_-5px_rgba(0,0,0,0.02)]">
-              <!-- Subtle Ambient Pastel Glows -->
-              <div class="absolute -top-24 -left-24 w-80 h-80 bg-sky-100/40 rounded-full blur-3xl pointer-events-none"></div>
-              <div class="absolute -top-20 -right-20 w-80 h-80 bg-emerald-100/35 rounded-full blur-3xl pointer-events-none"></div>
-              <div class="absolute -bottom-24 right-1/4 w-80 h-80 bg-purple-100/30 rounded-full blur-3xl pointer-events-none"></div>
+          <section id="program-unggulan" class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-6 sm:pb-10">
+            <!-- Ambient Glow Behind -->
+            <div class="absolute -top-16 left-1/2 -translate-x-1/2 w-3/4 h-80 bg-gradient-to-b from-cyan-400/10 via-sky-500/5 to-transparent blur-3xl pointer-events-none"></div>
 
-              <!-- Section Heading & Subtitle (Tanpa Teks Program Unggulan & Lebih Dekat ke Atas) -->
-              <div class="text-center max-w-3xl mx-auto space-y-2 mb-7 sm:mb-9 relative z-10">
-                <h2 class="text-2xl sm:text-3xl lg:text-[34px] font-extrabold text-[#0c1e3c] tracking-tight">
+            <div class="relative z-10 space-y-10 sm:space-y-12">
+              
+              <!-- Section Header: Cinematic Story Intro -->
+              <div class="text-center max-w-3xl mx-auto space-y-3.5 scroll-reveal">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-50 border border-sky-200/80 text-sky-800 text-[11px] font-bold uppercase tracking-wider shadow-2xs">
+                  <span class="w-2 h-2 rounded-full bg-[#0284C7] animate-pulse"></span>
+                  <span>Misi &amp; Program Strategis 2026</span>
+                </div>
+                <h2 class="text-2xl sm:text-4xl lg:text-[40px] font-black text-[#0B1B3D] tracking-tight leading-[1.18]">
                   Mewujudkan Kota Payakumbuh yang Lebih Cerdas
                 </h2>
-
                 <p class="text-xs sm:text-sm md:text-base text-slate-500 font-normal max-w-2xl mx-auto leading-relaxed">
                   Melalui inovasi, teknologi, dan kolaborasi untuk pelayanan publik yang lebih baik.
                 </p>
               </div>
 
-              <!-- 4 Kartu Misi Strategis -->
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
-                
-                <!-- KARTU MISI 01 — KONSERVASI HULU -->
-                <div class="group relative bg-white rounded-[26px] border border-sky-100/90 p-6 sm:p-7 flex flex-col justify-between min-h-[330px] pb-8 shadow-[0_8px_30px_-6px_rgba(56,189,248,0.12)] hover:shadow-[0_16px_36px_-6px_rgba(56,189,248,0.22)] hover:border-sky-300 transition-all duration-300 overflow-hidden">
-                  <div class="space-y-4 relative z-10">
-                    <div class="flex items-start justify-between">
-                      <div class="w-14 h-14 rounded-2xl bg-[#eaf4fe] flex items-center justify-center text-[#1d82f5] shadow-xs">
-                        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="m8 3 4 8 5-5 5 15H2L8 3z"/>
-                        </svg>
-                      </div>
-                      <svg class="w-5 h-5 text-[#38bdf8] mt-1 mr-0.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                        <line x1="8" y1="12" x2="14" y2="6" />
-                        <line x1="13" y1="17" x2="16" y2="14" />
-                      </svg>
-                    </div>
-
-                    <div>
-                      <span class="inline-flex items-center px-3.5 py-1 rounded-full text-[10px] sm:text-[11px] font-bold tracking-wider uppercase bg-[#e1f0fe] text-[#0066cc]">
-                        MISI 01 - KONSERVASI HULU
+              <!-- Flagship Feature Showcase: MISI 01 — KONSERVASI HULU (Panoramic Split Layout) -->
+              <div class="group relative rounded-[32px] bg-white border border-slate-200/90 shadow-xl shadow-sky-950/5 overflow-hidden hover:border-sky-300 transition-all duration-500 scroll-reveal">
+                <div class="grid grid-cols-1 lg:grid-cols-12 items-stretch">
+                  
+                  <!-- Left Image: High-res Mountain Spring Panorama -->
+                  <div class="lg:col-span-7 relative min-h-[280px] sm:min-h-[360px] overflow-hidden img-reveal-container">
+                    <img
+                      src="<?= asset('assets/images/hero-lake-bright.jpg') ?>"
+                      alt="Konservasi Hulu Gunung Sago"
+                      class="w-full h-full object-cover object-center img-reveal-zoom group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <!-- Gradients for pristine contrast -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-slate-950/20 lg:to-white"></div>
+                    
+                    <!-- Live Telemetry Tag -->
+                    <div class="absolute top-4 left-4 flex flex-wrap items-center gap-2">
+                      <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-950/70 backdrop-blur-md border border-white/20 text-white text-[11px] font-mono font-semibold">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                        Gunung Sago &bull; Sikabu &bull; Batang Agam
                       </span>
                     </div>
 
-                    <h3 class="text-[17px] sm:text-[18px] font-bold text-[#0c1e3c] leading-snug">
-                      Perlindungan Tangkapan Air Gunung Sago
-                    </h3>
-
-                    <p class="text-[13px] text-slate-500 leading-relaxed">
-                      Menjaga debit alami Mata Air Sikabu dan hulu DAS Batang Agam dari sedimentasi, penebangan liar, dan pencemaran limbah cair.
-                    </p>
-                  </div>
-
-                  <div class="absolute bottom-0 right-0 pointer-events-none select-none z-0">
-                    <svg class="w-36 h-24 text-[#eaf4fe]" viewBox="0 0 150 100" fill="none">
-                      <path d="M0 100 C 50 100 65 35 150 20 L 150 100 Z" fill="currentColor" />
-                    </svg>
-                    <div class="absolute bottom-3 right-4">
-                      <svg class="w-8 h-8" viewBox="0 0 32 32" fill="none">
-                        <path d="M12 28 C 16 22 20 16 24 8" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" />
-                        <path d="M24 8 C 21 6 17 8 18 13 C 21 14 25 12 24 8 Z" fill="#38bdf8" />
-                        <path d="M18 16 C 14 15 12 18 14 21 C 17 21 19 19 18 16 Z" fill="#38bdf8" />
-                      </svg>
+                    <div class="absolute bottom-4 left-4 right-4 text-white lg:hidden">
+                      <span class="text-[10px] font-bold uppercase tracking-wider text-cyan-300">Zonasi Perlindungan Sumber Daya Air</span>
                     </div>
                   </div>
-                </div>
 
+                  <!-- Right Content: Narrative Detail -->
+                  <div class="lg:col-span-5 p-7 sm:p-9 lg:p-10 flex flex-col justify-between space-y-6 relative z-10 bg-white">
+                    <div class="space-y-4">
+                      <div class="flex items-center justify-between">
+                        <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-[10px] sm:text-[11px] font-extrabold tracking-wider uppercase bg-sky-50 text-[#0284C7] border border-sky-100">
+                          MISI 01 - KONSERVASI HULU
+                        </span>
+                        <span class="text-xs font-mono font-bold text-slate-300">01 / 04</span>
+                      </div>
+
+                      <h3 class="text-xl sm:text-2xl font-black text-[#0B1B3D] leading-snug">
+                        Perlindungan Tangkapan Air Gunung Sago
+                      </h3>
+
+                      <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">
+                        Menjaga debit alami Mata Air Sikabu dan hulu DAS Batang Agam dari sedimentasi, penebangan liar, dan pencemaran limbah cair.
+                      </p>
+
+                      <!-- Key Highlights -->
+                      <div class="pt-2 space-y-2.5">
+                        <div class="flex items-start gap-2.5 text-xs text-slate-600">
+                          <div class="w-5 h-5 rounded-lg bg-sky-100 text-[#0284C7] flex items-center justify-center shrink-0 mt-0.5">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                          </div>
+                          <span>Pemantauan level reservoir hulu secara berkala demi kestabilan pasokan.</span>
+                        </div>
+                        <div class="flex items-start gap-2.5 text-xs text-slate-600">
+                          <div class="w-5 h-5 rounded-lg bg-sky-100 text-[#0284C7] flex items-center justify-center shrink-0 mt-0.5">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                          </div>
+                          <span>Pemberdayaan masyarakat nagari di sekitar hutan tangkapan air alami.</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-[#0284C7]">
+                      <span class="flex items-center gap-1.5">
+                        <svg class="w-4 h-4 text-emerald-500" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8z"/></svg>
+                        Ekosistem Hulu Terjaga
+                      </span>
+                      <a href="<?= $isGuest ? url('/login?redirect=' . urlencode(url('/tentang'))) : url('/tentang') ?>" class="inline-flex items-center gap-1 text-slate-400 hover:text-[#0284C7] transition-colors cursor-pointer group-hover:translate-x-1">
+                        <span>Pelajari Selengkapnya</span>
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                      </a>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Trio of Mission Pillars: MISI 02, 03, 04 (3-Column Modern Grid) -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+                
                 <!-- KARTU MISI 02 — LITERASI WARGA -->
-                <div class="group relative bg-white rounded-[26px] border border-emerald-100/90 p-6 sm:p-7 flex flex-col justify-between min-h-[330px] pb-8 shadow-[0_8px_30px_-6px_rgba(16,185,129,0.12)] hover:shadow-[0_16px_36px_-6px_rgba(16,185,129,0.22)] hover:border-emerald-300 transition-all duration-300 overflow-hidden">
+                <div class="group relative bg-white rounded-3xl border border-emerald-100/90 p-7 flex flex-col justify-between shadow-lg shadow-emerald-950/5 hover:shadow-xl hover:shadow-emerald-500/10 hover:border-emerald-300 transition-all duration-300 scroll-reveal delay-100 overflow-hidden">
                   <div class="space-y-4 relative z-10">
-                    <div class="flex items-start justify-between">
-                      <div class="w-14 h-14 rounded-2xl bg-[#eaf8f1] flex items-center justify-center text-[#10b981] shadow-xs">
-                        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/>
-                          <path d="M22 10v6"/>
-                          <path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>
+                    <div class="flex items-center justify-between">
+                      <div class="w-13 h-13 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
+                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                          <path d="M6 12v5c3 3 9 3 12 0v-5"/>
                         </svg>
                       </div>
-                      <svg class="w-5 h-5 text-[#34d399] mt-1 mr-0.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                        <line x1="8" y1="12" x2="14" y2="6" />
-                        <line x1="13" y1="17" x2="16" y2="14" />
-                      </svg>
+                      <span class="text-xs font-mono font-bold text-slate-300">02 / 04</span>
                     </div>
 
                     <div>
-                      <span class="inline-flex items-center px-3.5 py-1 rounded-full text-[10px] sm:text-[11px] font-bold tracking-wider uppercase bg-[#dcf4e7] text-[#059669]">
+                      <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold tracking-wider uppercase bg-emerald-50 text-emerald-700 border border-emerald-100">
                         MISI 02 - LITERASI WARGA
                       </span>
                     </div>
 
-                    <h3 class="text-[17px] sm:text-[18px] font-bold text-[#0c1e3c] leading-snug">
+                    <h3 class="text-lg font-bold text-[#0B1B3D] leading-snug group-hover:text-emerald-700 transition-colors">
                       Edukasi Kebiasaan Hemat Air Gen-Z
                     </h3>
 
-                    <p class="text-[13px] text-slate-500 leading-relaxed">
+                    <p class="text-xs text-slate-500 leading-relaxed">
                       Membudayakan audit kebocoran mandiri di rumah tangga, teknik mencuci hemat, dan perhitungan kubikasi register meteran air.
                     </p>
                   </div>
 
-                  <div class="absolute bottom-0 right-0 pointer-events-none select-none z-0">
-                    <svg class="w-36 h-24 text-[#eaf8f1]" viewBox="0 0 150 100" fill="none">
-                      <path d="M0 100 C 50 100 65 35 150 20 L 150 100 Z" fill="currentColor" />
-                    </svg>
-                    <div class="absolute bottom-3 right-4">
-                      <svg class="w-8 h-8" viewBox="0 0 32 32" fill="none">
-                        <path d="M16 28 C 16 20 16 16 16 13" stroke="#10b981" stroke-width="2.2" stroke-linecap="round" />
-                        <path d="M16 16 C 10 14 8 19 11 22 C 14 23 16 19 16 16 Z" fill="#10b981" />
-                        <path d="M16 16 C 22 14 24 19 21 22 C 18 23 16 19 16 16 Z" fill="#10b981" />
-                      </svg>
-                    </div>
+                  <div class="pt-6 mt-4 border-t border-slate-100 flex items-center justify-between text-xs relative z-10">
+                    <span class="text-[11px] font-semibold text-emerald-600">Smart Water Academy</span>
+                    <a href="<?= $isGuest ? url('/login?redirect=' . urlencode(url('/akademi-air'))) : url('/akademi-air') ?>" class="font-bold text-slate-400 group-hover:text-emerald-600 transition-colors inline-flex items-center gap-1">
+                      <span>Mulai Belajar</span>
+                      <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </a>
                   </div>
                 </div>
 
                 <!-- KARTU MISI 03 — RESPONS CEPAT -->
-                <div class="group relative bg-white rounded-[26px] border border-orange-100/90 p-6 sm:p-7 flex flex-col justify-between min-h-[330px] pb-8 shadow-[0_8px_30px_-6px_rgba(249,115,22,0.12)] hover:shadow-[0_16px_36px_-6px_rgba(249,115,22,0.22)] hover:border-orange-300 transition-all duration-300 overflow-hidden">
+                <div class="group relative bg-white rounded-3xl border border-amber-100/90 p-7 flex flex-col justify-between shadow-lg shadow-amber-950/5 hover:shadow-xl hover:shadow-amber-500/10 hover:border-amber-300 transition-all duration-300 scroll-reveal delay-200 overflow-hidden">
                   <div class="space-y-4 relative z-10">
-                    <div class="flex items-start justify-between">
-                      <div class="w-14 h-14 rounded-2xl bg-[#fff3eb] flex items-center justify-center text-[#f97316] shadow-xs">
-                        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <div class="flex items-center justify-between">
+                      <div class="w-13 h-13 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
+                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                           <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
                           <path d="m9 12 2 2 4-4"/>
                         </svg>
                       </div>
-                      <svg class="w-5 h-5 text-[#fb923c] mt-1 mr-0.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                        <line x1="8" y1="12" x2="14" y2="6" />
-                        <line x1="13" y1="17" x2="16" y2="14" />
-                      </svg>
+                      <span class="text-xs font-mono font-bold text-slate-300">03 / 04</span>
                     </div>
 
                     <div>
-                      <span class="inline-flex items-center px-3.5 py-1 rounded-full text-[10px] sm:text-[11px] font-bold tracking-wider uppercase bg-[#ffedd5] text-[#ea580c]">
+                      <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold tracking-wider uppercase bg-amber-50 text-amber-700 border border-amber-100">
                         MISI 03 - RESPONS CEPAT
                       </span>
                     </div>
 
-                    <h3 class="text-[17px] sm:text-[18px] font-bold text-[#0c1e3c] leading-snug">
+                    <h3 class="text-lg font-bold text-[#0B1B3D] leading-snug group-hover:text-amber-700 transition-colors">
                       Pelayanan Publik Tanpa Hambatan
                     </h3>
 
-                    <p class="text-[13px] text-slate-500 leading-relaxed">
+                    <p class="text-xs text-slate-500 leading-relaxed">
                       Memastikan seluruh laporan semburan pipa bocor atau gangguan kualitas air ditindaklanjuti secara terbuka dengan status terlacak.
                     </p>
                   </div>
 
-                  <div class="absolute bottom-0 right-0 pointer-events-none select-none z-0">
-                    <svg class="w-36 h-24 text-[#fff3eb]" viewBox="0 0 150 100" fill="none">
-                      <path d="M0 100 C 50 100 65 35 150 20 L 150 100 Z" fill="currentColor" />
-                    </svg>
-                    <div class="absolute bottom-3 right-4">
-                      <svg class="w-7 h-8" viewBox="0 0 28 32" fill="none">
-                        <path d="M14 4 C 14 4 6 15 6 20 C 6 24.4 9.6 28 14 28 C 18.4 28 22 24.4 22 20 C 22 15 14 4 14 4 Z" fill="#f97316" fill-opacity="0.9" />
-                        <circle cx="11" cy="18" r="2" fill="white" fill-opacity="0.45" />
-                      </svg>
-                    </div>
+                  <div class="pt-6 mt-4 border-t border-slate-100 flex items-center justify-between text-xs relative z-10">
+                    <span class="text-[11px] font-semibold text-amber-600">SLA Respons &lt; 2 Jam</span>
+                    <a href="<?= $isGuest ? url('/login?redirect=' . urlencode(url('/pusat-layanan'))) : url('/pusat-layanan') ?>" class="font-bold text-slate-400 group-hover:text-amber-600 transition-colors inline-flex items-center gap-1">
+                      <span>Lapor Gangguan</span>
+                      <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </a>
                   </div>
                 </div>
 
                 <!-- KARTU MISI 04 — TEKNOLOGI CERDAS -->
-                <div class="group relative bg-white rounded-[26px] border border-purple-100/90 p-6 sm:p-7 flex flex-col justify-between min-h-[330px] pb-8 shadow-[0_8px_30px_-6px_rgba(139,92,246,0.12)] hover:shadow-[0_16px_36px_-6px_rgba(139,92,246,0.22)] hover:border-purple-300 transition-all duration-300 overflow-hidden">
+                <div class="group relative bg-white rounded-3xl border border-indigo-100/90 p-7 flex flex-col justify-between shadow-lg shadow-indigo-950/5 hover:shadow-xl hover:shadow-indigo-500/10 hover:border-indigo-300 transition-all duration-300 scroll-reveal delay-300 overflow-hidden">
                   <div class="space-y-4 relative z-10">
-                    <div class="flex items-start justify-between">
-                      <div class="w-14 h-14 rounded-2xl bg-[#f3efff] flex items-center justify-center text-[#8b5cf6] shadow-xs">
-                        <svg class="w-7 h-7 text-[#8b5cf6]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <circle cx="12" cy="12" r="3" fill="currentColor" fill-opacity="0.2" />
-                          <circle cx="12" cy="3.5" r="1.5" fill="currentColor" />
-                          <circle cx="12" cy="20.5" r="1.5" fill="currentColor" />
-                          <circle cx="4" cy="8" r="1.5" fill="currentColor" />
-                          <circle cx="20" cy="8" r="1.5" fill="currentColor" />
-                          <circle cx="4" cy="16" r="1.5" fill="currentColor" />
-                          <circle cx="20" cy="16" r="1.5" fill="currentColor" />
-                          <line x1="12" y1="9" x2="12" y2="5" />
-                          <line x1="12" y1="15" x2="12" y2="19" />
-                          <line x1="9.5" y1="10.5" x2="5.5" y2="8.8" />
-                          <line x1="14.5" y1="10.5" x2="18.5" y2="8.8" />
-                          <line x1="9.5" y1="13.5" x2="5.5" y2="15.2" />
-                          <line x1="14.5" y1="13.5" x2="18.5" y2="15.2" />
+                    <div class="flex items-center justify-between">
+                      <div class="w-13 h-13 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
+                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                          <circle cx="12" cy="13" r="4"/>
                         </svg>
                       </div>
-                      <svg class="w-5 h-5 text-[#c084fc] mt-1 mr-0.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                        <line x1="8" y1="12" x2="14" y2="6" />
-                        <line x1="13" y1="17" x2="16" y2="14" />
-                      </svg>
+                      <span class="text-xs font-mono font-bold text-slate-300">04 / 04</span>
                     </div>
 
                     <div>
-                      <span class="inline-flex items-center px-3.5 py-1 rounded-full text-[10px] sm:text-[11px] font-bold tracking-wider uppercase bg-[#ede9fe] text-[#7c3aed]">
+                      <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold tracking-wider uppercase bg-indigo-50 text-indigo-700 border border-indigo-100">
                         MISI 04 - TEKNOLOGI CERDAS
                       </span>
                     </div>
 
-                    <h3 class="text-[17px] sm:text-[18px] font-bold text-[#0c1e3c] leading-snug">
+                    <h3 class="text-lg font-bold text-[#0B1B3D] leading-snug group-hover:text-indigo-700 transition-colors">
                       Integrasi AI &amp; Komunitas
                     </h3>
 
-                    <p class="text-[13px] text-slate-500 leading-relaxed">
+                    <p class="text-xs text-slate-500 leading-relaxed">
                       Menggabungkan ketepatan AI-OCR pembacaan meter mobile dengan transparansi data telemetri di portal komunitas web.
                     </p>
                   </div>
 
-                  <div class="absolute bottom-0 right-0 pointer-events-none select-none z-0">
-                    <svg class="w-36 h-24 text-[#f3efff]" viewBox="0 0 150 100" fill="none">
-                      <path d="M0 100 C 50 100 65 35 150 20 L 150 100 Z" fill="currentColor" />
-                    </svg>
-                    <div class="absolute bottom-3 right-4">
-                      <div class="grid grid-cols-2 gap-1.5 p-1 text-[#c084fc]">
-                        <span class="w-2.5 h-2.5 rounded-full bg-current opacity-75"></span>
-                        <span class="w-2.5 h-2.5 rounded-full bg-current opacity-75"></span>
-                        <span class="w-2.5 h-2.5 rounded-full bg-current opacity-75"></span>
-                        <span class="w-2.5 h-2.5 rounded-full bg-current opacity-75"></span>
-                        <span class="w-2.5 h-2.5 rounded-full bg-current opacity-75"></span>
-                        <span class="w-2.5 h-2.5 rounded-full bg-current opacity-75"></span>
-                      </div>
-                    </div>
+                  <div class="pt-6 mt-4 border-t border-slate-100 flex items-center justify-between text-xs relative z-10">
+                    <span class="text-[11px] font-semibold text-indigo-600">AI-OCR Computer Vision</span>
+                    <a href="<?= $isGuest ? url('/login?redirect=' . urlencode(url('/report-meter'))) : url('/report-meter') ?>" class="font-bold text-slate-400 group-hover:text-indigo-600 transition-colors inline-flex items-center gap-1">
+                      <span>Coba AI Meter</span>
+                      <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </a>
                   </div>
                 </div>
 
               </div>
+
             </div>
           </section>
 
           <!-- ======================================================== -->
-          <!-- 3. FALSAFAH & NILAI KEARIFAN AIR PAYAKUMBUH              -->
+          <!-- 3. SECTION: NILAI LUHUR & FALSAFAH AIR MINANGKABAU       -->
           <!-- ======================================================== -->
-          <section id="falsafah" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-slate-50 rounded-3xl border border-slate-200 p-8 sm:p-12 space-y-8">
-              <div class="max-w-2xl space-y-2">
-                <div class="flex items-center gap-2 text-cyan-800 text-xs font-bold uppercase">
-                  <svg class="w-4 h-4 text-cyan-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
-                    <path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"/>
-                    <path d="m18 15-2-2"/>
-                    <path d="m15 18-2-2"/>
+          <section id="falsafah" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
+            <div class="relative rounded-[36px] bg-gradient-to-br from-[#08152E] via-[#0B1F47] to-[#061126] text-white p-8 sm:p-12 lg:p-16 overflow-hidden shadow-2xl border border-white/10 scroll-reveal">
+              <!-- Ambient Backing Image with Smooth Scrim -->
+              <div class="absolute inset-0 pointer-events-none opacity-20">
+                <img
+                  src="<?= asset('assets/images/hero-lake-grass.jpg') ?>"
+                  alt="Kearifan Alam Minangkabau"
+                  class="w-full h-full object-cover object-center filter grayscale"
+                />
+                <div class="absolute inset-0 bg-gradient-to-r from-[#08152E] via-[#08152E]/90 to-transparent"></div>
+              </div>
+
+              <!-- Glow Orbs -->
+              <div class="absolute -top-20 -right-20 w-80 h-80 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none"></div>
+              <div class="absolute -bottom-20 -left-20 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+              <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+                
+                <!-- Left: Proverb & Cultural Story -->
+                <div class="lg:col-span-6 space-y-6 scroll-reveal-left">
+                  <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-400/15 border border-cyan-400/30 text-cyan-300 text-xs font-bold uppercase tracking-wider">
+                    <svg class="w-4 h-4 text-cyan-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+                    </svg>
+                    <span>Nilai Luhur &amp; Falsafah Air Minangkabau</span>
+                  </div>
+
+                  <div class="space-y-4">
+                    <h3 class="text-2xl sm:text-4xl lg:text-[42px] font-black tracking-tight leading-[1.15] text-white">
+                      “Aia Tagang Manyerak, <br />
+                      <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-200 to-teal-300">
+                        Aia Janiah Manyanangkan”
+                      </span>
+                    </h3>
+
+                    <p class="text-xs sm:text-sm md:text-base text-slate-300 leading-relaxed max-w-xl font-normal">
+                      Kearifan lokal mengajarkan bahwa air bukan sekadar komoditas yang dibeli, melainkan amanah alam yang harus dijaga kejernihan dan kesucian alirannya bagi sesama warga.
+                    </p>
+                  </div>
+
+                  <div class="pt-2 flex items-center gap-4 text-xs text-slate-400 border-t border-white/10">
+                    <span class="font-mono text-cyan-400 font-semibold">&bull; Luhak Nan Bungsu</span>
+                    <span class="text-slate-500">|</span>
+                    <span>Adat Basandi Syarak, Syarak Basandi Kitabullah</span>
+                  </div>
+                </div>
+
+                <!-- Right: The 3 Philosophical Pillars in Modern Action -->
+                <div class="lg:col-span-6 space-y-4 scroll-reveal-right">
+                  
+                  <!-- Pillar 1 -->
+                  <div class="group p-5 sm:p-6 rounded-2xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/10 hover:border-cyan-400/40 backdrop-blur-md transition-all duration-300 space-y-2">
+                    <div class="flex items-center justify-between">
+                      <h4 class="text-sm sm:text-base font-bold text-white flex items-center gap-2.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-sm shadow-cyan-400"></span>
+                        <span>Tanggung Jawab Kolektif</span>
+                      </h4>
+                      <span class="text-[10px] font-mono text-cyan-300/80 uppercase">Solidaritas Pipa</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed pl-5">
+                      Pemborosan air di satu rumah tangga mengurangi cadangan tekanan pipa bagi warga di ujung jaringan pipa transmisi.
+                    </p>
+                  </div>
+
+                  <!-- Pillar 2 -->
+                  <div class="group p-5 sm:p-6 rounded-2xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/10 hover:border-emerald-400/40 backdrop-blur-md transition-all duration-300 space-y-2">
+                    <div class="flex items-center justify-between">
+                      <h4 class="text-sm sm:text-base font-bold text-white flex items-center gap-2.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400"></span>
+                        <span>Integritas Kejujuran Meteran</span>
+                      </h4>
+                      <span class="text-[10px] font-mono text-emerald-300/80 uppercase">AI-OCR Transparansi</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed pl-5">
+                      Pembacaan meter mandiri berbasis AI-OCR melatih transparansi antara pelanggan dan pengelola air Tirta Sago.
+                    </p>
+                  </div>
+
+                  <!-- Pillar 3 -->
+                  <div class="group p-5 sm:p-6 rounded-2xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/10 hover:border-amber-400/40 backdrop-blur-md transition-all duration-300 space-y-2">
+                    <div class="flex items-center justify-between">
+                      <h4 class="text-sm sm:text-base font-bold text-white flex items-center gap-2.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-sm shadow-amber-400"></span>
+                        <span>Aksi Nyata Generasi Muda</span>
+                      </h4>
+                      <span class="text-[10px] font-mono text-amber-300/80 uppercase">Gen-Z Berdaya</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed pl-5">
+                      Gen-Z Payakumbuh menjadi penggerak perubahan lewat misi harian dan deteksi kebocoran pipa di lingkungan sekitar.
+                    </p>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+          </section>
+
+          <!-- ======================================================== -->
+          <!-- 4. SECTION: MANIFESTO & IKRAR WARGA HEMAT AIR            -->
+          <!-- ======================================================== -->
+          <section id="manifesto" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
+            <div class="relative rounded-[36px] bg-[#07132B] text-white p-8 sm:p-12 lg:p-16 space-y-10 sm:space-y-12 overflow-hidden border border-slate-800 shadow-2xl scroll-reveal">
+              
+              <!-- Subtle Background Light Streaks -->
+              <div class="absolute top-0 right-1/4 w-96 h-96 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none"></div>
+              <div class="absolute bottom-0 left-1/4 w-96 h-96 bg-sky-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+              <!-- Header -->
+              <div class="text-center max-w-2xl mx-auto space-y-3.5 relative z-10">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-cyan-300 text-[11px] font-bold uppercase tracking-wider">
+                  <svg class="w-3.5 h-3.5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>
                   </svg>
-                  <span>Nilai Luhur &amp; Falsafah Air Minangkabau</span>
-                </div>
-                <h3 class="text-2xl font-bold text-slate-900">
-                  “Aia Tagang Manyerak, Aia Janiah Manyanangkan”
-                </h3>
-                <p class="text-xs text-slate-600 leading-relaxed">
-                  Kearifan lokal mengajarkan bahwa air bukan sekadar komoditas yang dibeli, melainkan amanah alam yang harus dijaga kejernihan dan kesucian alirannya bagi sesama warga.
-                </p>
-              </div>
-
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-slate-200">
-                <div class="space-y-2">
-                  <h4 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-cyan-600"></span>
-                    <span>Tanggung Jawab Kolektif</span>
-                  </h4>
-                  <p class="text-xs text-slate-600 leading-relaxed">
-                    Pemborosan air di satu rumah tangga mengurangi cadangan tekanan pipa bagi warga di ujung jaringan pipa transmisi.
-                  </p>
+                  <span>Komitmen Moral Warga Luhak 50</span>
                 </div>
 
-                <div class="space-y-2">
-                  <h4 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
-                    <span>Integritas Kejujuran Meteran</span>
-                  </h4>
-                  <p class="text-xs text-slate-600 leading-relaxed">
-                    Pembacaan meter mandiri berbasis AI-OCR melatih transparansi antara pelanggan dan pengelola air Tirta Sago.
-                  </p>
-                </div>
-
-                <div class="space-y-2">
-                  <h4 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-                    <span>Aksi Nyata Generasi Muda</span>
-                  </h4>
-                  <p class="text-xs text-slate-600 leading-relaxed">
-                    Gen-Z Payakumbuh menjadi penggerak perubahan lewat misi harian dan deteksi kebocoran pipa di lingkungan sekitar.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- ======================================================== -->
-          <!-- 4. MANIFESTO & IKRAR WARGA HEMAT AIR PAYAKUMBUH          -->
-          <!-- ======================================================== -->
-          <section id="manifesto" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-gradient-to-br from-cyan-900 via-sky-950 to-slate-950 text-white rounded-3xl p-8 sm:p-12 space-y-8 relative overflow-hidden">
-              <div class="relative z-10 max-w-2xl space-y-3">
-                <h2 class="text-2xl sm:text-4xl font-extrabold text-white leading-tight">
+                <h2 class="text-2xl sm:text-4xl font-black text-white tracking-tight leading-tight">
                   Manifesto Komunitas Air Payakumbuh
                 </h2>
-                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-xl mx-auto">
                   Komitmen moral bersama untuk menjaga keberlanjutan air bersih di rumah masing-masing:
                 </p>
               </div>
 
-              <!-- 4 Pledge Checkpoints -->
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
-                <div class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-1">
-                  <div class="flex items-center gap-2 font-semibold text-xs text-cyan-200">
-                    <svg class="w-4 h-4 text-cyan-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M20 6 9 17l-5-5"/>
-                    </svg>
-                    <span>1. Menutup Keran Saat Tidak Mengalirkan Faedah</span>
+              <!-- 4 Pledge Checkpoints (Prestigious Grid with Big Numbers) -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 relative z-10">
+                
+                <!-- Pledge 1 -->
+                <div class="group relative rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-cyan-400/50 p-6 sm:p-7 backdrop-blur-md transition-all duration-300 flex flex-col justify-between overflow-hidden">
+                  <div class="absolute top-3 right-5 text-4xl sm:text-5xl font-black text-white/[0.05] group-hover:text-cyan-400/10 font-mono transition-colors select-none pointer-events-none">
+                    01
                   </div>
-                  <p class="text-[11px] text-slate-400 pl-6">
-                    Tidak membiarkan air mengalir bebas saat menggosok gigi, sabunan, atau berwudhu.
-                  </p>
+                  <div class="space-y-3 relative z-10">
+                    <div class="flex items-center gap-3">
+                      <div class="w-9 h-9 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-400/30 flex items-center justify-center shrink-0">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                      </div>
+                      <h3 class="text-sm sm:text-base font-bold text-white group-hover:text-cyan-200 transition-colors">
+                        1. Menutup Keran Saat Tidak Mengalirkan Faedah
+                      </h3>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed pl-12">
+                      Tidak membiarkan air mengalir bebas saat menggosok gigi, sabunan, atau berwudhu.
+                    </p>
+                  </div>
                 </div>
 
-                <div class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-1">
-                  <div class="flex items-center gap-2 font-semibold text-xs text-cyan-200">
-                    <svg class="w-4 h-4 text-cyan-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M20 6 9 17l-5-5"/>
-                    </svg>
-                    <span>2. Melakukan Uji Kebocoran Meteran Berkala</span>
+                <!-- Pledge 2 -->
+                <div class="group relative rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-cyan-400/50 p-6 sm:p-7 backdrop-blur-md transition-all duration-300 flex flex-col justify-between overflow-hidden">
+                  <div class="absolute top-3 right-5 text-4xl sm:text-5xl font-black text-white/[0.05] group-hover:text-cyan-400/10 font-mono transition-colors select-none pointer-events-none">
+                    02
                   </div>
-                  <p class="text-[11px] text-slate-400 pl-6">
-                    Memeriksa jarum meteran air di malam hari sebulan sekali untuk mencegah silent leak.
-                  </p>
+                  <div class="space-y-3 relative z-10">
+                    <div class="flex items-center gap-3">
+                      <div class="w-9 h-9 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-400/30 flex items-center justify-center shrink-0">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                      </div>
+                      <h3 class="text-sm sm:text-base font-bold text-white group-hover:text-cyan-200 transition-colors">
+                        2. Melakukan Uji Kebocoran Meteran Berkala
+                      </h3>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed pl-12">
+                      Memeriksa jarum meteran air di malam hari sebulan sekali untuk mencegah silent leak.
+                    </p>
+                  </div>
                 </div>
 
-                <div class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-1">
-                  <div class="flex items-center gap-2 font-semibold text-xs text-cyan-200">
-                    <svg class="w-4 h-4 text-cyan-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M20 6 9 17l-5-5"/>
-                    </svg>
-                    <span>3. Memanfaatkan Air Reused yang Aman</span>
+                <!-- Pledge 3 -->
+                <div class="group relative rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-cyan-400/50 p-6 sm:p-7 backdrop-blur-md transition-all duration-300 flex flex-col justify-between overflow-hidden">
+                  <div class="absolute top-3 right-5 text-4xl sm:text-5xl font-black text-white/[0.05] group-hover:text-cyan-400/10 font-mono transition-colors select-none pointer-events-none">
+                    03
                   </div>
-                  <p class="text-[11px] text-slate-400 pl-6">
-                    Menyiram pot tanaman dengan air cucian sayur/beras daripada menyia-nyiakan air minum.
-                  </p>
+                  <div class="space-y-3 relative z-10">
+                    <div class="flex items-center gap-3">
+                      <div class="w-9 h-9 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-400/30 flex items-center justify-center shrink-0">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                      </div>
+                      <h3 class="text-sm sm:text-base font-bold text-white group-hover:text-cyan-200 transition-colors">
+                        3. Memanfaatkan Air Reused yang Aman
+                      </h3>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed pl-12">
+                      Menyiram pot tanaman dengan air cucian sayur/beras daripada menyia-nyiakan air minum.
+                    </p>
+                  </div>
                 </div>
 
-                <div class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-1">
-                  <div class="flex items-center gap-2 font-semibold text-xs text-cyan-200">
-                    <svg class="w-4 h-4 text-cyan-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M20 6 9 17l-5-5"/>
-                    </svg>
-                    <span>4. Peduli Terhadap Kebocoran Pipa Publik</span>
+                <!-- Pledge 4 -->
+                <div class="group relative rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-cyan-400/50 p-6 sm:p-7 backdrop-blur-md transition-all duration-300 flex flex-col justify-between overflow-hidden">
+                  <div class="absolute top-3 right-5 text-4xl sm:text-5xl font-black text-white/[0.05] group-hover:text-cyan-400/10 font-mono transition-colors select-none pointer-events-none">
+                    04
                   </div>
-                  <p class="text-[11px] text-slate-400 pl-6">
-                    Segera melapor di portal Smart Water bila melihat kebocoran pipa air bersih di jalan.
-                  </p>
+                  <div class="space-y-3 relative z-10">
+                    <div class="flex items-center gap-3">
+                      <div class="w-9 h-9 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-400/30 flex items-center justify-center shrink-0">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                      </div>
+                      <h3 class="text-sm sm:text-base font-bold text-white group-hover:text-cyan-200 transition-colors">
+                        4. Peduli Terhadap Kebocoran Pipa Publik
+                      </h3>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed pl-12">
+                      Segera melapor di portal Smart Water bila melihat kebocoran pipa air bersih di jalan.
+                    </p>
+                  </div>
                 </div>
+
               </div>
+
             </div>
           </section>
 
           <!-- ======================================================== -->
-          <!-- 5. FITUR UTAMA PLATFORM SMART WATER                      -->
+          <!-- 5. SECTION: ARSITEKTUR EKOSISTEM DIGITAL                 -->
           <!-- ======================================================== -->
-          <section id="fitur-platform" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-            <div class="text-center max-w-3xl mx-auto space-y-3">
-              <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+          <section id="fitur-platform" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-10 sm:space-y-12">
+            
+            <!-- Section Header -->
+            <div class="text-center max-w-3xl mx-auto space-y-3.5 scroll-reveal">
+              <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-50 border border-cyan-200 text-cyan-800 text-[11px] font-bold uppercase tracking-wider">
+                <svg class="w-3.5 h-3.5 text-cyan-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/>
+                  <path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/>
+                  <path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/>
+                </svg>
+                <span>Arsitektur Ekosistem Digital</span>
+              </div>
+
+              <h2 class="text-2xl sm:text-4xl lg:text-[40px] font-black text-[#0B1B3D] tracking-tight leading-tight">
                 Semua Kebutuhan Air, Lebih Mudah dalam Satu Platform
               </h2>
-              <p class="text-xs sm:text-sm text-slate-500 max-w-2xl mx-auto leading-relaxed">
+
+              <p class="text-xs sm:text-sm md:text-base text-slate-500 max-w-2xl mx-auto leading-relaxed">
                 Nikmati kemudahan mengakses layanan, memantau penggunaan air, dan meningkatkan pengetahuan tentang air.
               </p>
             </div>
 
+            <!-- 4 Elevated Interactive Feature Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <!-- Kartu 1: Pusat Layanan -->
+              
+              <!-- Card 1: Pusat Layanan -->
               <a
                 href="<?= $isGuest ? url('/login?redirect=' . urlencode(url('/pusat-layanan'))) : url('/pusat-layanan') ?>"
-                class="group bg-white rounded-2xl border border-slate-200/90 hover:border-cyan-400 p-6 text-center space-y-3.5 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col items-center justify-between"
+                class="group relative rounded-3xl bg-white border border-slate-200/90 hover:border-cyan-400 p-7 flex flex-col justify-between shadow-lg shadow-sky-950/5 hover:shadow-2xl hover:shadow-cyan-500/10 transition-all duration-300 hover:-translate-y-1.5 cursor-pointer scroll-reveal delay-100 overflow-hidden"
               >
-                <div class="w-12 h-12 rounded-2xl bg-cyan-50 text-cyan-700 group-hover:bg-cyan-600 group-hover:text-white transition-colors flex items-center justify-center shrink-0">
-                  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect width="20" height="14" x="2" y="7" rx="2" ry="2"/>
-                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-                  </svg>
+                <div class="space-y-4 relative z-10">
+                  <div class="flex items-center justify-between">
+                    <div class="w-13 h-13 rounded-2xl bg-cyan-50 text-cyan-700 group-hover:bg-cyan-600 group-hover:text-white transition-colors duration-300 flex items-center justify-center shrink-0 shadow-xs">
+                      <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect width="20" height="14" x="2" y="7" rx="2" ry="2"/>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                      </svg>
+                    </div>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-cyan-50 text-cyan-800">
+                      Layanan
+                    </span>
+                  </div>
+
+                  <div>
+                    <h3 class="text-lg font-bold text-[#0B1B3D] group-hover:text-cyan-700 transition-colors">
+                      Pusat Layanan
+                    </h3>
+                    <p class="text-xs text-slate-500 leading-relaxed mt-2">
+                      Kelola informasi pelanggan, laporan meter, tagihan, dan pengaduan.
+                    </p>
+                  </div>
                 </div>
-                <div class="space-y-1.5 flex-1 flex flex-col justify-center">
-                  <h3 class="text-sm font-bold text-slate-900 group-hover:text-cyan-800 transition-colors">
-                    Pusat Layanan
-                  </h3>
-                  <p class="text-[11px] text-slate-500 leading-relaxed">
-                    Kelola informasi pelanggan, laporan meter, tagihan, dan pengaduan.
-                  </p>
+
+                <div class="pt-6 mt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-cyan-700 group-hover:text-cyan-800 relative z-10">
+                  <span>Buka Layanan</span>
+                  <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+                  </svg>
                 </div>
               </a>
 
-              <!-- Kartu 2: AI OCR Meter -->
+              <!-- Card 2: AI OCR Meter -->
               <a
                 href="<?= $isGuest ? url('/login?redirect=' . urlencode(url('/report-meter'))) : url('/report-meter') ?>"
-                class="group bg-white rounded-2xl border border-slate-200/90 hover:border-cyan-400 p-6 text-center space-y-3.5 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col items-center justify-between"
+                class="group relative rounded-3xl bg-white border border-slate-200/90 hover:border-sky-400 p-7 flex flex-col justify-between shadow-lg shadow-sky-950/5 hover:shadow-2xl hover:shadow-sky-500/10 transition-all duration-300 hover:-translate-y-1.5 cursor-pointer scroll-reveal delay-200 overflow-hidden"
               >
-                <div class="w-12 h-12 rounded-2xl bg-sky-50 text-sky-700 group-hover:bg-sky-600 group-hover:text-white transition-colors flex items-center justify-center shrink-0">
-                  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                    <circle cx="12" cy="13" r="4"/>
-                  </svg>
+                <div class="space-y-4 relative z-10">
+                  <div class="flex items-center justify-between">
+                    <div class="w-13 h-13 rounded-2xl bg-sky-50 text-sky-700 group-hover:bg-sky-600 group-hover:text-white transition-colors duration-300 flex items-center justify-center shrink-0 shadow-xs">
+                      <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                        <circle cx="12" cy="13" r="4"/>
+                      </svg>
+                    </div>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-sky-50 text-sky-800">
+                      AI Vision
+                    </span>
+                  </div>
+
+                  <div>
+                    <h3 class="text-lg font-bold text-[#0B1B3D] group-hover:text-sky-700 transition-colors">
+                      AI OCR Meter
+                    </h3>
+                    <p class="text-xs text-slate-500 leading-relaxed mt-2">
+                      Bantu membaca angka meter air melalui foto secara digital.
+                    </p>
+                  </div>
                 </div>
-                <div class="space-y-1.5 flex-1 flex flex-col justify-center">
-                  <h3 class="text-sm font-bold text-slate-900 group-hover:text-sky-800 transition-colors">
-                    AI OCR Meter
-                  </h3>
-                  <p class="text-[11px] text-slate-500 leading-relaxed">
-                    Bantu membaca angka meter air melalui foto secara digital.
-                  </p>
+
+                <div class="pt-6 mt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-sky-700 group-hover:text-sky-800 relative z-10">
+                  <span>Pindai Meteran</span>
+                  <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+                  </svg>
                 </div>
               </a>
 
-              <!-- Kartu 3: Akademi Air -->
+              <!-- Card 3: Akademi Air -->
               <a
                 href="<?= $isGuest ? url('/login?redirect=' . urlencode(url('/akademi-air'))) : url('/akademi-air') ?>"
-                class="group bg-white rounded-2xl border border-slate-200/90 hover:border-cyan-400 p-6 text-center space-y-3.5 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col items-center justify-between"
+                class="group relative rounded-3xl bg-white border border-slate-200/90 hover:border-indigo-400 p-7 flex flex-col justify-between shadow-lg shadow-sky-950/5 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-300 hover:-translate-y-1.5 cursor-pointer scroll-reveal delay-300 overflow-hidden"
               >
-                <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-700 group-hover:bg-indigo-600 group-hover:text-white transition-colors flex items-center justify-center shrink-0">
-                  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                    <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-                  </svg>
+                <div class="space-y-4 relative z-10">
+                  <div class="flex items-center justify-between">
+                    <div class="w-13 h-13 rounded-2xl bg-indigo-50 text-indigo-700 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300 flex items-center justify-center shrink-0 shadow-xs">
+                      <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                        <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                      </svg>
+                    </div>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-800">
+                      Literasi &amp; XP
+                    </span>
+                  </div>
+
+                  <div>
+                    <h3 class="text-lg font-bold text-[#0B1B3D] group-hover:text-indigo-700 transition-colors">
+                      Akademi Air
+                    </h3>
+                    <p class="text-xs text-slate-500 leading-relaxed mt-2">
+                      Pelajari pengetahuan air melalui materi dan kuis edukatif.
+                    </p>
+                  </div>
                 </div>
-                <div class="space-y-1.5 flex-1 flex flex-col justify-center">
-                  <h3 class="text-sm font-bold text-slate-900 group-hover:text-indigo-800 transition-colors">
-                    Akademi Air
-                  </h3>
-                  <p class="text-[11px] text-slate-500 leading-relaxed">
-                    Pelajari pengetahuan air melalui materi dan kuis edukatif.
-                  </p>
+
+                <div class="pt-6 mt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-indigo-700 group-hover:text-indigo-800 relative z-10">
+                  <span>Mulai Belajar</span>
+                  <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+                  </svg>
                 </div>
               </a>
 
-              <!-- Kartu 4: Tantangan Air -->
+              <!-- Card 4: Tantangan Air -->
               <a
                 href="<?= $isGuest ? url('/login?redirect=' . urlencode(url('/tantangan'))) : url('/tantangan') ?>"
-                class="group bg-white rounded-2xl border border-slate-200/90 hover:border-cyan-400 p-6 text-center space-y-3.5 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col items-center justify-between"
+                class="group relative rounded-3xl bg-white border border-slate-200/90 hover:border-amber-400 p-7 flex flex-col justify-between shadow-lg shadow-sky-950/5 hover:shadow-2xl hover:shadow-amber-500/10 transition-all duration-300 hover:-translate-y-1.5 cursor-pointer scroll-reveal delay-400 overflow-hidden"
               >
-                <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-700 group-hover:bg-amber-600 group-hover:text-white transition-colors flex items-center justify-center shrink-0">
-                  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+                <div class="space-y-4 relative z-10">
+                  <div class="flex items-center justify-between">
+                    <div class="w-13 h-13 rounded-2xl bg-amber-50 text-amber-700 group-hover:bg-amber-600 group-hover:text-white transition-colors duration-300 flex items-center justify-center shrink-0 shadow-xs">
+                      <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+                      </svg>
+                    </div>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800">
+                      Komunitas
+                    </span>
+                  </div>
+
+                  <div>
+                    <h3 class="text-lg font-bold text-[#0B1B3D] group-hover:text-amber-700 transition-colors">
+                      Tantangan Air
+                    </h3>
+                    <p class="text-xs text-slate-500 leading-relaxed mt-2">
+                      Ikuti tantangan hemat air dan kumpulkan poin edukasi.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="pt-6 mt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-amber-700 group-hover:text-amber-800 relative z-10">
+                  <span>Ambil Tantangan</span>
+                  <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
                   </svg>
                 </div>
-                <div class="space-y-1.5 flex-1 flex flex-col justify-center">
-                  <h3 class="text-sm font-bold text-slate-900 group-hover:text-amber-800 transition-colors">
-                    Tantangan Air
-                  </h3>
-                  <p class="text-[11px] text-slate-500 leading-relaxed">
-                    Ikuti tantangan hemat air dan kumpulkan poin edukasi.
-                  </p>
-                </div>
               </a>
+
             </div>
           </section>
 
           <!-- ======================================================== -->
-          <!-- 6. CALL-TO-ACTION (CTA) BANNER (YANG DI-SCREENSHOT USER) -->
+          <!-- 6. SECTION: CALL-TO-ACTION (CTA) PENUTUP SEBELUM FOOTER  -->
           <!-- ======================================================== -->
-          <section id="cta-gabung" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="relative overflow-hidden rounded-[36px] bg-gradient-to-r from-slate-900 via-sky-950 to-cyan-950 text-white p-8 sm:p-14 text-center space-y-6 shadow-2xl border border-slate-800">
-              <!-- Decorative Circles -->
-              <div class="absolute -top-24 -left-24 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
-              <div class="absolute -bottom-24 -right-24 w-72 h-72 bg-sky-500/15 rounded-full blur-3xl pointer-events-none"></div>
+          <section id="cta-gabung" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
+            <div class="relative overflow-hidden rounded-[40px] bg-gradient-to-r from-[#07132B] via-[#0A1F44] to-[#07132B] text-white p-8 sm:p-14 lg:p-16 text-center space-y-8 shadow-2xl border border-white/10 scroll-reveal">
+              
+              <!-- Background Scenic Reflection with Scrim -->
+              <div class="absolute inset-0 pointer-events-none opacity-20">
+                <img
+                  src="<?= asset('assets/images/hero-lake-serene.jpg') ?>"
+                  alt="Danau Sikabu Payakumbuh"
+                  class="w-full h-full object-cover object-center filter grayscale contrast-125"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-[#07132B] via-[#07132B]/80 to-[#07132B]/95"></div>
+              </div>
 
-              <div class="max-w-2xl mx-auto space-y-3 relative z-10">
-                <span class="text-xs font-bold font-mono text-cyan-400 uppercase tracking-widest block">
+              <!-- Ambient Glow -->
+              <div class="absolute -top-28 -left-28 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none"></div>
+              <div class="absolute -bottom-28 -right-28 w-80 h-80 bg-sky-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+              <div class="max-w-3xl mx-auto space-y-4 relative z-10">
+                <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-400/10 border border-cyan-400/25 text-cyan-300 text-xs font-mono font-bold uppercase tracking-widest">
+                  <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
                   MARI BERKONTRIBUSI HARI INI
                 </span>
-                <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight">
+
+                <h2 class="text-3xl sm:text-5xl font-black text-white tracking-tight leading-[1.12]">
                   Mulai Pengalaman Layanan Air Cerdas Bersama Smart Water
                 </h2>
-                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+
+                <p class="text-xs sm:text-sm md:text-base text-slate-300 leading-relaxed max-w-2xl mx-auto font-normal">
                   Catat stand meter mandiri, pantau rekening keluarga, dan nikmati kemudahan akses informasi publik dalam satu platform terpercaya.
                 </p>
               </div>
 
+              <!-- Action Buttons -->
               <div class="flex flex-wrap items-center justify-center gap-4 pt-2 relative z-10">
                 <a
                   href="<?= $isGuest ? url('/login?redirect=' . urlencode(url('/report-meter'))) : url('/report-meter') ?>"
-                  class="btn-shimmer relative px-8 py-3.5 rounded-2xl text-xs sm:text-sm font-extrabold text-slate-950 bg-cyan-400 hover:bg-cyan-300 shadow-xl shadow-cyan-400/25 transition-all hover:scale-105 cursor-pointer"
+                  class="btn-shimmer relative px-8 py-4 rounded-2xl text-xs sm:text-sm font-extrabold text-slate-950 bg-gradient-to-r from-cyan-400 via-cyan-300 to-sky-400 hover:from-cyan-300 hover:to-sky-300 shadow-xl shadow-cyan-400/25 hover:shadow-cyan-400/40 transition-all hover:scale-105 cursor-pointer flex items-center gap-2"
                 >
-                  Coba Lapor Meter Mandiri AI Sekarang &rarr;
+                  <span>Coba Lapor Meter Mandiri AI Sekarang</span>
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                 </a>
+                
                 <a
                   href="<?= $isGuest ? url('/login?redirect=' . urlencode(url('/pusat-layanan'))) : url('/pusat-layanan') ?>"
-                  class="px-7 py-3.5 rounded-2xl text-xs sm:text-sm font-bold text-white bg-white/10 hover:bg-white/20 border border-white/20 transition-all hover:scale-105 cursor-pointer backdrop-blur-md"
+                  class="px-7 py-4 rounded-2xl text-xs sm:text-sm font-bold text-white bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md transition-all hover:scale-105 cursor-pointer flex items-center gap-2"
                 >
-                  Pusat Bantuan &amp; Pengaduan
+                  <svg class="w-4 h-4 text-cyan-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  <span>Pusat Bantuan &amp; Pengaduan</span>
                 </a>
               </div>
+
+              <!-- Trust Verification Badges -->
+              <div class="pt-6 border-t border-white/10 flex flex-wrap items-center justify-center gap-6 text-[11px] font-medium text-slate-400 relative z-10">
+                <span class="flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  Terintegrasi PDAM Tirta Sago
+                </span>
+                <span class="flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  Layanan Terbuka untuk Seluruh Warga Payakumbuh
+                </span>
+                <span class="flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5 text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  Keamanan Data Terenkripsi
+                </span>
+              </div>
+
             </div>
           </section>
 
