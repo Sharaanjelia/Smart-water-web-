@@ -166,7 +166,7 @@ $isGuest = empty($activeUser) && !\Illuminate\Support\Facades\Auth::check();
                   <!-- Left Image: High-res Mountain Spring Panorama -->
                   <div class="lg:col-span-7 relative min-h-[280px] sm:min-h-[360px] overflow-hidden img-reveal-container">
                     <img
-                      src="<?= asset('assets/images/hero-lake-bright.jpg') ?>"
+                      src="<?= asset('assets/images/gunung-sago.jpg') ?>"
                       alt="Konservasi Hulu Gunung Sago"
                       class="w-full h-full object-cover object-center img-reveal-zoom group-hover:scale-105 transition-transform duration-700"
                     />
