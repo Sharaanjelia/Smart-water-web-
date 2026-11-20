@@ -522,18 +522,20 @@
     }
 
     const observer = new IntersectionObserver(
-      (entries, obs) => {
+      (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('is-revealed');
-            obs.unobserve(entry.target);
+          } else {
+            // Hapus class agar animasi dapat terpicu kembali setiap kali pengguna scroll ulang
+            entry.target.classList.remove('is-revealed');
           }
         });
       },
       {
         root: null,
         rootMargin: '0px 0px -40px 0px',
-        threshold: 0.08,
+        threshold: 0.1,
       }
     );
 
