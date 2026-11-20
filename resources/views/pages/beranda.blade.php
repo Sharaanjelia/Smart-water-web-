@@ -173,14 +173,6 @@ $isGuest = empty($activeUser) && !\Illuminate\Support\Facades\Auth::check();
                     <!-- Gradients for pristine contrast -->
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-slate-950/20 lg:to-white"></div>
                     
-                    <!-- Live Telemetry Tag -->
-                    <div class="absolute top-4 left-4 flex flex-wrap items-center gap-2">
-                      <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-950/70 backdrop-blur-md border border-white/20 text-white text-[11px] font-mono font-semibold">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                        Gunung Sago &bull; Sikabu &bull; Batang Agam
-                      </span>
-                    </div>
-
                     <div class="absolute bottom-4 left-4 right-4 text-white lg:hidden">
                       <span class="text-[10px] font-bold uppercase tracking-wider text-cyan-300">Zonasi Perlindungan Sumber Daya Air</span>
                     </div>
